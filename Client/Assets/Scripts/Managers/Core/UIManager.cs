@@ -109,13 +109,24 @@ public class UIManager
 
     public void ClosePopupUI()
     {
-        if (_popupStack.Count == 0)
+        if (_popupStack.Count <= 0)
             return;
 
         UI_Popup popup = _popupStack.Pop();
         Managers.Resource.Destroy(popup.gameObject);
         popup = null;
         _order--;
+
+        // 현재 선택된 UI를 변경해줌
+        if (_popupStack.Count > 0)
+        { 
+            popup = _popupStack.Peek();
+            Managers.Select.CurPanel = popup.gameObject;
+        }
+        else
+        {
+            Managers.Select.CurPanel = SceneUI.gameObject;
+        }
     }
 
     public void CloseAllPopupUI()

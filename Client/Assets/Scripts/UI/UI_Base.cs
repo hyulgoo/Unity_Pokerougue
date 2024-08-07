@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,12 +9,21 @@ using UnityEngine.UI;
 public abstract class UI_Base : MonoBehaviour
 {
 	protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
-	public abstract void Init();
+
+	public Button _lastSelected = null;
+    enum Pointer
+    {
+        Pointer,
+    }
+
+    public abstract void Init();
 
 	private void Awake()
 	{
 		Init();
-	}
+        Bind<Image>(typeof(Pointer));
+        Managers.Select.CurPanel = gameObject;
+    }
 
 	protected void Bind<T>(Type type) where T : UnityEngine.Object
 	{
@@ -46,6 +56,7 @@ public abstract class UI_Base : MonoBehaviour
 	protected Text GetText(int idx) { return Get<Text>(idx); }
 	protected Button GetButton(int idx) { return Get<Button>(idx); }
 	protected Image GetImage(int idx) { return Get<Image>(idx); }
+	protected TMP_InputField GetInputField(int idx) { return Get<TMP_InputField>(idx); }
 
 	public static void BindEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
 	{
@@ -62,5 +73,29 @@ public abstract class UI_Base : MonoBehaviour
 				evt.OnDragHandler += action;
 				break;
 		}
+	}
+
+    // 현재 선택된 버튼을 가리키는 Obj PosSetting
+    public void SetPointerPos(Transform parent)
+    {
+		Image pointer = GetImage((int)Pointer.Pointer);
+		if (pointer == null) return;
+
+        pointer.transform.SetParent(parent);
+        RectTransform selectrect = GetImage((int)Pointer.Pointer).GetComponent<RectTransform>();
+        selectrect.offsetMin = Vector2.zero;
+        selectrect.offsetMax = Vector2.zero;
+    }
+
+	public void ActiveBtn(bool active)
+	{
+        UnityEngine.Object[] buttons;
+		_objects.TryGetValue(typeof(Button), out buttons);
+
+        foreach (UnityEngine.Object btn in buttons)
+		{
+			Button button = (Button)btn;
+            button.interactable = active;
+        }
 	}
 }

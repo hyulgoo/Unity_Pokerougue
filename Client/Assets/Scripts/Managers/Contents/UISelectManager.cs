@@ -19,7 +19,7 @@ public class UISelectManager
 
     Button _curSelectButton;
     Button[] _totButtoninPanel;
-
+    
     void SetPanel(GameObject panel)
     {
         if (panel == null) return;
@@ -27,13 +27,19 @@ public class UISelectManager
         _totButtoninPanel = panel.GetComponentsInChildren<Button>();
         if (_totButtoninPanel.Length > 0)
         {
-            _curSelectButton = _totButtoninPanel[0];
-            _curSelectButton.Select();
-            UI_Panel uipanel = panel.GetComponent<UI_Panel>();
-            if(uipanel != null)
+            UI_Base bc = panel.GetComponent<UI_Base>();
+            if (bc == null) return;
+
+            if(bc._lastSelected != null)
             {
-                uipanel.SetArrowPos(_curSelectButton.transform);
+                _curSelectButton = bc._lastSelected;
             }
+            else
+            {
+                _curSelectButton = _totButtoninPanel[0];
+            }
+            _curSelectButton.Select();
+            bc.SetPointerPos(_curSelectButton.transform);
         }
         else
         { 
