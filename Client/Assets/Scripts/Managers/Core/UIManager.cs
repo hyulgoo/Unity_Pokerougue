@@ -76,7 +76,10 @@ public class UIManager
 
 		go.transform.SetParent(Root.transform);
 
-		return sceneUI;
+        // 새로 생성하면 선택된 패널로 만들어줌.
+        Managers.Select.CurPanel = go;
+
+        return sceneUI;
 	}
 
 	public T ShowPopupUI<T>(string name = null) where T : UI_Popup
@@ -89,6 +92,9 @@ public class UIManager
         _popupStack.Push(popup);
 
         go.transform.SetParent(Root.transform);
+
+        // 새로 생성하면 선택된 패널로 만들어줌.
+        Managers.Select.CurPanel = go;
 
 		return popup;
     }

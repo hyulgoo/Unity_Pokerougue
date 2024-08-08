@@ -17,7 +17,6 @@ public class UI_MainScene : UI_Scene
         base.Init();
 
         Bind<Button>(typeof(Buttons));
-        Managers.Select.CurPanel = gameObject;
 
         GetButton((int)Buttons.Btn_Start).onClick.AddListener(OnClickStartButton);
         GetButton((int)Buttons.Btn_Setting).onClick.AddListener(OnClickSettingButton);

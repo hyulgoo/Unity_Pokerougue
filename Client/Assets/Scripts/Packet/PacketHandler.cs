@@ -37,70 +37,6 @@ class PacketHandler
 		}
 	}
 
-	public static void S_MoveHandler(PacketSession session, IMessage packet)
-	{
-		S_Move movePacket = packet as S_Move;
-
-		GameObject go = Managers.Object.FindById(movePacket.ObjectId);
-		if (go == null)
-			return;
-
-		if (Managers.Object.MyPlayer.Id == movePacket.ObjectId)
-			return;
-
-		BaseController bc = go.GetComponent<BaseController>();
-		if (bc == null)
-			return;
-
-		bc.PosInfo = movePacket.PosInfo;
-	}
-
-	public static void S_SkillHandler(PacketSession session, IMessage packet)
-	{
-		S_Skill skillPacket = packet as S_Skill;
-
-		GameObject go = Managers.Object.FindById(skillPacket.ObjectId);
-		if (go == null)
-			return;
-
-		CreatureController cc = go.GetComponent<CreatureController>();
-		if (cc != null)
-		{
-			cc.UseSkill(skillPacket.Info.SkillId);
-		}
-	}
-
-	public static void S_ChangeHpHandler(PacketSession session, IMessage packet)
-	{
-		S_ChangeHp changePacket = packet as S_ChangeHp;
-
-		GameObject go = Managers.Object.FindById(changePacket.ObjectId);
-		if (go == null)
-			return;
-
-		CreatureController cc = go.GetComponent<CreatureController>();
-		if (cc != null)
-		{
-			cc.Hp = changePacket.Hp;
-		}
-	}
-
-	public static void S_DieHandler(PacketSession session, IMessage packet)
-	{
-		S_Die diePacket = packet as S_Die;
-
-		GameObject go = Managers.Object.FindById(diePacket.ObjectId);
-		if (go == null)
-			return;
-
-		CreatureController cc = go.GetComponent<CreatureController>();
-		if (cc != null)
-		{
-			cc.Hp = 0;
-			cc.OnDead();
-		}
-	}
-
 	public static void S_ConnectedHandler(PacketSession session, IMessage packet)
 	{
 		Debug.Log("S_ConnectedHandler");
@@ -164,9 +100,6 @@ class PacketHandler
 			Item item = Item.MakeItem(itemInfo);
 			Managers.Inven.Add(item);
 		}
-
-		if (Managers.Object.MyPlayer != null)
-			Managers.Object.MyPlayer.RefreshAdditionalStat();
 	}
 
 	public static void S_AddItemHandler(PacketSession session, IMessage packet)
@@ -185,9 +118,6 @@ class PacketHandler
 		UI_GameScene gameSceneUI = Managers.UI.SceneUI as UI_GameScene;
 		gameSceneUI.InvenUI.RefreshUI();
 		gameSceneUI.StatUI.RefreshUI();
-
-		if (Managers.Object.MyPlayer != null)
-			Managers.Object.MyPlayer.RefreshAdditionalStat();
 	}
 
 	public static void S_EquipItemHandler(PacketSession session, IMessage packet)
@@ -205,9 +135,6 @@ class PacketHandler
 		UI_GameScene gameSceneUI = Managers.UI.SceneUI as UI_GameScene;
 		gameSceneUI.InvenUI.RefreshUI();
 		gameSceneUI.StatUI.RefreshUI();
-
-		if (Managers.Object.MyPlayer != null)
-			Managers.Object.MyPlayer.RefreshAdditionalStat();
 	}
 
 	public static void S_ChangeStatHandler(PacketSession session, IMessage packet)

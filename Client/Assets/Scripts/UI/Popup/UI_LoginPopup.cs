@@ -73,8 +73,8 @@ public class UI_LoginPopup : UI_Popup
                 Managers.Network.AccountId = res.AccountId;
                 Managers.Network.Token = res.Token;
 
-                UI_SelectServerPopup popup = Managers.UI.ShowPopupUI<UI_SelectServerPopup>();
-                popup.SetServers(res.ServerList);
+                Managers.Network.ConnectToGame(res.ServerList[0]);
+                Managers.Scene.LoadScene(Define.Scene.Lobby);
             }
         });
     }

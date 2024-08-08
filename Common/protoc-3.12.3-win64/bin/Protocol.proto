@@ -6,41 +6,26 @@ option csharp_namespace = "Google.Protobuf.Protocol";
 enum MsgId {
   S_ENTER_GAME = 0;
   S_LEAVE_GAME = 1;
-  S_SPAWN = 2;
-  S_DESPAWN = 3;
-  C_MOVE = 4;
-  S_MOVE = 5;
-  C_SKILL = 6;
-  S_SKILL = 7;
-  S_CHANGE_HP = 8;
-  S_DIE = 9;
-  S_CONNECTED = 10;
-  C_LOGIN = 11;
-  S_LOGIN = 12;
-  C_ENTER_GAME = 13;
-  C_CREATE_PLAYER = 14;
-  S_CREATE_PLAYER = 15;
-  S_ITEM_LIST = 16;
-  S_ADD_ITEM = 17;
-  C_EQUIP_ITEM = 18;
-  S_EQUIP_ITEM = 19;
-  S_CHANGE_STAT = 20;
-  S_PING = 21;
-  C_PONG = 22;
+  S_CONNECTED = 2;
+  S_SPAWN = 3;
+  S_DESPAWN = 4;
+  C_LOGIN = 5;
+  S_LOGIN = 6;
+  C_ENTER_GAME = 7;
+  C_CREATE_PLAYER = 8;
+  S_CREATE_PLAYER = 9;
+  S_ITEM_LIST = 10;
+  S_ADD_ITEM = 11;
+  C_EQUIP_ITEM = 12;
+  S_EQUIP_ITEM = 13;
+  S_CHANGE_STAT = 14;
+  S_PING = 15;
+  C_PONG = 16;
 }
 
 enum CreatureState {
-  IDLE = 0;
-  MOVING = 1;
-  SKILL = 2;
-  DEAD = 3;
-}
-
-enum MoveDir {
-  UP = 0;
-  DOWN = 1;
-  LEFT = 2;
-  RIGHT = 3;
+  LIVE = 0;
+  DEAD = 1;
 }
 
 enum GameObjectType {
@@ -69,24 +54,10 @@ enum ItemType {
   ITEM_TYPE_CONSUMABLE = 3;
 }
 
-enum WeaponType {
-  WEAPON_TYPE_NONE = 0;
-  WEAPON_TYPE_SWORD = 1;
-  WEAPON_TYPE_BOW = 2;
-}
-
-enum ArmorType {
-  ARMOR_TYPE_NONE = 0;
-  ARMOR_TYPE_HELMET = 1;
-  ARMOR_TYPE_ARMOR = 2;
-  ARMOR_TYPE_BOOTS = 3;
-}
-
 enum ConsumableType {
    CONSUMABLE_TYPE_NONE = 0;
    CONSUMABLE_TYPE_POTION = 1;
 }
-
 
 message S_EnterGame {
   ObjectInfo player = 1;
@@ -101,34 +72,6 @@ message S_Spawn {
 
 message S_Despawn {
   repeated int32 objectIds = 1;
-}
-
-message C_Move {
-  PositionInfo posInfo = 1;
-}
-
-message S_Move {
-  int32 objectId = 1;
-  PositionInfo posInfo = 2;
-}
-
-message C_Skill {
-  SkillInfo info = 1;
-}
-
-message S_Skill {
-  int32 objectId = 1;
-  SkillInfo info = 2;
-}
-
-message S_ChangeHp {
-  int32 objectId = 1;
-  int32 hp = 2;
-}
-
-message S_Die {
-  int32 objectId = 1;
-  int32 attackerId = 2;
 }
 
 message S_Connected {
@@ -192,15 +135,7 @@ message LobbyPlayerInfo {
 message ObjectInfo {
   int32 objectId = 1;
   string name = 2;
-  PositionInfo posInfo = 3;
-  StatInfo statInfo = 4;
-}
-
-message PositionInfo {
-  CreatureState state = 1;
-  MoveDir moveDir = 2;
-  int32 posX = 3;
-  int32 posY = 4;
+  StatInfo statInfo = 3;
 }
 
 message StatInfo {

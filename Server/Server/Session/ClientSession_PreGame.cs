@@ -101,10 +101,6 @@ namespace Server
 			{
 				MyPlayer.PlayerDbId = playerInfo.PlayerDbId;
 				MyPlayer.Info.Name = playerInfo.Name;
-				MyPlayer.Info.PosInfo.State = CreatureState.Idle;
-				MyPlayer.Info.PosInfo.MoveDir = MoveDir.Down;
-				MyPlayer.Info.PosInfo.PosX = 0;
-				MyPlayer.Info.PosInfo.PosY = 0;
 				MyPlayer.Stat.MergeFrom(playerInfo.StatInfo);
 				MyPlayer.Session = this;
 

@@ -28,26 +28,6 @@ class PacketHandler
 		S_Despawn despawnPacket = packet as S_Despawn;
 	}
 
-	public static void S_MoveHandler(PacketSession session, IMessage packet)
-	{
-		S_Move movePacket = packet as S_Move;
-	}
-
-	public static void S_SkillHandler(PacketSession session, IMessage packet)
-	{
-		S_Skill skillPacket = packet as S_Skill;
-	}
-
-	public static void S_ChangeHpHandler(PacketSession session, IMessage packet)
-	{
-		S_ChangeHp changePacket = packet as S_ChangeHp;
-	}
-
-	public static void S_DieHandler(PacketSession session, IMessage packet)
-	{
-		S_Die diePacket = packet as S_Die;
-	}
-
 	// Step1
 	public static void S_ConnectedHandler(PacketSession session, IMessage packet)
 	{

@@ -94,126 +94,6 @@ namespace Server.Game
 
 		bool[,] _collision;
 		GameObject[,] _objects;
-
-		public bool CanGo(Vector2Int cellPos, bool checkObjects = true)
-		{
-			if (cellPos.x < MinX || cellPos.x > MaxX)
-				return false;
-			if (cellPos.y < MinY || cellPos.y > MaxY)
-				return false;
-
-			int x = cellPos.x - MinX;
-			int y = MaxY - cellPos.y;
-			return !_collision[y, x] && (!checkObjects || _objects[y, x] == null);
-		}
-
-		public GameObject Find(Vector2Int cellPos)
-		{
-			if (cellPos.x < MinX || cellPos.x > MaxX)
-				return null;
-			if (cellPos.y < MinY || cellPos.y > MaxY)
-				return null;
-
-			int x = cellPos.x - MinX;
-			int y = MaxY - cellPos.y;
-			return _objects[y, x];
-		}
-
-		public bool ApplyLeave(GameObject gameObject)
-		{
-			if (gameObject.Room == null)
-				return false;
-			if (gameObject.Room.Map != this)
-				return false;
-
-			PositionInfo posInfo = gameObject.PosInfo;
-			if (posInfo.PosX < MinX || posInfo.PosX > MaxX)
-				return false;
-			if (posInfo.PosY < MinY || posInfo.PosY > MaxY)
-				return false;
-
-			// Zone
-			Zone zone = gameObject.Room.GetZone(gameObject.CellPos);
-			zone.Remove(gameObject);
-
-			{
-				int x = posInfo.PosX - MinX;
-				int y = MaxY - posInfo.PosY;
-				if (_objects[y, x] == gameObject)
-					_objects[y, x] = null;
-			}
-
-			return true;
-		}
-
-		public bool ApplyMove(GameObject gameObject, Vector2Int dest, bool checkObjects = true, bool collision = true)
-		{
-			if (gameObject.Room == null)
-				return false;
-			if (gameObject.Room.Map != this)
-				return false;
-
-			PositionInfo posInfo = gameObject.PosInfo;
-			if (CanGo(dest, checkObjects) == false)
-				return false;
-
-			if (collision)
-			{
-				{
-					int x = posInfo.PosX - MinX;
-					int y = MaxY - posInfo.PosY;
-					if (_objects[y, x] == gameObject)
-						_objects[y, x] = null;
-				}
-				{ 
-					int x = dest.x - MinX;
-					int y = MaxY - dest.y;
-					_objects[y, x] = gameObject;
-				}
-			}
-
-			// Zone
-			GameObjectType type = ObjectManager.GetObjectTypeById(gameObject.Id);
-			if (type == GameObjectType.Player)
-			{
-				Player player = (Player)gameObject;
-				Zone now = gameObject.Room.GetZone(gameObject.CellPos);
-				Zone after = gameObject.Room.GetZone(dest);
-				if (now != after)
-				{
-					now.Players.Remove(player);
-					after.Players.Add(player);
-				}
-			}
-			else if (type == GameObjectType.Monster)
-			{
-				Monster monster = (Monster)gameObject;
-				Zone now = gameObject.Room.GetZone(gameObject.CellPos);
-				Zone after = gameObject.Room.GetZone(dest);
-				if (now != after)
-				{
-					now.Monsters.Remove(monster);
-					after.Monsters.Add(monster);
-				}
-			}
-			else if (type == GameObjectType.Projectile)
-			{
-				Projectile projectile = (Projectile)gameObject;
-				Zone now = gameObject.Room.GetZone(gameObject.CellPos);
-				Zone after = gameObject.Room.GetZone(dest);
-				if (now != after)
-				{
-					now.Projectiles.Remove(projectile);
-					after.Projectiles.Add(projectile);
-				}
-			}
-
-			// 실제 좌표 이동
-			posInfo.PosX = dest.x;
-			posInfo.PosY = dest.y;
-			return true;
-		}
-
 		public void LoadMap(int mapId, string pathPrefix = "../../../../../Common/MapData")
 		{
 			string mapName = "Map_" + mapId.ToString("000");
@@ -310,8 +190,8 @@ namespace Server.Game
 					// 벽으로 막혀서 갈 수 없으면 스킵
 					if (next.Y != dest.Y || next.X != dest.X)
 					{
-						if (CanGo(Pos2Cell(next), checkObjects) == false) // CellPos
-							continue;
+						//if (CanGo(Pos2Cell(next), checkObjects) == false) // CellPos
+						//	continue;
 					}
 
 					// 이미 방문한 곳이면 스킵

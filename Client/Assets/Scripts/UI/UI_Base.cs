@@ -22,7 +22,6 @@ public abstract class UI_Base : MonoBehaviour
 	{
 		Init();
         Bind<Image>(typeof(Pointer));
-        Managers.Select.CurPanel = gameObject;
     }
 
 	protected void Bind<T>(Type type) where T : UnityEngine.Object

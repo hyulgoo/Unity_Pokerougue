@@ -33,9 +33,6 @@ public class ObjectManager
 
 				MyPlayer = go.GetComponent<MyPlayerController>();
 				MyPlayer.Id = info.ObjectId;
-				MyPlayer.PosInfo = info.PosInfo;
-				MyPlayer.Stat.MergeFrom(info.StatInfo);
-				MyPlayer.SyncPos();
 			}
 			else
 			{
@@ -45,33 +42,7 @@ public class ObjectManager
 
 				PlayerController pc = go.GetComponent<PlayerController>();
 				pc.Id = info.ObjectId;
-				pc.PosInfo = info.PosInfo;
-				pc.Stat.MergeFrom(info.StatInfo);
-				pc.SyncPos();
 			}
-		}
-		else if (objectType == GameObjectType.Monster)
-		{
-			GameObject go = Managers.Resource.Instantiate("Creature/Monster");
-			go.name = info.Name;
-			_objects.Add(info.ObjectId, go);
-
-			MonsterController mc = go.GetComponent<MonsterController>();
-			mc.Id = info.ObjectId;
-			mc.PosInfo = info.PosInfo;
-			mc.Stat = info.StatInfo;
-			mc.SyncPos();
-		}
-		else if (objectType == GameObjectType.Projectile)
-		{
-			GameObject go = Managers.Resource.Instantiate("Creature/Arrow");
-			go.name = "Arrow";
-			_objects.Add(info.ObjectId, go);
-
-			ArrowController ac = go.GetComponent<ArrowController>();
-			ac.PosInfo = info.PosInfo;
-			ac.Stat = info.StatInfo;
-			ac.SyncPos();
 		}
 	}
 
@@ -95,21 +66,6 @@ public class ObjectManager
 		GameObject go = null;
 		_objects.TryGetValue(id, out go);
 		return go;
-	}
-
-	public GameObject FindCreature(Vector3Int cellPos)
-	{
-		foreach (GameObject obj in _objects.Values)
-		{
-			CreatureController cc = obj.GetComponent<CreatureController>();
-			if (cc == null)
-				continue;
-
-			if (cc.CellPos == cellPos)
-				return obj;
-		}
-
-		return null;
 	}
 
 	public GameObject Find(Func<GameObject, bool> condition)

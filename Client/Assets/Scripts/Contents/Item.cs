@@ -58,12 +58,12 @@ public class Item
 
 		switch (itemData.itemType)
 		{
-			case ItemType.Weapon:
-				item = new Weapon(itemInfo.TemplateId);
-				break;
-			case ItemType.Armor:
-				item = new Armor(itemInfo.TemplateId);
-				break;
+			//case ItemType.Weapon:
+				//item = new Weapon(itemInfo.TemplateId);
+				//break;
+			//case ItemType.Armor:
+				//item = new Armor(itemInfo.TemplateId);
+				//break;
 			case ItemType.Consumable:
 				item = new Consumable(itemInfo.TemplateId);
 				break;
@@ -81,61 +81,61 @@ public class Item
 	}
 }
 
-public class Weapon : Item
-{
-	public WeaponType WeaponType { get; private set; }
-	public int Damage { get; private set; }
+//public class Weapon : Item
+//{
+//	public WeaponType WeaponType { get; private set; }
+//	public int Damage { get; private set; }
 
-	public Weapon(int templateId) : base(ItemType.Weapon)
-	{
-		Init(templateId);
-	}
+//	public Weapon(int templateId) : base(ItemType.Weapon)
+//	{
+//		Init(templateId);
+//	}
 
-	void Init(int templateId)
-	{
-		ItemData itemData = null;
-		Managers.Data.ItemDict.TryGetValue(templateId, out itemData);
-		if (itemData.itemType != ItemType.Weapon)
-			return;
+//	void Init(int templateId)
+//	{
+//		ItemData itemData = null;
+//		Managers.Data.ItemDict.TryGetValue(templateId, out itemData);
+//		if (itemData.itemType != ItemType.Weapon)
+//			return;
 
-		WeaponData data = (WeaponData)itemData;
-		{
-			TemplateId = data.id;
-			Count = 1;
-			WeaponType = data.weaponType;
-			Damage = data.damage;
-			Stackable = false;
-		}
-	}
-}
+//		WeaponData data = (WeaponData)itemData;
+//		{
+//			TemplateId = data.id;
+//			Count = 1;
+//			WeaponType = data.weaponType;
+//			Damage = data.damage;
+//			Stackable = false;
+//		}
+//	}
+//}
 
-public class Armor : Item
-{
-	public ArmorType ArmorType { get; private set; }
-	public int Defence { get; private set; }
+//public class Armor : Item
+//{
+//	public ArmorType ArmorType { get; private set; }
+//	public int Defence { get; private set; }
 
-	public Armor(int templateId) : base(ItemType.Armor)
-	{
-		Init(templateId);
-	}
+//	public Armor(int templateId) : base(ItemType.Armor)
+//	{
+//		Init(templateId);
+//	}
 
-	void Init(int templateId)
-	{
-		ItemData itemData = null;
-		Managers.Data.ItemDict.TryGetValue(templateId, out itemData);
-		if (itemData.itemType != ItemType.Armor)
-			return;
+//	void Init(int templateId)
+//	{
+//		ItemData itemData = null;
+//		Managers.Data.ItemDict.TryGetValue(templateId, out itemData);
+//		if (itemData.itemType != ItemType.Armor)
+//			return;
 
-		ArmorData data = (ArmorData)itemData;
-		{
-			TemplateId = data.id;
-			Count = 1;
-			ArmorType = data.armorType;
-			Defence = data.defence;
-			Stackable = false;
-		}
-	}
-}
+//		ArmorData data = (ArmorData)itemData;
+//		{
+//			TemplateId = data.id;
+//			Count = 1;
+//			ArmorType = data.armorType;
+//			Defence = data.defence;
+//			Stackable = false;
+//		}
+//	}
+//}
 
 public class Consumable : Item
 {
