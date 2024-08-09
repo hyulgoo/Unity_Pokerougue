@@ -8,7 +8,7 @@ public class MyPlayerController : PlayerController
 
     private void Start()
     {
-        //Managers.Object.MyPlayer = this;
+        Managers.Object.MyPlayer = this;
     }
 
     private void Update()

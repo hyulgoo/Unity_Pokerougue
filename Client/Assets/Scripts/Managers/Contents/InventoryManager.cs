@@ -6,7 +6,7 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
 	public Dictionary<int, Item> Items { get; } = new Dictionary<int, Item>();
-
+	
 	public void Add(Item item)
 	{
 		Items.Add(item.ItemDbId, item);

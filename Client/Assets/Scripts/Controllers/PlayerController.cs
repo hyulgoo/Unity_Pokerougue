@@ -6,4 +6,5 @@ public class PlayerController : MonoBehaviour
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    
 }

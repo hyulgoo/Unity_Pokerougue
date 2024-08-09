@@ -34,6 +34,7 @@ namespace Server.DB
 					if (success)
 					{
 						// Me
+						// room.Push(() => 일감)
 					}
 				}
 			});			

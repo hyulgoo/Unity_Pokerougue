@@ -1,6 +1,5 @@
 ﻿using Google.Protobuf.Protocol;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,6 +41,20 @@ public class ObjectManager
 
 				PlayerController pc = go.GetComponent<PlayerController>();
 				pc.Id = info.ObjectId;
+			}
+
+			if (Managers.Scene.CurrentScene.SceneType == Define.Scene.Lobby)
+			{
+				string[] playernames = new string[_objects.Count];
+				int order = 0;
+
+				foreach (GameObject go in _objects.Values)
+				{
+					PlayerController pc = go.GetComponent<PlayerController>();
+					playernames[order++] = pc.Name;
+				}
+
+				Managers.UI.SceneUI.GetComponent<UI_LobbyScene>().SetUserName(playernames);
 			}
 		}
 	}

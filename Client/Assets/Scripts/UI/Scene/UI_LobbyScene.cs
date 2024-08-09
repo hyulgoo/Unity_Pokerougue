@@ -20,17 +20,17 @@ public class UI_LobbyScene : UI_Scene
         for(int i = 0; i < buttons.Length; ++i)
         {
             string newtext = "";
-            TMP_Text text = buttons[i].GetComponent<TMP_Text>();
+            TextMeshProUGUI text = buttons[i].gameObject.GetComponentInChildren<TextMeshProUGUI>();
             if (i < names.Length)
             {
                 newtext = names[i];
-                buttons[i].GetComponent<TMP_Text>().alignment = TextAlignmentOptions.Left;
+                text.alignment = TextAlignmentOptions.Left;
                 buttons[i].interactable = true;
             }
             else
             {
                 newtext = "ºó ½½·Ô";
-                buttons[i].GetComponent<TMP_Text>().alignment = TextAlignmentOptions.Center;
+                text.alignment = TextAlignmentOptions.Center;
                 buttons[i].interactable = false;
             }
             text.text = newtext;
