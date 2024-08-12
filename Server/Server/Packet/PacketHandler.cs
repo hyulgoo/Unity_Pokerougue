@@ -53,4 +53,16 @@ class PacketHandler
 		ClientSession clientSession = (ClientSession)session;
 		clientSession.HandlePong();
 	}
+
+	public static void C_RequestDuelHandler(PacketSession session, IMessage packet)
+    {
+        C_RequestDuel equipPacket = (C_RequestDuel)packet;
+        ClientSession clientSession = (ClientSession)session;
+    }
+
+    public static void C_RespondDuelHandler(PacketSession session, IMessage packet)
+    {
+        C_RespondDuel equipPacket = (C_RespondDuel)packet;
+        ClientSession clientSession = (ClientSession)session;
+    }
 }

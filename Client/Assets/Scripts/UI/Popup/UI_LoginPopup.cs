@@ -72,6 +72,7 @@ public class UI_LoginPopup : UI_Popup
             {
                 Managers.Network.AccountId = res.AccountId;
                 Managers.Network.Token = res.Token;
+                Managers.Network.Name = account;
 
                 Managers.Network.ConnectToGame(res.ServerList[0]);
                 Managers.Scene.LoadScene(Define.Scene.Lobby);

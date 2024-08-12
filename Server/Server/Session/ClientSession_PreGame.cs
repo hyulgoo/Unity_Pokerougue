@@ -87,7 +87,7 @@ namespace Server
 				}
 			}
 		}
-
+		
 		public void HandleEnterGame(C_EnterGame enterGamePacket)
 		{
 			if (ServerState != PlayerServerState.ServerStateLobby)

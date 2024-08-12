@@ -21,6 +21,9 @@ enum MsgId {
   S_CHANGE_STAT = 14;
   S_PING = 15;
   C_PONG = 16;
+  C_REQUEST_DUEL = 17;
+  S_REQUEST_DUEL = 18;
+  C_RESPOND_DUEL = 19;
 }
 
 enum CreatureState {
@@ -96,6 +99,20 @@ message S_CreatePlayer {
 
 message C_EnterGame {
   string name = 1;
+}
+
+message C_RequestDuel {		
+  int32 applyId = 1;
+  int32 opponentId = 2;
+}
+
+message S_RequestDuel {
+  int32 requestId = 1;
+}
+
+message C_RespondDuel {
+  int32 respondId = 1;
+  int32 duelOK = 2;
 }
 
 message S_ItemList {

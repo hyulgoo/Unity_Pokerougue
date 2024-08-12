@@ -10,6 +10,7 @@ public class NetworkManager
 {
 	public int AccountId { get; set; }
 	public int Token { get; set; }
+	public string Name { get; set; }
 
 	ServerSession _session = new ServerSession();
 
@@ -45,7 +46,7 @@ public class NetworkManager
     }
 
 	public void Update()
-	{
+	{ 
 		List<PacketMessage> list = PacketQueue.Instance.PopAll();
 		foreach (PacketMessage packet in list)
 		{

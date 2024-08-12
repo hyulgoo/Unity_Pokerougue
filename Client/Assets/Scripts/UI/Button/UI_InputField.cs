@@ -5,16 +5,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UI_InputField : MonoBehaviour, ISelectHandler, IDeselectHandler
-{
-    TMP_InputField _input;
-
+{ 
     public void OnSelect(BaseEventData eventData)
     {
-        //Managers.Object.MyPlayer._inputMode = true;
+        Managers.Object.MyPlayer._inputMode = true;
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
-        //Managers.Object.MyPlayer._inputMode = false;
+        Managers.Object.MyPlayer._inputMode = false;
     }
 }

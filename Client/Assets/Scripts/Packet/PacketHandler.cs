@@ -11,13 +11,14 @@ class PacketHandler
 	{
 		S_EnterGame enterGamePacket = packet as S_EnterGame;
 		Managers.Object.Add(enterGamePacket.Player, myPlayer: true);
+		Managers.UI.SetLobbyPlayer();
 	}
 
 	public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
 	{
 		S_LeaveGame leaveGameHandler = packet as S_LeaveGame;
 		Managers.Object.Clear();
-	}
+    }
 
 	public static void S_SpawnHandler(PacketSession session, IMessage packet)
 	{
@@ -25,8 +26,9 @@ class PacketHandler
 		foreach (ObjectInfo obj in spawnPacket.Objects)
 		{
 			Managers.Object.Add(obj, myPlayer: false);
-		}
-	}
+        }
+        Managers.UI.SetLobbyPlayer();
+    }
 
 	public static void S_DespawnHandler(PacketSession session, IMessage packet)
 	{
@@ -35,6 +37,7 @@ class PacketHandler
 		{
 			Managers.Object.Remove(id);
 		}
+		Managers.UI.SetLobbyPlayer();
 	}
 
 	public static void S_ConnectedHandler(PacketSession session, IMessage packet)
@@ -42,7 +45,7 @@ class PacketHandler
 		Debug.Log("S_ConnectedHandler");
 		C_Login loginPacket = new C_Login();
 
-		string path = Application.dataPath;
+		string path = Managers.Network.Name;
 		loginPacket.UniqueId = path.GetHashCode().ToString();
 		Managers.Network.Send(loginPacket);
 	}
@@ -57,18 +60,33 @@ class PacketHandler
 		if (loginPacket.Players == null || loginPacket.Players.Count == 0)
 		{
 			C_CreatePlayer createPacket = new C_CreatePlayer();
-			createPacket.Name = $"Player_{Random.Range(0, 10000).ToString("0000")}";
+			createPacket.Name = Managers.Network.Name;
 			Managers.Network.Send(createPacket);
 		}
 		else
 		{
-			// 무조건 첫번째 로그인
-			LobbyPlayerInfo info = loginPacket.Players[0];
-			C_EnterGame enterGamePacket = new C_EnterGame();
-			enterGamePacket.Name = info.Name;
-			Managers.Network.Send(enterGamePacket);
-		}
-	}
+			for(int i = 0; i <  loginPacket.Players.Count; i++)
+            {
+                LobbyPlayerInfo info = loginPacket.Players[i];
+                if (i == 0)
+				{
+                    C_EnterGame enterGamePacket = new C_EnterGame();
+                    enterGamePacket.Name = info.Name;
+                    Managers.Network.Send(enterGamePacket);
+                }
+				else
+                {
+					ObjectInfo playerinfo = new ObjectInfo();
+					playerinfo.ObjectId = info.PlayerDbId;
+					playerinfo.Name = info.Name;
+					playerinfo.StatInfo = info.StatInfo;
+
+					Managers.Object.Add(playerinfo, myPlayer: false);
+				}
+			}
+        }
+        Managers.UI.SetLobbyPlayer();
+    }
 
 	public static void S_CreatePlayerHandler(PacketSession session, IMessage packet)
 	{
@@ -77,7 +95,7 @@ class PacketHandler
 		if (createOkPacket.Player == null)
 		{
 			C_CreatePlayer createPacket = new C_CreatePlayer();
-			createPacket.Name = $"Player_{Random.Range(0, 10000).ToString("0000")}";
+			createPacket.Name = Managers.Network.Name;
 			Managers.Network.Send(createPacket);
 		}
 		else
@@ -150,6 +168,10 @@ class PacketHandler
 		Debug.Log("[Server] PingCheck");
 		Managers.Network.Send(pongPacket);
 	}
+    public static void S_RequestDuelHandler(PacketSession session, IMessage packet)
+    {
+        S_RequestDuel pongPacket = new S_RequestDuel();
+    }
 }
 
 

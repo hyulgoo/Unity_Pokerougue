@@ -146,4 +146,20 @@ public class UIManager
         CloseAllPopupUI();
         SceneUI = null;
     }
+
+    public void SetLobbyPlayer()
+    {
+        if (Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby) return;
+        KeyValuePair<int, GameObject>[] nameidlist = Managers.Object.GetObjects();
+        int[] id = new int[nameidlist.Length];
+        string[] names = new string[nameidlist.Length];
+        for (int i = 0; i < nameidlist.Length; i++)
+        {
+            id[i] = nameidlist[i].Key;
+            names[i] = nameidlist[i].Value.name;
+        }
+        UI_LobbyScene lc = SceneUI.gameObject.GetComponent<UI_LobbyScene>();
+        if (lc == null) return;
+        lc.SetUserName(id, names);
+    }
 }
