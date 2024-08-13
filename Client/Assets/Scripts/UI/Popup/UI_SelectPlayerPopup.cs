@@ -1,44 +1,42 @@
+using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_SelectPlayerPopup : UI_Popup
+public class UI_SelectPlayerPopup : UI_AcceptDenyPopup
 {
-    int OpponentId;
-    enum Texts
-    {
-        Text
-    }
-    enum Buttons
-    {
-        Btn_Apply,
-        Btn_Cancle
-    }
-
+    int _oponentId;
     public override void Init()
     {
         base.Init();
-        Bind<Button>(typeof(Buttons));
-        Bind<Text>(typeof(Texts));
-
-        GetButton((int)Buttons.Btn_Apply).onClick.AddListener(OnClickApplyButton);
-        GetButton((int)Buttons.Btn_Cancle).onClick.AddListener(OnClickCancleButton);
     }
 
     public void SetOpponentPlayer(int playerid)
     {
+        _oponentId = playerid;
         string playerName = Managers.Object.GetPlayerName(playerid);
         playerName += "님에게 \n 대결 신청?";
-        GetText((int)Texts.Text).text = playerName;
+
+        TMP_Text textbtn = GetText((int)Texts.Text);
+        textbtn.text = playerName;
     }
 
-    void OnClickApplyButton()
+    protected override void OnClickApplyButton()
     {
+        C_RequestDuel requestduelpacket = new C_RequestDuel();
+        requestduelpacket.ApplyId = Managers.Object.MyPlayer.Id;
+        requestduelpacket.OpponentId = _oponentId;
+        Managers.Network.Send(requestduelpacket);
 
+        ClosePopupUI();
+
+        UI_WaitingForRespondPopup popup = Managers.UI.ShowPopupUI<UI_WaitingForRespondPopup>();
+        popup.Text = "서버 응답 대기 중";
     }
 
-    void OnClickCancleButton()
+    protected override void OnClickDenyButton()
     {
         ClosePopupUI();
     }

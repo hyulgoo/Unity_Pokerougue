@@ -47,8 +47,12 @@ class PacketManager
 		_handler.Add((ushort)MsgId.SChangeStat, PacketHandler.S_ChangeStatHandler);		
 		_onRecv.Add((ushort)MsgId.SPing, MakePacket<S_Ping>);
 		_handler.Add((ushort)MsgId.SPing, PacketHandler.S_PingHandler);		
-		_onRecv.Add((ushort)MsgId.SRequestDual, MakePacket<S_RequestDual>);
-		_handler.Add((ushort)MsgId.SRequestDual, PacketHandler.S_RequestDualHandler);
+		_onRecv.Add((ushort)MsgId.SRequestSendOk, MakePacket<S_RequestSendOk>);
+		_handler.Add((ushort)MsgId.SRequestSendOk, PacketHandler.S_RequestSendOkHandler);		
+		_onRecv.Add((ushort)MsgId.SRequestDuel, MakePacket<S_RequestDuel>);
+		_handler.Add((ushort)MsgId.SRequestDuel, PacketHandler.S_RequestDuelHandler);		
+		_onRecv.Add((ushort)MsgId.SRespondDuel, MakePacket<S_RespondDuel>);
+		_handler.Add((ushort)MsgId.SRespondDuel, PacketHandler.S_RespondDuelHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

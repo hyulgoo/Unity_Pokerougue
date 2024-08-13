@@ -130,8 +130,6 @@ namespace Server
 				Send(itemListPacket);
 			}
 
-			ServerState = PlayerServerState.ServerStateGame;
-
 			GameLogic.Instance.Push(() =>
 			{
 				GameRoom room = GameLogic.Instance.Find(1);

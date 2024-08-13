@@ -56,13 +56,34 @@ class PacketHandler
 
 	public static void C_RequestDuelHandler(PacketSession session, IMessage packet)
     {
-        C_RequestDuel equipPacket = (C_RequestDuel)packet;
+        C_RequestDuel requestDuelPaceket = (C_RequestDuel)packet;
         ClientSession clientSession = (ClientSession)session;
+
+		Player player = clientSession.MyPlayer;
+        if (player == null)
+            return;
+
+        GameRoom room = player.Room;
+        if (room == null)
+            return;
+
+        room.Push(room.RequestDuel, requestDuelPaceket.ApplyId, requestDuelPaceket.OpponentId);
     }
 
     public static void C_RespondDuelHandler(PacketSession session, IMessage packet)
     {
-        C_RespondDuel equipPacket = (C_RespondDuel)packet;
+        C_RespondDuel respondDuelPacket = (C_RespondDuel)packet;
         ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+            return;
+
+        GameRoom room = player.Room;
+        if (room == null)
+            return;
+
+        bool letsDuel = respondDuelPacket.DuelOK == 1 ? true : false;
+        room.Push(room.RespondDuel, respondDuelPacket.RespondId, respondDuelPacket.OpponentId, letsDuel);
     }
 }

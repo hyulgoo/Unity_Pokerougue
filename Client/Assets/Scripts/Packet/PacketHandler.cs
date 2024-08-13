@@ -168,9 +168,53 @@ class PacketHandler
 		Debug.Log("[Server] PingCheck");
 		Managers.Network.Send(pongPacket);
 	}
+
+	public static void S_RequestSendOkHandler(PacketSession session, IMessage packet)
+	{
+        S_RequestSendOk requestSendOK = (S_RequestSendOk)packet;
+
+		if(requestSendOK.SendOK == 1)
+		{
+			// 패킷 전송 성공
+			Managers.UI.ClosePopupUI();
+            UI_WaitingForRespondPopup popup = Managers.UI.ShowPopupUI<UI_WaitingForRespondPopup>();
+			popup.Text = "상대 응답 대기 중";
+		}
+		else
+		{
+			// 대결 신청 패킷 보내기 실패
+			Managers.UI.ClosePopupUI();
+			UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
+			popup.SetAnnounceText("대결 신청 실패");
+		}
+	}
+
     public static void S_RequestDuelHandler(PacketSession session, IMessage packet)
     {
-        S_RequestDuel pongPacket = new S_RequestDuel();
+        S_RequestDuel requestDuel = (S_RequestDuel)packet;
+        UI_DualRespondPopup popup = Managers.UI.ShowPopupUI<UI_DualRespondPopup>("UI_AcceptDenyPopup");
+		popup.SetApplyDuelAnnounce(requestDuel.RequestId);
+    }
+    public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
+    {
+        S_RespondDuel respenDuel = (S_RespondDuel)packet;
+
+		bool letsDuel = respenDuel.DuelOK == 1 ? true : false;
+
+		if(letsDuel)
+        {
+            Managers.UI.ClosePopupUI();
+            UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
+            popup.SetAnnounceText("게임이 곧 시작됩니다");
+
+            // 인게임으로 전환
+        }
+        else
+		{
+			Managers.UI.ClosePopupUI();
+            UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
+			popup.SetAnnounceText("상대가 거절하였습니다");
+		}
     }
 }
 

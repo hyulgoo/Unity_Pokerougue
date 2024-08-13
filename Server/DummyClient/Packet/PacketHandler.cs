@@ -104,6 +104,18 @@ class PacketHandler
 	{
 		C_Pong pongPacket = new C_Pong();
 	}
+
+    public static void S_RequestSendOkHandler(PacketSession session, IMessage packet)
+    {
+		S_RequestSendOk requestSendOk = (S_RequestSendOk)packet;
+        ServerSession serverSession = (ServerSession)session;
+    }
+
+    public static void S_RequestDuelHandler(PacketSession session, IMessage packet)
+    {
+        S_RequestDuel requestDuel = (S_RequestDuel)packet;
+        ServerSession serverSession = (ServerSession)session;
+    }
 }
 
 

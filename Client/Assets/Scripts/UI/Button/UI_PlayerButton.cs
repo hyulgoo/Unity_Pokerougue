@@ -24,6 +24,4 @@ public class UI_PlayerButton : MonoBehaviour, ISelectHandler
             Debug.Log("LOBBY is Empty");
         }
     }
-
-
 }

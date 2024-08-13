@@ -16,6 +16,8 @@ public class UI_LobbyScene : UI_Scene
         _buttons = GetComponentsInChildren<Button>();
     }
 
+    // 전체 유저의 이름 목록을 띄움.
+    // 유저 수만큼의 버튼만 활성화
     public void SetUserName(int[] id, string[] names)
     {
         for(int i = 0; i < _buttons.Length; ++i)
@@ -44,7 +46,7 @@ public class UI_LobbyScene : UI_Scene
 
     public void OnClickPlayerButton()
     {
-        UI_SelectPlayerPopup popup = Managers.UI.ShowPopupUI<UI_SelectPlayerPopup>();
+        UI_SelectPlayerPopup popup = Managers.UI.ShowPopupUI<UI_SelectPlayerPopup>("UI_AcceptDenyPopup");
         popup.SetOpponentPlayer(_selectbuttonid);
     }
 }

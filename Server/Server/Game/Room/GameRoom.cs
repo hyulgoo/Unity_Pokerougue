@@ -88,6 +88,40 @@ namespace Server.Game
 			}
 		}
 
+		public void ApplyDuel(int playerId, bool sendOK)
+		{
+            S_RequestSendOk requestSendOKpacket = new S_RequestSendOk() { SendOK = sendOK ? 1 : 0 };
+			_players[playerId].Session.Send(requestSendOKpacket);
+		}
+
+		public void RequestDuel(int playerId, int opponentId)
+		{
+			Int32 isOK = _players[playerId].Session.ServerState == PlayerServerState.ServerStateLobby ? 1 : 0;
+            S_RequestSendOk requestSendOKpacket = new S_RequestSendOk() { SendOK = isOK };
+			_players[playerId].Session.Send(requestSendOKpacket);
+
+			if(isOK == 1)
+			{	
+				S_RequestDuel requestDuelpacket = new S_RequestDuel() { RequestId = playerId };
+				_players[opponentId].Session.Send(requestDuelpacket);
+			}
+        }
+
+		public void RespondDuel(int playerId, int opponentId, bool duelOk)
+		{
+            Int32 isOK = duelOk ? 1 : 0;
+            S_RespondDuel respondDuelpacket = new S_RespondDuel() { DuelOK = isOK };
+
+			respondDuelpacket.OpponentId = playerId;
+			_players[opponentId].Session.Send(respondDuelpacket);
+
+			if(duelOk)
+			{   
+				respondDuelpacket.OpponentId = opponentId;
+				_players[playerId].Session.Send(respondDuelpacket);
+			}
+        }
+
 		Player FindPlayer(Func<GameObject, bool> condition)
 		{
 			foreach (Player player in _players.Values)
