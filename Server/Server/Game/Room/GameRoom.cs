@@ -14,7 +14,7 @@ namespace Server.Game
 
 		Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
-		public void Init(int mapId, int zoneCells)
+		public void Init()
 		{
 		}
 
@@ -25,7 +25,7 @@ namespace Server.Game
 		}
 
 		Random _rand = new Random();
-		public void EnterGame(GameObject gameObject, bool randomPos)
+		public void EnterGame(GameObject gameObject)
 		{
 			if (gameObject == null)
 				return;
@@ -86,12 +86,11 @@ namespace Server.Game
 				despawnPacket.ObjectIds.Add(objectId);
 				Broadcast(despawnPacket);
 			}
-		}
 
-		public void ApplyDuel(int playerId, bool sendOK)
-		{
-            S_RequestSendOk requestSendOKpacket = new S_RequestSendOk() { SendOK = sendOK ? 1 : 0 };
-			_players[playerId].Session.Send(requestSendOKpacket);
+			if(_players.Count == 0)
+			{
+				GameLogic.Instance.Remove(RoomId);
+			}
 		}
 
 		public void RequestDuel(int playerId, int opponentId)
@@ -112,14 +111,32 @@ namespace Server.Game
             Int32 isOK = duelOk ? 1 : 0;
             S_RespondDuel respondDuelpacket = new S_RespondDuel() { DuelOK = isOK };
 
-			respondDuelpacket.OpponentId = playerId;
-			_players[opponentId].Session.Send(respondDuelpacket);
+            Player player = _players[playerId];
+            Player opponentplayer = _players[opponentId];
 
+            // 대결을 신청한 상대에게 응답패킷을 보냄
+
+			// 대결을 승낙하면 씬 전환을 해야하므로 본인에게도 다시 보냄
 			if(duelOk)
-			{   
-				respondDuelpacket.OpponentId = opponentId;
-				_players[playerId].Session.Send(respondDuelpacket);
-			}
+            {
+				GameLogic.Instance.Push( () => 
+					{
+                        GameRoom room = GameLogic.Instance.Add();
+                        int roomId = room.RoomId;
+
+                        respondDuelpacket.OpponentId = playerId;
+                        opponentplayer.Session.HandleRespondDuel(respondDuelpacket, roomId);
+
+                        respondDuelpacket.OpponentId = opponentId;
+                        player.Session.HandleRespondDuel(respondDuelpacket, roomId);
+                    }
+					);				
+            }
+			else
+			{
+                respondDuelpacket.OpponentId = playerId;
+                opponentplayer.Session.HandleRespondDuel(respondDuelpacket, 0);
+            }
         }
 
 		Player FindPlayer(Func<GameObject, bool> condition)

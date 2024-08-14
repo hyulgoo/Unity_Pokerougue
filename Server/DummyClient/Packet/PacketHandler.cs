@@ -116,6 +116,10 @@ class PacketHandler
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
         ServerSession serverSession = (ServerSession)session;
     }
+	public static void S_RespondDuelHandler(PacketSession handler, IMessage packet)
+	{
+
+	}
 }
 
 

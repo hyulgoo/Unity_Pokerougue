@@ -165,7 +165,7 @@ class PacketHandler
 	public static void S_PingHandler(PacketSession session, IMessage packet)
 	{
 		C_Pong pongPacket = new C_Pong();
-		Debug.Log("[Server] PingCheck");
+		//Debug.Log("[Server] PingCheck");
 		Managers.Network.Send(pongPacket);
 	}
 
@@ -185,7 +185,7 @@ class PacketHandler
 			// 대결 신청 패킷 보내기 실패
 			Managers.UI.ClosePopupUI();
 			UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
-			popup.SetAnnounceText("대결 신청 실패");
+			popup.SetAnnounceText("상대가 로비에 존재하지 않습니다");
 		}
 	}
 
@@ -207,7 +207,8 @@ class PacketHandler
             UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
             popup.SetAnnounceText("게임이 곧 시작됩니다");
 
-            // 인게임으로 전환
+			// 인게임으로 전환
+			Managers.Scene.LoadScene(Define.Scene.Game);
         }
         else
 		{

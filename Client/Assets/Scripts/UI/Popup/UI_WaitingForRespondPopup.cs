@@ -7,12 +7,7 @@ using UnityEngine;
 
 public class UI_WaitingForRespondPopup : UI_Popup
 {
-    string _text = "";
-    public string Text 
-    { 
-        get { return _text; } 
-        set { _text = value; }
-    }
+    public string Text { get; set; }
 
     float _updateDelay = 0.7f;
     int _curCount = 0;
@@ -27,6 +22,7 @@ public class UI_WaitingForRespondPopup : UI_Popup
     {
         Managers.Object.MyPlayer._inputMode = true;
     }
+
     ~UI_WaitingForRespondPopup()
     {
         Managers.Object.MyPlayer._inputMode = false;
@@ -44,7 +40,7 @@ public class UI_WaitingForRespondPopup : UI_Popup
     {
         // . -> .. -> ... -> . 순서로 _text 뒤에 붙도록 함
         _curCount = _curCount == 3 ? 1 : _curCount + 1;
-        string text = _text;
+        string text = Text;
         for (int i = 0; i < _curCount; i++)
             text += ".";
         GetText((int)Texts.Announce).text = text;

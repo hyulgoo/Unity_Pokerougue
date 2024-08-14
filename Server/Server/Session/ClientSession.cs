@@ -52,29 +52,22 @@ namespace Server
 			_pingpongTick = System.Environment.TickCount64;
 		}
 
-		public void HandleRequestDuel(C_RequestDuel packet)
+		public void HandleRespondDuel(S_RespondDuel packet, int roomId)
 		{
-			Player opponentplayer = ObjectManager.Instance.Find(packet.OpponentId);
-            
-			// 대결을 신청한 플레이어가 로비에 있지 않다면 실패 패킷을 보냄						
-            S_RequestSendOk requestSendOK = new S_RequestSendOk() { SendOK = (Int32)1};
-
-            if (opponentplayer == null || opponentplayer.Session.ServerState != PlayerServerState.ServerStateLobby)
-            {
-				requestSendOK.SendOK = (Int32)0;
-				Send(requestSendOK);
-                return;
+			bool letsduel = packet.DuelOK == 1;
+			if (letsduel)
+			{ 
+				ServerState = PlayerServerState.ServerStateGame;
+				MyPlayer.Room.Push(MyPlayer.Room.LeaveGame, MyPlayer.Info.ObjectId);
+				GameRoom room = GameLogic.Instance.Find(roomId);
+				room.Push(room.EnterGame, MyPlayer);
             }
 
-            Send(requestSendOK);
-
-            S_RequestDuel requestduelpacket = new S_RequestDuel();
-			requestduelpacket.RequestId = packet.ApplyId;
-
-            opponentplayer.Session.Send(packet);
-        }
+			Send(packet);
+		}
 
 		#region Network
+
 		// 예약만 하고 보내지는 않는다
 		public void Send(IMessage packet)
 		{
@@ -140,7 +133,7 @@ namespace Server
 				if (MyPlayer == null)
 					return;
 
-				GameRoom room = GameLogic.Instance.Find(1);
+				GameRoom room = GameLogic.Instance.Find(MyPlayer.Room.RoomId);
 				room.Push(room.LeaveGame, MyPlayer.Info.ObjectId);
 			});
 
