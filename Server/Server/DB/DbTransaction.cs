@@ -21,21 +21,20 @@ namespace Server.DB
 			// Me (GameRoom)
 			PlayerDb playerDb = new PlayerDb();
 			playerDb.PlayerDbId = player.PlayerDbId;
-			playerDb.Hp = player.Stat.Hp;
 
 			// You
 			Instance.Push(() =>
 			{
 				using (AppDbContext db = new AppDbContext())
 				{
-					db.Entry(playerDb).State = EntityState.Unchanged;
-					db.Entry(playerDb).Property(nameof(PlayerDb.Hp)).IsModified = true;
-					bool success = db.SaveChangesEx();
-					if (success)
-					{
-						// Me
-						// room.Push(() => 일감)
-					}
+					//db.Entry(playerDb).State = EntityState.Unchanged;
+					//db.Entry(playerDb).Property(nameof(PlayerDb.Hp)).IsModified = true;
+					//bool success = db.SaveChangesEx();
+					//if (success)
+					//{
+					//	// Me
+					//	// room.Push(() => 일감)
+					//}
 				}
 			});			
 		}
@@ -49,7 +48,6 @@ namespace Server.DB
 			// Me (GameRoom)
 			PlayerDb playerDb = new PlayerDb();
 			playerDb.PlayerDbId = player.PlayerDbId;
-			playerDb.Hp = player.Stat.Hp;
 			Instance.Push<PlayerDb, GameRoom>(SavePlayerStatus_Step2, playerDb, room);
 		}
 
@@ -58,13 +56,13 @@ namespace Server.DB
 		{
 			using (AppDbContext db = new AppDbContext())
 			{
-				db.Entry(playerDb).State = EntityState.Unchanged;
-				db.Entry(playerDb).Property(nameof(PlayerDb.Hp)).IsModified = true;
-				bool success = db.SaveChangesEx();
-				if (success)
-				{
-					room.Push(SavePlayerStatus_Step3, playerDb.Hp);
-				}
+				//db.Entry(playerDb).State = EntityState.Unchanged;
+				//db.Entry(playerDb).Property(nameof(PlayerDb.Hp)).IsModified = true;
+				//bool success = db.SaveChangesEx();
+				//if (success)
+				//{
+				//	room.Push(SavePlayerStatus_Step3, playerDb.Hp);
+				//}
 			}
 		}
 

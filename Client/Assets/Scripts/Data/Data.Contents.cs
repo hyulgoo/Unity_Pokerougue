@@ -77,28 +77,27 @@ namespace Data
 	}
 	#endregion
 
-	#region Monster
+	#region Pokemon
 
 	[Serializable]
-	public class MonsterData
+	public class PokemonData
 	{
 		public int id;
 		public string name;
-		public StatInfo stat;
-		public string prefabPath;
+		public PokemonInfo info;
 	}
 
 	[Serializable]
-	public class MonsterLoader : ILoader<int, MonsterData>
+	public class MonsterLoader : ILoader<int, PokemonData>
 	{
-		public List<MonsterData> monsters = new List<MonsterData>();
+		public List<PokemonData> pokemons = new List<PokemonData>();
 
-		public Dictionary<int, MonsterData> MakeDict()
+		public Dictionary<int, PokemonData> MakeDict()
 		{
-			Dictionary<int, MonsterData> dict = new Dictionary<int, MonsterData>();
-			foreach (MonsterData monster in monsters)
+			Dictionary<int, PokemonData> dict = new Dictionary<int, PokemonData>();
+			foreach (PokemonData pokemon in pokemons)
 			{
-				dict.Add(monster.id, monster);
+				dict.Add(pokemon.id, pokemon);
 			}
 			return dict;
 		}

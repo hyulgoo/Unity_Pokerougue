@@ -79,7 +79,6 @@ class PacketHandler
 					ObjectInfo playerinfo = new ObjectInfo();
 					playerinfo.ObjectId = info.PlayerDbId;
 					playerinfo.Name = info.Name;
-					playerinfo.StatInfo = info.StatInfo;
 
 					Managers.Object.Add(playerinfo, myPlayer: false);
 				}

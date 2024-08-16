@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf.Protocol;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -25,12 +26,7 @@ namespace Server.DB
 
 		public ICollection<ItemDb> Items { get; set; }
 
-		public int Level { get; set; }
-		public int Hp { get; set; }
-		public int MaxHp { get; set; }
-		public int Attack { get; set; }
-		public float Speed { get; set; }
-		public int TotalExp { get; set; }
+		public PokemonList PokemonList { get; set; }
 	}
 
 	[Table("Item")]

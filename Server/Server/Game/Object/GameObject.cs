@@ -18,26 +18,12 @@ namespace Server.Game
 		public GameRoom Room { get; set; }
 
 		public ObjectInfo Info { get; set; } = new ObjectInfo();
-		public StatInfo Stat { get; private set; } = new StatInfo();
 
-		public virtual int TotalAttack { get { return Stat.Attack; } }
-		public virtual int TotalDefence { get { return 0; } }
-
-		public float Speed
-		{
-			get { return Stat.Speed; }
-			set { Stat.Speed = value; }
-		}
-
-		public int Hp
-		{
-			get { return Stat.Hp; }
-			set { Stat.Hp = Math.Clamp(value, 0, Stat.MaxHp); }
-		}
+		public PokemonList PokemonList { get; set; } = new PokemonList();
 
 		public GameObject()
 		{
-			Info.StatInfo = Stat;
+			//Info.StatInfo = Stat;
 		}
 
 		public virtual void Update()

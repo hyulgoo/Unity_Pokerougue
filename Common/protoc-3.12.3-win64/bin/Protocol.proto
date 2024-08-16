@@ -28,22 +28,11 @@ enum MsgId {
   S_RESPOND_DUEL = 21;
 }
 
-enum CreatureState {
-  LIVE = 0;
-  DEAD = 1;
-}
-
 enum GameObjectType {
-  NONE = 0;
+  NONETYPE = 0;
   PLAYER = 1;
   MONSTER = 2;
   PROJECTILE = 3;
-}
-
-enum SkillType {
-  SKILL_NONE = 0;
-  SKILL_AUTO = 1;
-  SKILL_PROJECTILE = 2;
 }
 
 enum PlayerServerState {
@@ -60,8 +49,47 @@ enum ItemType {
 }
 
 enum ConsumableType {
-   CONSUMABLE_TYPE_NONE = 0;
-   CONSUMABLE_TYPE_POTION = 1;
+  CONSUMABLE_TYPE_NONE = 0;
+  CONSUMABLE_TYPE_POTION = 1;
+}
+
+enum ActionType
+{
+  NONE = 0;
+  FIGHT = 1;
+  POKEBALL = 2;
+  CHANGE = 3;
+  RUNAWAY = 4;
+}
+
+ enum Type 
+{   
+  NORMAL = 0;
+  FIGHTING = 1;
+  FLYING = 2;
+  POISON = 3;
+  GROUND = 4;
+  ROCK = 5;
+  BUG = 6;
+  GHOST = 7;
+  STEEL = 8;
+  FIRE = 9;
+  WATER = 10;
+  GRASS = 11;
+  ELECTRIC= 12;
+  PSYCHIC= 13;
+  ICE = 14;
+  DRAGON = 15;
+  DARK = 16;
+  FAIRY = 17;
+}
+
+enum SkillType
+{	
+  ATK = 0;
+  SPA = 1;
+  BUFF = 2;
+  DEBUFF = 3;
 }
 
 message S_EnterGame {
@@ -146,7 +174,7 @@ message S_EquipItem {
 }
 
 message S_ChangeStat {
-  StatInfo statInfo = 1;
+  PokemonInfo statInfo = 1;
 }
 
 message S_Ping {
@@ -158,26 +186,50 @@ message C_Pong {
 message LobbyPlayerInfo {
   int32 playerDbId = 1;
   string name = 2;
-  StatInfo statInfo = 3;
 }
 
 message ObjectInfo {
   int32 objectId = 1;
   string name = 2;
-  StatInfo statInfo = 3;
+  PokemonList pKMList = 3;
 }
 
-message StatInfo {
+message TurnInfo
+{
+  ActionType action  = 1;
+  int32 skillNum = 2;
+  int32 ballType = 3;
+  int32 changeNum = 4;
+}
+
+message PokemonList
+{
+  int32 pokemon_0 = 1;
+  int32 pokemon_1 = 2;
+  int32 pokemon_2 = 3;
+  int32 pokemon_3 = 4;
+  int32 pokemon_4 = 5;
+  int32 pokemon_5 = 6;
+}
+
+message PokemonInfo {
   int32 level = 1;
   int32 hp = 2;
   int32 maxHp = 3;
-  int32 attack = 4;
-  float speed = 5;
-  int32 totalExp = 6;
+  int32 atk = 4;
+  int32 spA = 5;
+  int32 def = 6;
+  int32 spD = 7;
+  int32 spe = 8;
+  repeated Type type = 9;
+  int32 exp = 10;
+  repeated int32 skillId = 11;
 }
 
 message SkillInfo {
   int32 skillId = 1;
+  SkillType type = 2;
+  int32 value = 3;
 }
 
 message ItemInfo {

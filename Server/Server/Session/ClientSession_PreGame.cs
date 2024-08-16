@@ -1,17 +1,14 @@
 ﻿using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore;
-using Server.Data;
 using Server.DB;
 using Server.Game;
 using ServerCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq;	
 
 namespace Server
 {
-	public partial class ClientSession : PacketSession
+    public partial class ClientSession : PacketSession
 	{
 		public int AccountDbId { get; private set; }
 		public List<LobbyPlayerInfo> LobbyPlayers { get; set; } = new List<LobbyPlayerInfo>();
@@ -47,15 +44,6 @@ namespace Server
 						{
 							PlayerDbId = playerDb.PlayerDbId,
 							Name = playerDb.PlayerName,
-							StatInfo = new StatInfo()
-							{
-								Level = playerDb.Level,
-								Hp = playerDb.Hp,
-								MaxHp = playerDb.MaxHp,
-								Attack = playerDb.Attack,
-								Speed = playerDb.Speed,
-								TotalExp = playerDb.TotalExp
-							}
 						};
 
 						// 메모리에도 들고 있다
@@ -101,7 +89,6 @@ namespace Server
 			{
 				MyPlayer.PlayerDbId = playerInfo.PlayerDbId;
 				MyPlayer.Info.Name = playerInfo.Name;
-				MyPlayer.Stat.MergeFrom(playerInfo.StatInfo);
 				MyPlayer.Session = this;
 
 				S_ItemList itemListPacket = new S_ItemList();
@@ -155,20 +142,14 @@ namespace Server
 				}
 				else
 				{
-					// 1레벨 스탯 정보 추출
-					StatInfo stat = null;
-					DataManager.StatDict.TryGetValue(1, out stat);
+					//// 1레벨 스탯 정보 추출
+					//StatInfo stat = null;
+					//DataManager.StatDict.TryGetValue(1, out stat);
 
 					// DB에 플레이어 만들어줘야 함
 					PlayerDb newPlayerDb = new PlayerDb()
 					{
 						PlayerName = createPacket.Name,
-						Level = stat.Level,
-						Hp = stat.Hp,
-						MaxHp = stat.MaxHp,
-						Attack = stat.Attack,
-						Speed = stat.Speed,
-						TotalExp = 0,
 						AccountDbId = AccountDbId
 					};
 
@@ -182,15 +163,6 @@ namespace Server
 					{
 						PlayerDbId = newPlayerDb.PlayerDbId,
 						Name = createPacket.Name,
-						StatInfo = new StatInfo()
-						{
-							Level = stat.Level,
-							Hp = stat.Hp,
-							MaxHp = stat.MaxHp,
-							Attack = stat.Attack,
-							Speed = stat.Speed,
-							TotalExp = 0
-						}
 					};
 
 					// 메모리에도 들고 있다
