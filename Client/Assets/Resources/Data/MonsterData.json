@@ -1,42 +1,217 @@
 {
-  "monsters": [
+  "pokemons": [
     {
-        "id": "1",
-        "name": "���ð���",
-        "stat": {
-            "level": "1",
-            "maxHp": "20",
-            "attack": "5",
-            "speed": "5.0",
-            "totalExp": "10"
-        },
-        "rewards": [
-            {
-                "probability": "10",
-                "itemId": "1",
-                "count": "1"
-            },
-            {
-                "probability": "10",
-                "itemId": "2",
-                "count": "1"
-            },
-            {
-                "probability": "10",
-                "itemId": "100",
-                "count": "1"
-            },
-            {
-                "probability": "10",
-                "itemId": "101",
-                "count": "1"
-            },
-            {
-                "probability": "10",
-                "itemId": "200",
-                "count": "5"
-            }
+      "id": "388",
+      "name": "토대부기",
+      "info": {
+        "level": 100,
+        "hp": 354,
+        "atk": 304,
+        "spA": 229,
+        "def": 295,
+        "spD": 251,
+        "spe": 188,
+        "exp": 300,
+        "type": [
+          "Grass",
+          "Ground"
+        ],
+        "skillId": [
+          437,
+          202,
+          242,
+          73
         ]
+      }
+    },
+    {
+      "id": "392",
+      "name": "초염몽",
+      "info": {
+        "level": 100,
+        "hp": 356,
+        "atk": 337,
+        "spA": 337,
+        "def": 265,
+        "spD": 265,
+        "spe": 346,
+        "exp": 300,
+        "type": [
+          "Fire",
+          "Fighting"
+        ],
+        "skillId": [
+          394,
+          347,
+          83,
+          370
+        ]
+      }
+    },
+    {
+      "id": "395",
+      "name": "엠페르트",
+      "info": {
+        "level": 100,
+        "hp": 372,
+        "atk": 298,
+        "spA": 353,
+        "def": 302,
+        "spD": 331,
+        "spe": 240,
+        "exp": 300,
+        "type": [
+          "Water",
+          "Steel"
+        ],
+        "skillId": [
+          56,
+          65,
+          250,
+          61
+        ]
+      }
+    },
+    {
+      "id": "398",
+      "name": "찌르호크",
+      "info": {
+        "level": 100,
+        "hp": 374,
+        "atk": 372,
+        "spA": 218,
+        "def": 262,
+        "spD": 240,
+        "spe": 328,
+        "exp": 300,
+        "type": [
+          "Normal",
+          "Flying"
+        ],
+        "skillId": [
+          413,
+          97,
+          36,
+          332
+        ]
+      }
+    },
+    {
+      "id": "400",
+      "name": "비버통",
+      "info": {
+        "level": 100,
+        "hp": 362,
+        "atk": 295,
+        "spA": 229,
+        "def": 240,
+        "spD": 240,
+        "spe": 265,
+        "exp": 300,
+        "type": [
+          "Normal",
+          "Water"
+        ],
+        "skillId": [
+          276,
+          133,
+          14,
+          36
+        ]
+      }
+    },
+    {
+      "id": "405",
+      "name": "렌트라",
+      "info": {
+        "level": 100,
+        "hp": 364,
+        "atk": 372,
+        "spA": 317,
+        "def": 282,
+        "spD": 282,
+        "spe": 262,
+        "exp": 300,
+        "type": [
+          "Electric"
+        ],
+        "skillId": [
+          407,
+          242,
+          184,
+          84
+        ]
+      }
+    },
+    {
+      "id": "419",
+      "name": "플로젤",
+      "info": {
+        "level": 100,
+        "hp": 374,
+        "atk": 339,
+        "spA": 295,
+        "def": 229,
+        "spD": 218,
+        "spe": 218,
+        "exp": 300,
+        "type": [
+          "Water"
+        ],
+        "skillId": [
+          453,
+          401,
+          56,
+          129
+        ]
+      }
+    },
+    {
+      "id": "426",
+      "name": "둥실라이드",
+      "info": {
+        "level": 100,
+        "hp": 504,
+        "atk": 284,
+        "spA": 306,
+        "def": 205,
+        "spD": 227,
+        "spe": 284,
+        "exp": 300,
+        "type": [
+          "Ghost",
+          "Flying"
+        ],
+        "skillId": [
+          366,
+          247,
+          310,
+          254
+        ]
+      }
+    },
+    {
+      "id": "428",
+      "name": "이어롭",
+      "info": {
+        "level": 100,
+        "hp": 334,
+        "atk": 276,
+        "spA": 227,
+        "def": 293,
+        "spD": 320,
+        "spe": 339,
+        "exp": 300,
+        "type": [
+          "Normal"
+        ],
+        "skillId": [
+          260,
+          29,
+          204,
+          24
+        ]
+      }
     }
   ]
 } 

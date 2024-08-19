@@ -53,43 +53,60 @@ enum ConsumableType {
   CONSUMABLE_TYPE_POTION = 1;
 }
 
-enum ActionType
-{
-  NONE = 0;
+enum ActionType {
+  PASS = 0;
   FIGHT = 1;
   POKEBALL = 2;
   CHANGE = 3;
   RUNAWAY = 4;
 }
 
- enum Type 
-{   
-  NORMAL = 0;
-  FIGHTING = 1;
-  FLYING = 2;
-  POISON = 3;
-  GROUND = 4;
-  ROCK = 5;
-  BUG = 6;
-  GHOST = 7;
-  STEEL = 8;
-  FIRE = 9;
-  WATER = 10;
-  GRASS = 11;
-  ELECTRIC= 12;
-  PSYCHIC= 13;
-  ICE = 14;
-  DRAGON = 15;
-  DARK = 16;
-  FAIRY = 17;
+ enum Type {   
+  NONETYPE = 0;
+  BUG = 1;
+  DARK = 2;
+  DRAGON = 3;
+  ELECTRIC= 4;
+  FAIRY = 5;
+  FIGHTING = 6;
+  FIRE = 7;
+  FLYING = 8;
+  GHOST = 9;
+  GRASS = 10;
+  GROUND = 11;
+  ICE = 12;
+  NORMAL = 13;
+  POISON = 14;
+  PSYCHIC= 15;
+  ROCK = 16;
+  STEEL = 17;
+  WATER = 18;
+}
+
+enum TargetType {
+  ONESELF = 0;
+  OPPONENT = 1;
 }
 
 enum SkillType
 {	
-  ATK = 0;
-  SPA = 1;
-  BUFF = 2;
-  DEBUFF = 3;
+  NONE = 0;
+  ATK = 1;
+  SPA = 2;
+  RECOVERY = 3;
+  BUFF_ATK = 4;
+  BUFF_SPA = 5;
+  BUFF_DEF = 6;
+  BUFF_SPD = 7;
+  BUFF_SPE = 8;
+  DOT = 9;
+  DEBUFF_ATK = 10;
+  DEBUFF_SPA = 11;
+  DEBUFF_DEF = 12;
+  DEBUFF_SPD = 13;
+  DEBUFF_SPE = 14;
+  STURN = 15;
+  CONFUSION = 16;
 }
 
 message S_EnterGame {
@@ -212,24 +229,32 @@ message PokemonList
   int32 pokemon_5 = 6;
 }
 
-message PokemonInfo {
+message PokemonInfo 
+{
   int32 level = 1;
   int32 hp = 2;
-  int32 maxHp = 3;
-  int32 atk = 4;
-  int32 spA = 5;
-  int32 def = 6;
-  int32 spD = 7;
-  int32 spe = 8;
+  int32 atk = 3;
+  int32 spA = 4;
+  int32 def = 5;
+  int32 spD = 6;
+  int32 spe = 7;
+  int32 exp = 8;
   repeated Type type = 9;
-  int32 exp = 10;
-  repeated int32 skillId = 11;
+  repeated int32 skillId = 10;
+}
+
+message SkillEffect {
+  SkillType skillType = 1;
+  TargetType target = 2;
+  Type type = 3;
+  int32 value = 4;
+  int32 accuracy = 5;
+  int32 duration = 6;
 }
 
 message SkillInfo {
-  int32 skillId = 1;
-  SkillType type = 2;
-  int32 value = 3;
+  repeated SkillEffect skillEffect = 1;
+  int32 pp = 2;
 }
 
 message ItemInfo {

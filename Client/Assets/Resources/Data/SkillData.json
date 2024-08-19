@@ -1,24 +1,702 @@
 {
-    "skills": [
-        {
-            "id": "1",
-            "name": "��Ÿ",
-            "cooldown": "0.5",
-            "damage": "10",
-            "skillType": "SkillAuto"
-        },
-        {
-            "id": "2",
-            "name": "ȭ�� ����",
-            "cooldown": "0.5",
-            "damage": "5",
-            "skillType": "SkillProjectile",
-            "projectile": {
-                "name": "ȭ��",
-                "speed": "20.0",
-                "range": "10",
-                "prefab": "Creature/Arrow"
-            }
-        }
-    ]
+  "skills": [
+    {
+      "id": "437",
+      "name": "리프스톰",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Grass",
+            "value": 130,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "DebuffSpa",
+            "target": "Oneself",
+            "type": "Grass",
+            "value": 2,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 5
+      }
+    },
+    {
+      "id": "202",
+      "name": "기가드레인",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Grass",
+            "value": 75,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Recovery",
+            "target": "Oneself",
+            "type": "Grass",
+            "value": 37,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 10
+      }
+    },
+    {
+      "id": "242",
+      "name": "깨물어부수기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Dark",
+            "value": 80,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "DebuffAtk",
+            "target": "Opponent",
+            "type": "Grass",
+            "value": 37,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "73",
+      "name": "씨뿌리기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Dot",
+            "target": "Opponent",
+            "type": "Grass",
+            "value": 35,
+            "accuracy": 100,
+            "duration": 5
+          },
+          {
+            "skillType": "Recovery",
+            "target": "Oneself",
+            "type": "Grass",
+            "value": 35,
+            "accuracy": 100,
+            "duration": 5
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "394",
+      "name": "플레어드라이브",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Fire",
+            "value": 120,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Atk",
+            "target": "Oneself",
+            "type": "Fire",
+            "value": 40,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "347",
+      "name": "명상",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffSpa",
+            "target": "Oneself",
+            "type": "Psychic",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "BuffSpd",
+            "target": "Oneself",
+            "type": "Psychic",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "83",
+      "name": "회오리불꽃",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Fire",
+            "value": 35,
+            "accuracy": 85,
+            "duration": 4
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "370",
+      "name": "인파이트",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Fighting",
+            "value": 120,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 5
+      }
+    },
+    {
+      "id": "56",
+      "name": "하이드로펌프",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Water",
+            "value": 110,
+            "accuracy": 80,
+            "duration": 1
+          }
+        ],
+        "pp": 5
+      }
+    },
+    {
+      "id": "65",
+      "name": "회전부리",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Flying",
+            "value": 80,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "250",
+      "name": "바다회오리",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Water",
+            "value": 35,
+            "accuracy": 80,
+            "duration": 4
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "61",
+      "name": "거품광선",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Water",
+            "value": 65,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "413",
+      "name": "브레이브버드",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Flying",
+            "value": 120,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Atk",
+            "target": "Oneself",
+            "type": "Flying",
+            "value": 40,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "97",
+      "name": "고속이동",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffSpd",
+            "target": "Oneself",
+            "type": "Flying",
+            "value": 2,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 30
+      }
+    },
+    {
+      "id": "36",
+      "name": "돌진",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 90,
+            "accuracy": 85,
+            "duration": 1
+          },
+          {
+            "skillType": "Atk",
+            "target": "Oneself",
+            "type": "Normal",
+            "value": 22,
+            "accuracy": 85,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "332",
+      "name": "제비반환",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Flying",
+            "value": 60,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "276",
+      "name": "엄청난힘",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Fighting",
+            "value": 120,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 5
+      }
+    },
+    {
+      "id": "133",
+      "name": "망각술",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffSpd",
+            "target": "Oneself",
+            "type": "Psychic",
+            "value": 2,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "14",
+      "name": "칼춤",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffAtk",
+            "target": "Oneself",
+            "type": "Normal",
+            "value": 2,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "528",
+      "name": "와일드볼트",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Electric",
+            "value": 90,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Atk",
+            "target": "Oneself",
+            "type": "Electric",
+            "value": 22,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "184",
+      "name": "겁나는얼굴",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "DebuffSpe",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 2,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 10
+      }
+    },
+    {
+      "id": "84",
+      "name": "전기쇼크",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Electric",
+            "value": 40,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 30
+      }
+    },
+    {
+      "id": "453",
+      "name": "아쿠아제트",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Water",
+            "value": 40,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 30
+      }
+    },
+    {
+      "id": "401",
+      "name": "아쿠아테일",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Water",
+            "value": 90,
+            "accuracy": 90,
+            "duration": 1
+          }
+        ],
+        "pp": 10
+      }
+    },
+    {
+      "id": "129",
+      "name": "스피드스타",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 60,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "153",
+      "name": "대폭발",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 250,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Atk",
+            "target": "Oneself",
+            "type": "Normal",
+            "value": 1000,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 5
+      }
+    },
+    {
+      "id": "366",
+      "name": "순풍",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffSpe",
+            "target": "Oneself",
+            "type": "Normal",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 30
+      }
+    },
+    {
+      "id": "247",
+      "name": "섀도볼",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Spa",
+            "target": "Opponent",
+            "type": "Ghost",
+            "value": 80,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "310",
+      "name": "놀래키기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Ghost",
+            "value": 30,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Sturn",
+            "target": "Opponent",
+            "type": "Ghost",
+            "value": 1,
+            "accuracy": 30,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "254",
+      "name": "비축하기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffDef",
+            "target": "Oneself",
+            "type": "Normal",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "BuffSpd",
+            "target": "Oneself",
+            "type": "Normal",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "260",
+      "name": "부추기기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "BuffSpa",
+            "target": "Opponent",
+            "type": "Dark",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Confusion",
+            "target": "Opponent",
+            "type": "Dark",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "29",
+      "name": "박치기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 70,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Sturn",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 1,
+            "accuracy": 30,
+            "duration": 1
+          }
+        ],
+        "pp": 15
+      }
+    },
+    {
+      "id": "204",
+      "name": "애교부리기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "DebuffAtk",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 2,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    },
+    {
+      "id": "24",
+      "name": "두번치기",
+      "info": {
+        "skillEffect": [
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 30,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "skillType": "Atk",
+            "target": "Opponent",
+            "type": "Normal",
+            "value": 30,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 20
+      }
+    }
+  ]
 } 

@@ -1,107 +1,92 @@
 ﻿using Google.Protobuf.Protocol;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Text;
 
 namespace Data
-{ 
-	#region Skill
-	[Serializable]
-	public class Skill
-	{
-		public int id;
-		public string name;
-		public float cooldown;
-		public int damage;
-		public SkillType skillType;
-		public ProjectileInfo projectile;
-	}
+{
+    #region Skill
+    [Serializable]
+    public class SkillData
+    {
+        public int id;
+        public string name;
+        public SkillInfo info;
+    }
 
-	public class ProjectileInfo
-	{
-		public string name;
-		public float speed;
-		public int range;
-		public string prefab;
-	}
+    [Serializable]
+    public class SkillLoader : ILoader<int, SkillData>
+    {
+        public List<SkillData> skills = new List<SkillData>();
 
-	[Serializable]
-	public class SkillData : ILoader<int, Skill>
-	{
-		public List<Skill> skills = new List<Skill>();
+        public Dictionary<int, SkillData> MakeDict()
+        {
+            Dictionary<int, SkillData> dict = new Dictionary<int, SkillData>();
+            foreach (SkillData skill in skills)
+                dict.Add(skill.id, skill);
+            return dict;
+        }
+    }
+    #endregion
 
-		public Dictionary<int, Skill> MakeDict()
-		{
-			Dictionary<int, Skill> dict = new Dictionary<int, Skill>();
-			foreach (Skill skill in skills)
-				dict.Add(skill.id, skill);
-			return dict;
-		}
-	}
-	#endregion
+    #region Item
+    [Serializable]
+    public class ItemData
+    {
+        public int id;
+        public string name;
+        public ItemType itemType;
+        public string iconPath;
+    }
 
-	#region Item
-	[Serializable]
-	public class ItemData
-	{
-		public int id;
-		public string name;
-		public ItemType itemType;
-		public string iconPath;
-	}
+    public class ConsumableData : ItemData
+    {
+        public ConsumableType consumableType;
+        public int maxCount;
+    }
 
-	[Serializable]
-	public class ConsumableData : ItemData
-	{
-		public ConsumableType consumableType;
-		public int maxCount;
-	}
+    [Serializable]
+    public class ItemLoader : ILoader<int, ItemData>
+    {
+        public List<ConsumableData> consumables = new List<ConsumableData>();
 
+        public Dictionary<int, ItemData> MakeDict()
+        {
+            Dictionary<int, ItemData> dict = new Dictionary<int, ItemData>();
+            foreach (ItemData item in consumables)
+            {
+                item.itemType = ItemType.Consumable;
+                dict.Add(item.id, item);
+            }
+            return dict;
+        }
+    }
+    #endregion
 
-	[Serializable]
-	public class ItemLoader : ILoader<int, ItemData>
-	{
-		public List<ConsumableData> consumables = new List<ConsumableData>();
+    #region Monster
+    [Serializable]
+    public class PokemonData
+    {
+        public int id;
+        public string name;
+        public PokemonInfo info;
+    }
 
-		public Dictionary<int, ItemData> MakeDict()
-		{
-			Dictionary<int, ItemData> dict = new Dictionary<int, ItemData>();
-			foreach (ItemData item in consumables)
-			{
-				item.itemType = ItemType.Consumable;
-				dict.Add(item.id, item);
-			}
-			return dict;
-		}
-	}
-	#endregion
+    [Serializable]
+    public class MonsterLoader : ILoader<int, PokemonData>
+    {
+        public List<PokemonData> pokemons = new List<PokemonData>();
 
-	#region Pokemon
+        public Dictionary<int, PokemonData> MakeDict()
+        {
+            Dictionary<int, PokemonData> dict = new Dictionary<int, PokemonData>();
+            foreach (PokemonData pokemon in pokemons)
+            {
+                dict.Add(pokemon.id, pokemon);
+            }
+            return dict;
+        }
+    }
 
-	[Serializable]
-	public class PokemonData
-	{
-		public int id;
-		public string name;
-		public PokemonInfo info;
-	}
-
-	[Serializable]
-	public class MonsterLoader : ILoader<int, PokemonData>
-	{
-		public List<PokemonData> pokemons = new List<PokemonData>();
-
-		public Dictionary<int, PokemonData> MakeDict()
-		{
-			Dictionary<int, PokemonData> dict = new Dictionary<int, PokemonData>();
-			foreach (PokemonData pokemon in pokemons)
-			{
-				dict.Add(pokemon.id, pokemon);
-			}
-			return dict;
-		}
-	}
-
-	#endregion
+    #endregion
 }

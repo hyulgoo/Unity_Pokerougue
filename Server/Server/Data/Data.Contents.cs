@@ -5,54 +5,24 @@ using System.Text;
 
 namespace Server.Data
 {
-	#region Stat
-	[Serializable]
-	public class StatData : ILoader<int, StatInfo>
-	{
-		public List<StatInfo> stats = new List<StatInfo>();
-
-		public Dictionary<int, StatInfo> MakeDict()
-		{
-			Dictionary<int, StatInfo> dict = new Dictionary<int, StatInfo>();
-			foreach (StatInfo stat in stats)
-			{
-				stat.Hp = stat.MaxHp;
-				dict.Add(stat.Level, stat);
-			}	
-			return dict;
-		}
-	}
-	#endregion
-
 	#region Skill
 	[Serializable]
-	public class Skill
+	public class SkillData
 	{
 		public int id;
 		public string name;
-		public float cooldown;
-		public int damage;
-		public SkillType skillType;
-		public ProjectileInfo projectile;
-	}
-
-	public class ProjectileInfo
-	{
-		public string name;
-		public float speed;
-		public int range;
-		public string prefab;
+		public SkillInfo info;
 	}
 
 	[Serializable]
-	public class SkillData : ILoader<int, Skill>
+	public class SkillLoader : ILoader<int, SkillData>
 	{
-		public List<Skill> skills = new List<Skill>();
+		public List<SkillData> skills = new List<SkillData>();
 
-		public Dictionary<int, Skill> MakeDict()
+		public Dictionary<int, SkillData> MakeDict()
 		{
-			Dictionary<int, Skill> dict = new Dictionary<int, Skill>();
-			foreach (Skill skill in skills)
+			Dictionary<int, SkillData> dict = new Dictionary<int, SkillData>();
+			foreach (SkillData skill in skills)
 				dict.Add(skill.id, skill);
 			return dict;
 		}
@@ -66,14 +36,14 @@ namespace Server.Data
 		public int id;
 		public string name;
 		public ItemType itemType;
-	}
+        public string iconPath;
+    }
 
 	public class ConsumableData : ItemData
 	{
 		public ConsumableType consumableType;
 		public int maxCount;
 	}
-
 
 	[Serializable]
 	public class ItemLoader : ILoader<int, ItemData>
@@ -95,34 +65,24 @@ namespace Server.Data
 
 	#region Monster
 	[Serializable]
-	public class RewardData
-	{
-		public int probability; // 100분율
-		public int itemId;
-		public int count;
-	}
-
-	[Serializable]
-	public class MonsterData
+	public class PokemonData
 	{
 		public int id;
 		public string name;
-		public StatInfo stat;
-		public List<RewardData> rewards;
-		//public string prefabPath;
+		public PokemonInfo info;
 	}
 
 	[Serializable]
-	public class MonsterLoader : ILoader<int, MonsterData>
+	public class MonsterLoader : ILoader<int, PokemonData>
 	{
-		public List<MonsterData> monsters = new List<MonsterData>();
+		public List<PokemonData> pokemons = new List<PokemonData>();
 
-		public Dictionary<int, MonsterData> MakeDict()
+		public Dictionary<int, PokemonData> MakeDict()
 		{
-			Dictionary<int, MonsterData> dict = new Dictionary<int, MonsterData>();
-			foreach (MonsterData monster in monsters)
+			Dictionary<int, PokemonData> dict = new Dictionary<int, PokemonData>();
+			foreach (PokemonData pokemon in pokemons)
 			{
-				dict.Add(monster.id, monster);
+				dict.Add(pokemon.id, pokemon);
 			}
 			return dict;
 		}
