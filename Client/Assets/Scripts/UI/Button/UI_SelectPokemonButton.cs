@@ -56,8 +56,12 @@ public class UI_SelectPokemonButton : UI_Base, ISelectHandler
         uibase._lastSelected = eventData.selectedObject.GetComponent<Button>();
         uibase.SetPointerPos(eventData.selectedObject.transform);
 
+        SetParentCurMstInfo();
+    }
+
+    public void SetParentCurMstInfo()
+    {
         // ¹öÆ° ¼±ÅÃ ½Ã CurPokemon Info¸¦ ¶ç¿öÁÜ.
-        UI_SelectMstScene parentScene = GetComponentInParent<UI_SelectMstScene>();
-        parentScene.SetCurMstInfo(Id);
+        SelectMstScene.SetCurMstInfo(Id);
     }
 }

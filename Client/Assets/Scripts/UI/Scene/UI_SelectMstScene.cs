@@ -9,7 +9,8 @@ using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class UI_SelectMstScene : UI_Scene
 {
-    int[] _pokemonList = new int[6];
+    const int MaxCount = 3;
+    int[] _pokemonList = new int[MaxCount];
     public int CurOrder { get; set; } = 0;
 
     enum Texts
@@ -73,18 +74,22 @@ public class UI_SelectMstScene : UI_Scene
         foreach (int id in Managers.Data.MonsterDict.Keys)
         {
             // 몬스터 아이콘을 넣어줌.
-            GameObject pokebtn = Managers.Resource.Instantiate("Add/Pokemon");
-            pokebtn.transform.SetParent(GetObject((int)GameObjects.Content).transform);
-            RectTransform rt = pokebtn.GetComponent<RectTransform>();
+            GameObject pokebtnobj = Managers.Resource.Instantiate("Add/Pokemon");
+            pokebtnobj.transform.SetParent(GetObject((int)GameObjects.Content).transform);
+            
+            // 왠지 모르겠는데 Grid Layout Group에 들어가서 그런가 스케일이 1.15근처로 설정됨
+            // 강제로 1로 맞춰줌.
+            RectTransform rt = pokebtnobj.GetComponent<RectTransform>();
             rt.localScale = new Vector2(1, 1);
 
-            UI_SelectPokemonButton selectbtn = pokebtn.GetComponent<UI_SelectPokemonButton>();
+            UI_SelectPokemonButton selectbtn = pokebtnobj.GetComponent<UI_SelectPokemonButton>();
             selectbtn.Id = id;
             selectbtn.SelectMstScene = this;
 
             if (!first)
             {
-                pokebtn.GetComponent<Button>().Select();
+                pokebtnobj.GetComponent<Button>().Select();
+                pokebtnobj.GetComponent<UI_SelectPokemonButton>().SetParentCurMstInfo();
                 first = true;
             }
         }
@@ -92,7 +97,7 @@ public class UI_SelectMstScene : UI_Scene
 
     public bool SetMonster(int pokemonNum)
     {
-        if (CurOrder >= 6)
+        if (CurOrder >= MaxCount)
             return false;
         _pokemonList[CurOrder] = pokemonNum;
         int order = (int)GameObjects.Image_SelectedMst_0 + CurOrder;
@@ -106,15 +111,16 @@ public class UI_SelectMstScene : UI_Scene
 
     public void SetCurMstInfo(int pokemonNumber)
     {
-        Animator curMstAnimator= GetObject((int)GameObjects.Image_Mst).GetOrAddComponent<Animator>();
+        Image curMstAnimator= GetObject((int)GameObjects.Image_Mst).GetOrAddComponent<Image>();
         // 현재 포켓몬의 애니메이션을 틀어줌
-        // curMstAnimator.Play("");
+        Sprite[] sprites = Resources.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
+        curMstAnimator.sprite = sprites[0];
 
         // 현재 포켓몬의 정보를 나타냄
         PokemonData data = Managers.Data.MonsterDict[pokemonNumber];
         GetText((int)Texts.Text_MstNumber).text = $"{pokemonNumber}";
         GetText((int)Texts.Text_MstName).text = data.name;
-        Sprite[] sprites = Resources.LoadAll<Sprite>("Sprite/ui/type_bgs");
+        sprites = Resources.LoadAll<Sprite>("Sprite/ui/type_bgs");
         for (int i = 0; i < data.info.SkillId.Count; ++i)
         {
             SkillData skilldata = Managers.Data.SkillDict[data.info.SkillId[i]];
