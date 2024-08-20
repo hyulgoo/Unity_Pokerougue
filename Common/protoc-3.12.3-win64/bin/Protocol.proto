@@ -62,7 +62,7 @@ enum ActionType {
 }
 
  enum Type {   
-  NONETYPE = 0;
+  NOTYPE = 0;
   BUG = 1;
   DARK = 2;
   DRAGON = 3;

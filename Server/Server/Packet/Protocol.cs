@@ -82,19 +82,19 @@ namespace Google.Protobuf.Protocol {
             "QkxFEAMqRgoOQ29uc3VtYWJsZVR5cGUSGAoUQ09OU1VNQUJMRV9UWVBFX05P",
             "TkUQABIaChZDT05TVU1BQkxFX1RZUEVfUE9USU9OEAEqSAoKQWN0aW9uVHlw",
             "ZRIICgRQQVNTEAASCQoFRklHSFQQARIMCghQT0tFQkFMTBACEgoKBkNIQU5H",
-            "RRADEgsKB1JVTkFXQVkQBCrSAQoEVHlwZRIKCgZOT1JNQUwQABIMCghGSUdI",
-            "VElORxABEgoKBkZMWUlORxACEgoKBlBPSVNPThADEgoKBkdST1VORBAEEggK",
-            "BFJPQ0sQBRIHCgNCVUcQBhIJCgVHSE9TVBAHEgkKBVNURUVMEAgSCAoERklS",
-            "RRAJEgkKBVdBVEVSEAoSCQoFR1JBU1MQCxIMCghFTEVDVFJJQxAMEgsKB1BT",
-            "WUNISUMQDRIHCgNJQ0UQDhIKCgZEUkFHT04QDxIICgREQVJLEBASCQoFRkFJ",
-            "UlkQESonCgpUYXJnZXRUeXBlEgsKB09ORVNFTEYQABIMCghPUFBPTkVOVBAB",
-            "Ku4BCglTa2lsbFR5cGUSCAoETk9ORRAAEgcKA0FUSxABEgcKA1NQQRACEgwK",
-            "CFJFQ09WRVJZEAMSDAoIQlVGRl9BVEsQBBIMCghCVUZGX1NQQRAFEgwKCEJV",
-            "RkZfREVGEAYSDAoIQlVGRl9TUEQQBxIMCghCVUZGX1NQRRAIEgcKA0RPVBAJ",
-            "Eg4KCkRFQlVGRl9BVEsQChIOCgpERUJVRkZfU1BBEAsSDgoKREVCVUZGX0RF",
-            "RhAMEg4KCkRFQlVGRl9TUEQQDRIOCgpERUJVRkZfU1BFEA4SCQoFU1RVUk4Q",
-            "DxINCglDT05GVVNJT04QEEIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3RvY29s",
-            "YgZwcm90bzM="));
+            "RRADEgsKB1JVTkFXQVkQBCreAQoEVHlwZRIKCgZOT1RZUEUQABIHCgNCVUcQ",
+            "ARIICgREQVJLEAISCgoGRFJBR09OEAMSDAoIRUxFQ1RSSUMQBBIJCgVGQUlS",
+            "WRAFEgwKCEZJR0hUSU5HEAYSCAoERklSRRAHEgoKBkZMWUlORxAIEgkKBUdI",
+            "T1NUEAkSCQoFR1JBU1MQChIKCgZHUk9VTkQQCxIHCgNJQ0UQDBIKCgZOT1JN",
+            "QUwQDRIKCgZQT0lTT04QDhILCgdQU1lDSElDEA8SCAoEUk9DSxAQEgkKBVNU",
+            "RUVMEBESCQoFV0FURVIQEionCgpUYXJnZXRUeXBlEgsKB09ORVNFTEYQABIM",
+            "CghPUFBPTkVOVBABKu4BCglTa2lsbFR5cGUSCAoETk9ORRAAEgcKA0FUSxAB",
+            "EgcKA1NQQRACEgwKCFJFQ09WRVJZEAMSDAoIQlVGRl9BVEsQBBIMCghCVUZG",
+            "X1NQQRAFEgwKCEJVRkZfREVGEAYSDAoIQlVGRl9TUEQQBxIMCghCVUZGX1NQ",
+            "RRAIEgcKA0RPVBAJEg4KCkRFQlVGRl9BVEsQChIOCgpERUJVRkZfU1BBEAsS",
+            "DgoKREVCVUZGX0RFRhAMEg4KCkRFQlVGRl9TUEQQDRIOCgpERUJVRkZfU1BF",
+            "EA4SCQoFU1RVUk4QDxINCglDT05GVVNJT04QEEIbqgIYR29vZ2xlLlByb3Rv",
+            "YnVmLlByb3RvY29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.PlayerServerState), typeof(global::Google.Protobuf.Protocol.ItemType), typeof(global::Google.Protobuf.Protocol.ConsumableType), typeof(global::Google.Protobuf.Protocol.ActionType), typeof(global::Google.Protobuf.Protocol.Type), typeof(global::Google.Protobuf.Protocol.TargetType), typeof(global::Google.Protobuf.Protocol.SkillType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -193,24 +193,25 @@ namespace Google.Protobuf.Protocol {
   }
 
   public enum Type {
-    [pbr::OriginalName("NORMAL")] Normal = 0,
-    [pbr::OriginalName("FIGHTING")] Fighting = 1,
-    [pbr::OriginalName("FLYING")] Flying = 2,
-    [pbr::OriginalName("POISON")] Poison = 3,
-    [pbr::OriginalName("GROUND")] Ground = 4,
-    [pbr::OriginalName("ROCK")] Rock = 5,
-    [pbr::OriginalName("BUG")] Bug = 6,
-    [pbr::OriginalName("GHOST")] Ghost = 7,
-    [pbr::OriginalName("STEEL")] Steel = 8,
-    [pbr::OriginalName("FIRE")] Fire = 9,
-    [pbr::OriginalName("WATER")] Water = 10,
-    [pbr::OriginalName("GRASS")] Grass = 11,
-    [pbr::OriginalName("ELECTRIC")] Electric = 12,
-    [pbr::OriginalName("PSYCHIC")] Psychic = 13,
-    [pbr::OriginalName("ICE")] Ice = 14,
-    [pbr::OriginalName("DRAGON")] Dragon = 15,
-    [pbr::OriginalName("DARK")] Dark = 16,
-    [pbr::OriginalName("FAIRY")] Fairy = 17,
+    [pbr::OriginalName("NOTYPE")] Notype = 0,
+    [pbr::OriginalName("BUG")] Bug = 1,
+    [pbr::OriginalName("DARK")] Dark = 2,
+    [pbr::OriginalName("DRAGON")] Dragon = 3,
+    [pbr::OriginalName("ELECTRIC")] Electric = 4,
+    [pbr::OriginalName("FAIRY")] Fairy = 5,
+    [pbr::OriginalName("FIGHTING")] Fighting = 6,
+    [pbr::OriginalName("FIRE")] Fire = 7,
+    [pbr::OriginalName("FLYING")] Flying = 8,
+    [pbr::OriginalName("GHOST")] Ghost = 9,
+    [pbr::OriginalName("GRASS")] Grass = 10,
+    [pbr::OriginalName("GROUND")] Ground = 11,
+    [pbr::OriginalName("ICE")] Ice = 12,
+    [pbr::OriginalName("NORMAL")] Normal = 13,
+    [pbr::OriginalName("POISON")] Poison = 14,
+    [pbr::OriginalName("PSYCHIC")] Psychic = 15,
+    [pbr::OriginalName("ROCK")] Rock = 16,
+    [pbr::OriginalName("STEEL")] Steel = 17,
+    [pbr::OriginalName("WATER")] Water = 18,
   }
 
   public enum TargetType {
@@ -4402,7 +4403,7 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "type" field.</summary>
     public const int TypeFieldNumber = 3;
-    private global::Google.Protobuf.Protocol.Type type_ = global::Google.Protobuf.Protocol.Type.Normal;
+    private global::Google.Protobuf.Protocol.Type type_ = global::Google.Protobuf.Protocol.Type.Notype;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Google.Protobuf.Protocol.Type Type {
       get { return type_; }
@@ -4471,7 +4472,7 @@ namespace Google.Protobuf.Protocol {
       int hash = 1;
       if (SkillType != global::Google.Protobuf.Protocol.SkillType.None) hash ^= SkillType.GetHashCode();
       if (Target != global::Google.Protobuf.Protocol.TargetType.Oneself) hash ^= Target.GetHashCode();
-      if (Type != global::Google.Protobuf.Protocol.Type.Normal) hash ^= Type.GetHashCode();
+      if (Type != global::Google.Protobuf.Protocol.Type.Notype) hash ^= Type.GetHashCode();
       if (Value != 0) hash ^= Value.GetHashCode();
       if (Accuracy != 0) hash ^= Accuracy.GetHashCode();
       if (Duration != 0) hash ^= Duration.GetHashCode();
@@ -4496,7 +4497,7 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(16);
         output.WriteEnum((int) Target);
       }
-      if (Type != global::Google.Protobuf.Protocol.Type.Normal) {
+      if (Type != global::Google.Protobuf.Protocol.Type.Notype) {
         output.WriteRawTag(24);
         output.WriteEnum((int) Type);
       }
@@ -4526,7 +4527,7 @@ namespace Google.Protobuf.Protocol {
       if (Target != global::Google.Protobuf.Protocol.TargetType.Oneself) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Target);
       }
-      if (Type != global::Google.Protobuf.Protocol.Type.Normal) {
+      if (Type != global::Google.Protobuf.Protocol.Type.Notype) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
       }
       if (Value != 0) {
@@ -4555,7 +4556,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Target != global::Google.Protobuf.Protocol.TargetType.Oneself) {
         Target = other.Target;
       }
-      if (other.Type != global::Google.Protobuf.Protocol.Type.Normal) {
+      if (other.Type != global::Google.Protobuf.Protocol.Type.Notype) {
         Type = other.Type;
       }
       if (other.Value != 0) {
