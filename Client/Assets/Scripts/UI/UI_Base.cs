@@ -11,17 +11,14 @@ public abstract class UI_Base : MonoBehaviour
 	protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
 
 	public Button _lastSelected = null;
-    enum Pointer
-    {
-        Pointer,
-    }
+	public Image _pointer;
 
     public abstract void Init();
 
 	private void Awake()
 	{
 		Init();
-        Bind<Image>(typeof(Pointer));
+		_pointer = Util.FindChild<Image>(gameObject, "Pointer", true);
     }
 
 	protected void Bind<T>(Type type) where T : UnityEngine.Object
@@ -77,11 +74,10 @@ public abstract class UI_Base : MonoBehaviour
     // 현재 선택된 버튼을 가리키는 Obj PosSetting
     public void SetPointerPos(Transform parent)
     {
-		Image pointer = GetImage((int)Pointer.Pointer);
-		if (pointer == null) return;
+		if (_pointer == null) return;
 
-        pointer.transform.SetParent(parent);
-        RectTransform selectrect = GetImage((int)Pointer.Pointer).GetComponent<RectTransform>();
+        _pointer.transform.SetParent(parent);
+        RectTransform selectrect = _pointer.GetComponent<RectTransform>();
         selectrect.offsetMin = Vector2.zero;
         selectrect.offsetMax = Vector2.zero;
     }

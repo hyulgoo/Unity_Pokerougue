@@ -83,6 +83,43 @@ enum ActionType {
   WATER = 18;
 }
 
+enum Arenas {
+  ABYSS_ = 0;
+  BADLANDS_ = 1;
+  BEACH_ = 2;
+  CAVE_ = 3;
+  CONSTRUCTION_ = 4;
+  DESERT_ = 5;
+  FACTORY_ = 6;
+  FAIRY_CAVE_ = 7;
+  FOREST_ = 8;
+  GRASS_ = 9;
+  GRAVEYARD_ = 10;
+  ICE_CAVE_ = 11;
+  ISLAND_ = 12;
+  JUNGLE_ = 13;
+  LABORATORY_ = 14;
+  LAKE_ = 15;
+  MEADOW_ = 16;
+  METROPOLIS_ = 17;
+  MOUNTAIN_ = 18;
+  PLAINS_ = 19;
+  POWER_PLANT_ = 20;
+  RUINS_ = 21;
+  SEA_ = 22;
+  SEABED_ = 23;
+  SLUM_ = 24;
+  SNOWY_FOREST_ = 25;
+  SPACE_ = 26;
+  SWAMP_ = 27;
+  TALL_GRASS_ = 28;
+  TEMPLE_ = 29;
+  TOWN_ = 30;
+  VOLCANO_ = 31;
+  WASTELAND_ = 32;
+  END_ = 33;
+}
+
 enum TargetType {
   ONESELF = 0;
   OPPONENT = 1;

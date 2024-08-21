@@ -11,6 +11,7 @@ public class Define
         Lobby,
         Game,
         Select,
+        Battle,
     }
 
     public enum Sound
@@ -24,7 +25,5 @@ public class Define
     {
         Click,
         Drag,
-    }
-
-    
+    }    
 }

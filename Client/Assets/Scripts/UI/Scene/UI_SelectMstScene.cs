@@ -113,14 +113,14 @@ public class UI_SelectMstScene : UI_Scene
     {
         Image curMstAnimator= GetObject((int)GameObjects.Image_Mst).GetOrAddComponent<Image>();
         // 현재 포켓몬의 애니메이션을 틀어줌
-        Sprite[] sprites = Resources.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
+        Sprite[] sprites = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
         curMstAnimator.sprite = sprites[0];
 
         // 현재 포켓몬의 정보를 나타냄
         PokemonData data = Managers.Data.MonsterDict[pokemonNumber];
         GetText((int)Texts.Text_MstNumber).text = $"{pokemonNumber}";
         GetText((int)Texts.Text_MstName).text = data.name;
-        sprites = Resources.LoadAll<Sprite>("Sprite/ui/type_bgs");
+        sprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/type_bgs");
         for (int i = 0; i < data.info.SkillId.Count; ++i)
         {
             SkillData skilldata = Managers.Data.SkillDict[data.info.SkillId[i]];
@@ -132,19 +132,26 @@ public class UI_SelectMstScene : UI_Scene
             }
             else
             {
-                skillImage.color = Color.white; 
                 GetText(i).text = skilldata.name;
                 int type = (int)skilldata.info.SkillEffect[0].Type;
                 string spriteName = "type_bgs_" + type.ToString();
                 Sprite typesprite = System.Array.Find(sprites, sprite => sprite.name == spriteName);
                 skillImage.sprite = typesprite;
                 skillImage.type = Image.Type.Sliced;
+                skillImage.color = Color.white;
             }
         }           
     }
 
     void OnClickReadyButton()
     {
+        // 플레이어의 몬스터를 선택한 대로 설정해줌.
+        for(int i = 0; i < MaxCount; ++i)
+        {
+            Managers.Object.MyPlayer.AddPokemon(_pokemonList[i]);
+        }
+
+        Managers.Scene.LoadScene(Define.Scene.Battle);
         // 선택이 끝났으니 다음 UI 출력
     }
 }
