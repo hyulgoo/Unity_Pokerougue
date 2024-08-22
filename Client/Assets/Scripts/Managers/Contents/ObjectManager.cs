@@ -7,6 +7,8 @@ using UnityEngine;
 public class ObjectManager
 {
 	public MyPlayerController MyPlayer { get; set; }
+	public PlayerController Opponent { get; set; }
+
 	Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
 	
 	public static GameObjectType GetObjectTypeById(int id)
@@ -42,6 +44,11 @@ public class ObjectManager
 
 				PlayerController pc = go.GetComponent<PlayerController>();
 				pc.Id = info.ObjectId;
+
+				if(Managers.Scene.CurrentScene.SceneType == Define.Scene.Battle)
+				{
+					Opponent = pc;
+				}
 			}
 		}
 	}

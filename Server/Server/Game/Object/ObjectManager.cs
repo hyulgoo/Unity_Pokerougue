@@ -7,7 +7,7 @@ namespace Server.Game
 {
 	public class ObjectManager
 	{
-		public static ObjectManager Instance { get; } = new ObjectManager();
+		//public static ObjectManager Instance { get; } = new ObjectManager();
 
 		object _lock = new object();
 		Dictionary<int, Player> _players = new Dictionary<int, Player>();

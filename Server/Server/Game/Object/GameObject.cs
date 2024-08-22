@@ -8,7 +8,7 @@ namespace Server.Game
 {
 	public class GameObject
 	{
-		public GameObjectType ObjectType { get; protected set; } = GameObjectType.None;
+		public GameObjectType ObjectType { get; protected set; } = GameObjectType.Nonetype;
 		public int Id
 		{
 			get { return Info.ObjectId; }

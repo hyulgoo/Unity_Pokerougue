@@ -9,5 +9,6 @@ namespace Server.Game
 {
 	public partial class GameRoom : JobSerializer
 	{
+
 	}
 }

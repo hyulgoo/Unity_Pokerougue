@@ -25,8 +25,6 @@ namespace Server.DB
 		public AccountDb Account { get; set; }
 
 		public ICollection<ItemDb> Items { get; set; }
-
-		public PokemonList PokemonList { get; set; }
 	}
 
 	[Table("Item")]

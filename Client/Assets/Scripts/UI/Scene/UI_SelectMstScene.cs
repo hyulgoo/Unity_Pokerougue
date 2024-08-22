@@ -2,6 +2,7 @@ using Data;
 using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -145,13 +146,43 @@ public class UI_SelectMstScene : UI_Scene
 
     void OnClickReadyButton()
     {
-        // 플레이어의 몬스터를 선택한 대로 설정해줌.
-        for(int i = 0; i < MaxCount; ++i)
-        {
-            Managers.Object.MyPlayer.AddPokemon(_pokemonList[i]);
-        }
+        // 서버로 내가 고른 list를 보내줌.
+        C_SelectMst packet = new C_SelectMst();
+        packet.MstList = ChangePokemonListToMstList();
+        packet.PlayerId = Managers.Object.MyPlayer.Id;
 
-        Managers.Scene.LoadScene(Define.Scene.Battle);
-        // 선택이 끝났으니 다음 UI 출력
+        Managers.Network.Send(packet);
+
+        Managers.UI.ShowPopupUI<UI_WaitingForRespondPopup>();
+    }    
+
+    PokemonList ChangePokemonListToMstList()
+    {
+        PokemonList list = new PokemonList();
+        for (int i = 0; i < MaxCount; ++i)
+        {
+            switch (i)
+            {
+                case 0:
+                    list.Pokemon0 = _pokemonList[i];
+                    break;
+                case 1:
+                    list.Pokemon1 = _pokemonList[i];
+                    break;
+                case 2:
+                    list.Pokemon2 = _pokemonList[i];
+                    break;
+                case 3:
+                    list.Pokemon3 = _pokemonList[i];
+                    break;
+                case 4:
+                    list.Pokemon4 = _pokemonList[i];
+                    break;
+                case 5:
+                    list.Pokemon5 = _pokemonList[i];
+                    break;
+            }
+        }
+        return list;        
     }
 }

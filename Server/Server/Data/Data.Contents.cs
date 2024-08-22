@@ -61,10 +61,19 @@ namespace Server.Data
 			return dict;
 		}
 	}
-	#endregion
+    #endregion
 
-	#region Monster
+    #region Monster
+
 	[Serializable]
+    public class RewardData
+    {
+        public int probability; // 100분율
+        public int itemId;
+        public int count;
+    }
+
+    [Serializable]
 	public class PokemonData
 	{
 		public int id;

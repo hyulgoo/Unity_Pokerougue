@@ -86,4 +86,23 @@ class PacketHandler
         bool letsDuel = respondDuelPacket.DuelOK == 1 ? true : false;
         room.Push(room.RespondDuel, respondDuelPacket.RespondId, respondDuelPacket.OpponentId, letsDuel);
     }
+
+    public static void C_SelectMstHandler(PacketSession session, IMessage packet)
+    {
+        C_SelectMst selectMstPacket = (C_SelectMst)packet;
+        ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+            return;
+
+        GameRoom room = player.Room;
+        if (room == null)
+            return;
+
+		player.PokemonList = selectMstPacket.MstList;
+        room.Push(room.SelectMst, selectMstPacket.PlayerId);
+
+		// TODO 각 플레이어에게 자신이 고른 리스트와 상대가 고른 리스트를 보내줌.
+    }
 }

@@ -26,6 +26,7 @@ enum MsgId {
   S_REQUEST_DUEL = 19;
   C_RESPOND_DUEL = 20;
   S_RESPOND_DUEL = 21;
+  C_SELECT_MST = 22;
 }
 
 enum GameObjectType {
@@ -237,6 +238,11 @@ message S_Ping {
 message C_Pong {
 }
 
+message C_SelectMst {
+  int32 playerId = 1;
+  PokemonList MstList = 2;
+}
+
 message LobbyPlayerInfo {
   int32 playerDbId = 1;
   string name = 2;
@@ -245,7 +251,6 @@ message LobbyPlayerInfo {
 message ObjectInfo {
   int32 objectId = 1;
   string name = 2;
-  PokemonList pKMList = 3;
 }
 
 message TurnInfo

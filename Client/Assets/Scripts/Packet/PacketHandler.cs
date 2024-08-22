@@ -88,8 +88,9 @@ class PacketHandler
     }
 
 	public static void S_CreatePlayerHandler(PacketSession session, IMessage packet)
-	{
-		S_CreatePlayer createOkPacket = (S_CreatePlayer)packet;
+    {
+        Debug.Log("S_CreatePlayerHandler");
+        S_CreatePlayer createOkPacket = (S_CreatePlayer)packet;
 
 		if (createOkPacket.Player == null)
 		{
@@ -106,8 +107,9 @@ class PacketHandler
 	}
 
 	public static void S_ItemListHandler(PacketSession session, IMessage packet)
-	{
-		S_ItemList itemList = (S_ItemList)packet;
+    {
+        Debug.Log("S_ItemListHandler");
+        S_ItemList itemList = (S_ItemList)packet;
 
 		Managers.Inven.Clear();
 
@@ -169,7 +171,8 @@ class PacketHandler
 	}
 
 	public static void S_RequestSendOkHandler(PacketSession session, IMessage packet)
-	{
+    {
+        Debug.Log("S_RequestSendOkHandler");
         S_RequestSendOk requestSendOK = (S_RequestSendOk)packet;
 
 		if(requestSendOK.SendOK == 1)
@@ -190,12 +193,14 @@ class PacketHandler
 
     public static void S_RequestDuelHandler(PacketSession session, IMessage packet)
     {
+        Debug.Log("S_RequestDuelHandler");
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
         UI_DualRespondPopup popup = Managers.UI.ShowPopupUI<UI_DualRespondPopup>("UI_AcceptDenyPopup");
 		popup.SetApplyDuelAnnounce(requestDuel.RequestId);
     }
     public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
     {
+        Debug.Log("S_RespondDuelHandler");
         S_RespondDuel respenDuel = (S_RespondDuel)packet;
 
 		bool letsDuel = respenDuel.DuelOK == 1 ? true : false;
@@ -207,7 +212,7 @@ class PacketHandler
             popup.SetAnnounceText("게임이 곧 시작됩니다");
 
 			// 인게임으로 전환
-			Managers.Scene.LoadScene(Define.Scene.Game);
+			Managers.Scene.LoadScene(Define.Scene.Select);
         }
         else
 		{

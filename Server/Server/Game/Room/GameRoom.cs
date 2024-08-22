@@ -14,6 +14,9 @@ namespace Server.Game
 
 		Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
+		Dictionary<int, bool> _playerReady = new Dictionary<int, bool>();
+		public ObjectManager ObjManager { get; } = new ObjectManager();
+
 		public void Init()
 		{
 		}
@@ -87,9 +90,9 @@ namespace Server.Game
 				Broadcast(despawnPacket);
 			}
 
-			if(_players.Count == 0)
+			if(_players.Count == 0 && RoomId != 1)
 			{
-				GameLogic.Instance.Remove(RoomId);
+				GameLogic.Instance.Push(() => GameLogic.Instance.Remove(RoomId));
 			}
 		}
 
@@ -120,17 +123,16 @@ namespace Server.Game
 			if(duelOk)
             {
 				GameLogic.Instance.Push( () => 
-					{
-                        GameRoom room = GameLogic.Instance.Add();
-                        int roomId = room.RoomId;
+				{
+                    GameRoom room = GameLogic.Instance.Add();
+                    int roomId = room.RoomId;
 
-                        respondDuelpacket.OpponentId = playerId;
-                        opponentplayer.Session.HandleRespondDuel(respondDuelpacket, roomId);
+                    respondDuelpacket.OpponentId = playerId;
+                    opponentplayer.Session.HandleRespondDuel(respondDuelpacket, roomId);
 
-                        respondDuelpacket.OpponentId = opponentId;
-                        player.Session.HandleRespondDuel(respondDuelpacket, roomId);
-                    }
-					);				
+                    respondDuelpacket.OpponentId = opponentId;
+                    player.Session.HandleRespondDuel(respondDuelpacket, roomId);
+                });				
             }
 			else
 			{
@@ -138,6 +140,23 @@ namespace Server.Game
                 opponentplayer.Session.HandleRespondDuel(respondDuelpacket, 0);
             }
         }
+
+		public void SelectMst(int playerId)
+		{
+
+		}
+
+		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
+		{
+			Player player = ObjManager.Add<Player>();
+			player.PlayerDbId = info.PlayerDbId;
+			player.Info.Name = info.Name;
+			player.Session = session;
+
+			session.MyPlayer = player;
+
+			Push(EnterGame,player);
+		}
 
 		Player FindPlayer(Func<GameObject, bool> condition)
 		{

@@ -64,6 +64,15 @@ namespace Data
     #endregion
 
     #region Monster
+
+    [Serializable]
+    public class RewardData
+    {
+        public int probability; // 100분율
+        public int itemId;
+        public int count;
+    }
+
     [Serializable]
     public class PokemonData
     {

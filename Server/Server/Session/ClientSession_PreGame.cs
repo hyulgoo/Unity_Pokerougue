@@ -85,42 +85,42 @@ namespace Server
 			if (playerInfo == null)
 				return;
 
-			MyPlayer = ObjectManager.Instance.Add<Player>();
-			{
-				MyPlayer.PlayerDbId = playerInfo.PlayerDbId;
-				MyPlayer.Info.Name = playerInfo.Name;
-				MyPlayer.Session = this;
+			//MyPlayer = ObjectManager.Instance.Add<Player>();
+			//{
+			//	MyPlayer.PlayerDbId = playerInfo.PlayerDbId;
+			//	MyPlayer.Info.Name = playerInfo.Name;
+			//	MyPlayer.Session = this;
 
-				S_ItemList itemListPacket = new S_ItemList();
+			//	S_ItemList itemListPacket = new S_ItemList();
 
-				// 아이템 목록을 갖고 온다
-				using (AppDbContext db = new AppDbContext())
-				{
-					List<ItemDb> items = db.Items
-						.Where(i => i.OwnerDbId == playerInfo.PlayerDbId)
-						.ToList();
+			//	// 아이템 목록을 갖고 온다
+			//	using (AppDbContext db = new AppDbContext())
+			//	{
+			//		List<ItemDb> items = db.Items
+			//			.Where(i => i.OwnerDbId == playerInfo.PlayerDbId)
+			//			.ToList();
 
-					foreach (ItemDb itemDb in items)
-					{
-						Item item = Item.MakeItem(itemDb);
-						if (item != null)
-						{
-							MyPlayer.Inven.Add(item);
+			//		foreach (ItemDb itemDb in items)
+			//		{
+			//			Item item = Item.MakeItem(itemDb);
+			//			if (item != null)
+			//			{
+			//				MyPlayer.Inven.Add(item);
 
-							ItemInfo info = new ItemInfo();
-							info.MergeFrom(item.Info);
-							itemListPacket.Items.Add(info);
-						}
-					}
-				}
+			//				ItemInfo info = new ItemInfo();
+			//				info.MergeFrom(item.Info);
+			//				itemListPacket.Items.Add(info);
+			//			}
+			//		}
+			//	}
 
-				Send(itemListPacket);
-			}
+			//	Send(itemListPacket);
+			//}
 
 			GameLogic.Instance.Push(() =>
 			{
 				GameRoom room = GameLogic.Instance.Find(1);
-				room.Push(room.EnterGame, MyPlayer);
+				room.Push(room.SetPlayerBySession, this, playerInfo);
 			});
 		}
 
