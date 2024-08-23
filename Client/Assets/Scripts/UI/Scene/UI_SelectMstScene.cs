@@ -161,7 +161,7 @@ public class UI_SelectMstScene : UI_Scene
         PokemonList list = new PokemonList();
         for (int i = 0; i < MaxCount; ++i)
         {
-            switch (i)
+            switch (i) 
             {
                 case 0:
                     list.Pokemon0 = _pokemonList[i];

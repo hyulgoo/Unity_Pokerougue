@@ -19,8 +19,6 @@ namespace Server.Game
 
 		public ObjectInfo Info { get; set; } = new ObjectInfo();
 
-		public PokemonList PokemonList { get; set; } = new PokemonList();
-
 		public GameObject()
 		{
 			//Info.StatInfo = Stat;

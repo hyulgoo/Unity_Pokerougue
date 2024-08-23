@@ -54,13 +54,17 @@ namespace Server
 
 		public void HandleRespondDuel(S_RespondDuel packet, int roomId)
 		{
-			bool letsduel = packet.DuelOK == 1;
-			if (letsduel)
-			{ 
-				ServerState = PlayerServerState.ServerStateGame;
-				MyPlayer.Room.Push(MyPlayer.Room.LeaveGame, MyPlayer.Info.ObjectId);
-				GameRoom room = GameLogic.Instance.Find(roomId);
-				room.Push(room.EnterGame, MyPlayer);
+			if (packet.DuelOK == 1)
+			{
+				Player player = MyPlayer;
+				GameRoom room = player.Room;
+
+                ServerState = PlayerServerState.ServerStateGame;
+                room.Push(room.LeaveGame, player.Info.ObjectId);
+
+				MyPlayer = player;
+				room = GameLogic.Instance.Find(roomId);
+				room.Push(room.EnterGame, player);
             }
 
 			Send(packet);

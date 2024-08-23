@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UIManager
@@ -149,17 +150,22 @@ public class UIManager
 
     public void SetLobbyPlayer()
     {
-        if (Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby) return;
+        if (Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby) 
+            return;
+
         KeyValuePair<int, GameObject>[] nameidlist = Managers.Object.GetObjects();
-        int[] id = new int[nameidlist.Length];
+        int[] ids = new int[nameidlist.Length];
         string[] names = new string[nameidlist.Length];
+
         for (int i = 0; i < nameidlist.Length; i++)
         {
-            id[i] = nameidlist[i].Key;
+            ids[i] = nameidlist[i].Key;
             names[i] = nameidlist[i].Value.name;
         }
+
+        if (SceneUI == null) return;
         UI_LobbyScene lc = SceneUI.gameObject.GetComponent<UI_LobbyScene>();
         if (lc == null) return;
-        lc.SetUserName(id, names);
+        lc.SetUserName(ids, names);
     }
 }

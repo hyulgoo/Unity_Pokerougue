@@ -83,8 +83,7 @@ class PacketHandler
         if (room == null)
             return;
 
-        bool letsDuel = respondDuelPacket.DuelOK == 1 ? true : false;
-        room.Push(room.RespondDuel, respondDuelPacket.RespondId, respondDuelPacket.OpponentId, letsDuel);
+        room.Push(room.RespondDuel, respondDuelPacket);
     }
 
     public static void C_SelectMstHandler(PacketSession session, IMessage packet)

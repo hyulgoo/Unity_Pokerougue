@@ -48,18 +48,20 @@ public class UI_BattleScene : UI_Scene
         Bind<GameObject>(typeof(GameObjects));
         Bind<Image>(typeof(Images));
         Bind<Text>(typeof(Texts));
+    }
 
-        SetRandomField();
-
+    public void SetPlayerInfo()
+    {
         _hpbar = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
         _myMonsterData = Managers.Object.MyPlayer.GetCurMonsterData();
         _enemyMonsterData = Managers.Object.Opponent.GetCurMonsterData();
+
+        SetBattleMonsterInfo();
     }
 
-    void SetRandomField()
+    public void SetField(int type)
     {
-        // 랜덤으로 필드를 불러옴
-        int type = Random.Range(0, (int)Arenas.End);
+        // 필드를 불러옴
         Arenas arenatype = (Arenas)type;
         string path = "Sprite/arenas/";
         string arenaName = path + arenatype.ToString();

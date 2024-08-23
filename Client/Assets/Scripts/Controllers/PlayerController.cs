@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    int _curMonsterCount = 0;
     List<PokemonData> _pokemonDatas = new List<PokemonData>();
 
     private void Awake()
@@ -53,5 +52,15 @@ public class PlayerController : MonoBehaviour
         PokemonData tmp = _pokemonDatas[changetoCurorder];
         _pokemonDatas.RemoveAt(changetoCurorder);
         _pokemonDatas.Insert(0, tmp);
+    }
+
+    public void SetMonsterData(PokemonList list)
+    {
+        _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon0]);
+        _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon1]);
+        _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon2]);
+        //_pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon3]);
+        //_pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon4]);
+        //_pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon5]);
     }
 }

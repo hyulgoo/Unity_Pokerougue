@@ -27,6 +27,7 @@ enum MsgId {
   C_RESPOND_DUEL = 20;
   S_RESPOND_DUEL = 21;
   C_SELECT_MST = 22;
+  S_START_BATTLE = 23;
 }
 
 enum GameObjectType {
@@ -240,7 +241,15 @@ message C_Pong {
 
 message C_SelectMst {
   int32 playerId = 1;
-  PokemonList MstList = 2;
+  PokemonList mstList = 2;
+}
+
+message S_StartBattle {
+  int32 arenaType = 1;
+  ObjectInfo myInfo = 2;
+  ObjectInfo opponentInfo = 3;
+  PokemonList myMst = 4;
+  PokemonList opponentMst = 5;
 }
 
 message LobbyPlayerInfo {

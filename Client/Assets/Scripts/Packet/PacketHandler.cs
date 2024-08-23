@@ -1,8 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using ServerCore;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 class PacketHandler
@@ -27,6 +25,7 @@ class PacketHandler
 		{
 			Managers.Object.Add(obj, myPlayer: false);
         }
+
         Managers.UI.SetLobbyPlayer();
     }
 
@@ -36,8 +35,8 @@ class PacketHandler
 		foreach (int id in despawnPacket.ObjectIds)
 		{
 			Managers.Object.Remove(id);
-		}
-		Managers.UI.SetLobbyPlayer();
+        }
+        Managers.UI.SetLobbyPlayer();
 	}
 
 	public static void S_ConnectedHandler(PacketSession session, IMessage packet)
@@ -198,6 +197,7 @@ class PacketHandler
         UI_DualRespondPopup popup = Managers.UI.ShowPopupUI<UI_DualRespondPopup>("UI_AcceptDenyPopup");
 		popup.SetApplyDuelAnnounce(requestDuel.RequestId);
     }
+
     public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
     {
         Debug.Log("S_RespondDuelHandler");
@@ -220,6 +220,24 @@ class PacketHandler
             UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
 			popup.SetAnnounceText("상대가 거절하였습니다");
 		}
+    }
+
+    public static void S_StartBattleHandler(PacketSession session, IMessage packet)
+    {
+        Debug.Log("S_StartBattleHandler");
+        S_StartBattle startbattle = (S_StartBattle)packet;
+
+		Managers.Scene.LoadScene(Define.Scene.Battle);
+
+        Managers.Object.Add(startbattle.MyInfo, myPlayer: true);
+		Managers.Object.Add(startbattle.OpponentInfo, myPlayer: false);
+
+		Managers.Object.MyPlayer.SetMonsterData(startbattle.MyMst);
+        Managers.Object.Opponent.SetMonsterData(startbattle.OpponentMst);
+
+        UI_BattleScene battleScene = Managers.Scene.CurrentScene.gameObject.GetComponent<UI_BattleScene>();
+        battleScene.SetField(startbattle.ArenaType);
+        battleScene.SetPlayerInfo();
     }
 }
 

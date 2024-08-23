@@ -3,6 +3,7 @@ using Google.Protobuf.Protocol;
 using Server.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -18,7 +19,7 @@ namespace Server.Game
 		public ObjectManager ObjManager { get; } = new ObjectManager();
 
 		public void Init()
-		{
+		{			
 		}
 
 		// 누군가 주기적으로 호출해줘야 한다
@@ -39,24 +40,24 @@ namespace Server.Game
 			{
 				Player player = gameObject as Player;
 				_players.Add(gameObject.Id, player);
+				_playerReady.Add(gameObject.Id, false);
 				player.Room = this;
 
 				// 본인한테 정보 전송
-				{
-					S_EnterGame enterPacket = new S_EnterGame();
-					enterPacket.Player = player.Info;
-					player.Session.Send(enterPacket);
-				}
+				S_EnterGame enterPacket = new S_EnterGame();
+				enterPacket.Player = player.Info;
+				player.Session.Send(enterPacket);
 			}
 
 			// 타인한테 정보 전송
+			S_Spawn spawnPacket = new S_Spawn();
+			foreach (Player go in _players.Values)
 			{
-				S_Spawn spawnPacket = new S_Spawn();
-				foreach(Player go in _players.Values)
-					spawnPacket.Objects.Add(go.Info);
-				
-				Broadcast(spawnPacket);
+				if (go.Id == gameObject.Id) continue;
+				spawnPacket.Objects.Add(go.Info); 
 			}
+			
+			Broadcast(spawnPacket);
 		}
 
 		public void LeaveGame(int objectId)
@@ -73,23 +74,17 @@ namespace Server.Game
 				player.Room = null;
 
 				// 본인한테 정보 전송
-				{
-					S_LeaveGame leavePacket = new S_LeaveGame();
-					player.Session.Send(leavePacket);
-				}
-			}			
-			else
-			{
-				return;
+				S_LeaveGame leavePacket = new S_LeaveGame();
+				player.Session.Send(leavePacket);
 			}
 
-			// 타인한테 정보 전송
-			{
-				S_Despawn despawnPacket = new S_Despawn();
-				despawnPacket.ObjectIds.Add(objectId);
-				Broadcast(despawnPacket);
-			}
+			// 타인한테 정보 전송			
+			S_Despawn despawnPacket = new S_Despawn();
+			despawnPacket.ObjectIds.Add(objectId);
+			Broadcast(despawnPacket);
+			
 
+			// 플레이어가 없으면서 룸이 로비로 사용하지 않는 경우 room을 삭제
 			if(_players.Count == 0 && RoomId != 1)
 			{
 				GameLogic.Instance.Push(() => GameLogic.Instance.Remove(RoomId));
@@ -109,41 +104,66 @@ namespace Server.Game
 			}
         }
 
-		public void RespondDuel(int playerId, int opponentId, bool duelOk)
+		public void RespondDuel(C_RespondDuel packet)
 		{
-            Int32 isOK = duelOk ? 1 : 0;
-            S_RespondDuel respondDuelpacket = new S_RespondDuel() { DuelOK = isOK };
+			S_RespondDuel respondDuelpacket = new S_RespondDuel();
+			respondDuelpacket.DuelOK = packet.DuelOK;
 
-            Player player = _players[playerId];
-            Player opponentplayer = _players[opponentId];
+            Player Respond = _players[packet.RespondId];
+            Player opponent = _players[packet.OpponentId];
 
             // 대결을 신청한 상대에게 응답패킷을 보냄
-
 			// 대결을 승낙하면 씬 전환을 해야하므로 본인에게도 다시 보냄
-			if(duelOk)
+			if (respondDuelpacket.DuelOK == 1)
             {
 				GameLogic.Instance.Push( () => 
 				{
                     GameRoom room = GameLogic.Instance.Add();
-                    int roomId = room.RoomId;
 
-                    respondDuelpacket.OpponentId = playerId;
-                    opponentplayer.Session.HandleRespondDuel(respondDuelpacket, roomId);
+                    respondDuelpacket.OpponentId = packet.RespondId;
+                    opponent.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
 
-                    respondDuelpacket.OpponentId = opponentId;
-                    player.Session.HandleRespondDuel(respondDuelpacket, roomId);
+                    respondDuelpacket.OpponentId = packet.OpponentId;
+                    Respond.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
                 });				
             }
 			else
 			{
-                respondDuelpacket.OpponentId = playerId;
-                opponentplayer.Session.HandleRespondDuel(respondDuelpacket, 0);
+                respondDuelpacket.OpponentId = packet.RespondId;
+                opponent.Session.HandleRespondDuel(respondDuelpacket, 0);
             }
         }
 
 		public void SelectMst(int playerId)
 		{
+			_playerReady[playerId] = true;
 
+			int cnt = 0;
+			foreach (bool ready in _playerReady.Values)
+			{
+				cnt = ready ? cnt + 1 : cnt;
+			}
+
+			if(cnt == _playerReady.Count)
+			{
+				int[] list = _players.Keys.ToArray();
+
+                S_StartBattle packet = new S_StartBattle();
+				Random random = new Random();				
+				packet.ArenaType = random.Next(0, (int)Arenas.End);
+
+                for (int i = 0; i < 2; ++i)
+				{
+					int myid = list[i];
+					int opponentid = i == 0 ? list[1] : list[0];
+
+                    packet.MyInfo = _players[myid].Info;
+                    packet.MyMst = _players[myid].PokemonList;
+                    packet.OpponentInfo = _players[opponentid].Info;
+                    packet.OpponentMst = _players[opponentid].PokemonList;
+                    _players[myid].Session.Send(packet);
+                }
+            }
 		}
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)

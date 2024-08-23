@@ -92,6 +92,7 @@ public class ObjectManager
 			Managers.Resource.Destroy(obj);
 		_objects.Clear();
 		MyPlayer = null;
+		Opponent = null;
 	}
 
 	public KeyValuePair<int, GameObject>[] GetObjects()
