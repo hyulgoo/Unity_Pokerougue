@@ -53,7 +53,6 @@ namespace Server.Game
 			S_Spawn spawnPacket = new S_Spawn();
 			foreach (Player go in _players.Values)
 			{
-				if (go.Id == gameObject.Id) continue;
 				spawnPacket.Objects.Add(go.Info); 
 			}
 			
@@ -151,6 +150,7 @@ namespace Server.Game
                 S_StartBattle packet = new S_StartBattle();
 				Random random = new Random();				
 				packet.ArenaType = random.Next(0, (int)Arenas.End);
+				int turnorder = ObjManager.GetTurn();
 
                 for (int i = 0; i < 2; ++i)
 				{
@@ -162,6 +162,7 @@ namespace Server.Game
                     packet.OpponentInfo = _players[opponentid].Info;
                     packet.OpponentMst = _players[opponentid].PokemonList;
                     _players[myid].Session.Send(packet);
+					packet.Myturn = myid == turnorder ? 1 : 0;
                 }
             }
 		}

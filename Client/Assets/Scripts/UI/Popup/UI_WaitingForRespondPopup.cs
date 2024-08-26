@@ -31,7 +31,7 @@ public class UI_WaitingForRespondPopup : UI_Popup
     public override void Init()
     {
         base.Init();
-        Bind<TMP_Text>(typeof(Texts));
+        BindText(typeof(Texts));
 
         StartCoroutine(ChangeText(_updateDelay));
     }

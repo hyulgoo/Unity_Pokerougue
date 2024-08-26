@@ -234,11 +234,7 @@ class PacketHandler
 
 		Managers.Object.MyPlayer.SetMonsterData(startbattle.MyMst);
         Managers.Object.Opponent.SetMonsterData(startbattle.OpponentMst);
-
-        UI_BattleScene battleScene = Managers.Scene.CurrentScene.gameObject.GetComponent<UI_BattleScene>();
-        battleScene.SetField(startbattle.ArenaType);
-        battleScene.SetPlayerInfo();
+		Managers.Object.ArenaType = startbattle.ArenaType;
+		Managers.Object.MyTurn = startbattle.Myturn == 1 ? true : false;
     }
 }
-
-

@@ -17,7 +17,7 @@ public class UI_SelectBehaviorPopup : UI_Popup
     {
         base.Init();
 
-        Bind<Button>(typeof(Buttons));
+        BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.Battle).onClick.AddListener(OnClickBattleButton);
         GetButton((int)Buttons.Pokemon).onClick.AddListener(OnClickPokemonButton);

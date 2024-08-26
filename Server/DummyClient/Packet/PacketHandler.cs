@@ -4,6 +4,7 @@ using ServerCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static System.Collections.Specialized.BitVector32;
 
 class PacketHandler
 {
@@ -116,10 +117,16 @@ class PacketHandler
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
         ServerSession serverSession = (ServerSession)session;
     }
-	public static void S_RespondDuelHandler(PacketSession handler, IMessage packet)
-	{
-
-	}
+	public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
+    {
+        S_RespondDuel repondDuel = (S_RespondDuel)packet;
+        ServerSession serverSession = (ServerSession)session;
+    }
+    public static void S_StartBattleHandler(PacketSession session, IMessage packet)
+    {
+        S_StartBattle startBattle = (S_StartBattle)packet;
+        ServerSession serverSession = (ServerSession)session;
+    }
 }
 
 

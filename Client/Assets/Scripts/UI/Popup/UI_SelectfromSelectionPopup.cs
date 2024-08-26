@@ -21,7 +21,7 @@ public class UI_SelectfromSelectionPopup : UI_Popup
     public override void Init()
     {
         base.Init();
-        Bind<Button>(typeof(Buttons));
+        BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.AddParty).onClick.AddListener(OnClickAddPartyButton);
         GetButton((int)Buttons.TechManage).onClick.AddListener(OnClickTechManageButton);

@@ -20,8 +20,8 @@ public class UI_AcceptDenyPopup : UI_Popup
     public override void Init()
     {
         base.Init();
-        Bind<Button>(typeof(Buttons));
-        Bind<TMP_Text>(typeof(Texts));
+        BindButton(typeof(Buttons));
+        BindText(typeof(Texts));
 
         GetButton((int)Buttons.Btn_Apply).onClick.AddListener(OnClickApplyButton);
         GetButton((int)Buttons.Btn_Deny).onClick.AddListener(OnClickDenyButton);

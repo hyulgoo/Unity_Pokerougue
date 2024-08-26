@@ -7,13 +7,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public int Id { get; set; }
     public string Name { get; set; }
+    public int Id { get; set; }
     List<PokemonData> _pokemonDatas = new List<PokemonData>();
 
     private void Awake()
     {
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
     }
 
     public void AddPokemon(int pokemonNumber)
@@ -56,11 +56,7 @@ public class PlayerController : MonoBehaviour
 
     public void SetMonsterData(PokemonList list)
     {
-        _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon0]);
-        _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon1]);
-        _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon2]);
-        //_pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon3]);
-        //_pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon4]);
-        //_pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon5]);
+        for (int i = 0; i < list.Pokemon.Count(); ++i)
+            _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon[i]]);
     }
 }

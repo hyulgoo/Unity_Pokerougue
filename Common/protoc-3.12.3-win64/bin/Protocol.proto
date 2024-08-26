@@ -250,6 +250,7 @@ message S_StartBattle {
   ObjectInfo opponentInfo = 3;
   PokemonList myMst = 4;
   PokemonList opponentMst = 5;
+  int32 myturn = 6;
 }
 
 message LobbyPlayerInfo {
@@ -272,12 +273,7 @@ message TurnInfo
 
 message PokemonList
 {
-  int32 pokemon_0 = 1;
-  int32 pokemon_1 = 2;
-  int32 pokemon_2 = 3;
-  int32 pokemon_3 = 4;
-  int32 pokemon_4 = 5;
-  int32 pokemon_5 = 6;
+  repeated int32 pokemon = 1;
 }
 
 message PokemonInfo 

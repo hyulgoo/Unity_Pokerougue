@@ -55,9 +55,9 @@ public class UI_SelectMstScene : UI_Scene
     {
         base.Init();
 
-        Bind<TMP_Text>(typeof(Texts));
-        Bind<GameObject>(typeof(GameObjects));
-        Bind<Button>(typeof(Buttons));
+        BindText(typeof(Texts));
+        BindObject(typeof(GameObjects));
+        BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.Btn_Ready).onClick.AddListener(OnClickReadyButton);
 
@@ -148,41 +148,16 @@ public class UI_SelectMstScene : UI_Scene
     {
         // 서버로 내가 고른 list를 보내줌.
         C_SelectMst packet = new C_SelectMst();
-        packet.MstList = ChangePokemonListToMstList();
         packet.PlayerId = Managers.Object.MyPlayer.Id;
+
+        PokemonList list = new PokemonList();
+        for (int i = 0; i < _pokemonList.Count(); ++i)
+            list.Pokemon.Add(_pokemonList[i]);        
+        packet.MstList = list;
 
         Managers.Network.Send(packet);
 
-        Managers.UI.ShowPopupUI<UI_WaitingForRespondPopup>();
+        UI_WaitingForRespondPopup popup = Managers.UI.ShowPopupUI<UI_WaitingForRespondPopup>();
+        popup.Text = "상대방을 기다리는 중";
     }    
-
-    PokemonList ChangePokemonListToMstList()
-    {
-        PokemonList list = new PokemonList();
-        for (int i = 0; i < MaxCount; ++i)
-        {
-            switch (i) 
-            {
-                case 0:
-                    list.Pokemon0 = _pokemonList[i];
-                    break;
-                case 1:
-                    list.Pokemon1 = _pokemonList[i];
-                    break;
-                case 2:
-                    list.Pokemon2 = _pokemonList[i];
-                    break;
-                case 3:
-                    list.Pokemon3 = _pokemonList[i];
-                    break;
-                case 4:
-                    list.Pokemon4 = _pokemonList[i];
-                    break;
-                case 5:
-                    list.Pokemon5 = _pokemonList[i];
-                    break;
-            }
-        }
-        return list;        
-    }
 }

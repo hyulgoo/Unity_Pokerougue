@@ -23,8 +23,8 @@ public class UI_LoginPopup : UI_Popup
     {
         base.Init();
 
-        Bind<TMP_InputField>(typeof(InputFields));
-        Bind<Button>(typeof(Buttons));
+        BindInput(typeof(InputFields));
+        BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.Btn_Create).onClick.AddListener(OnClickCreateButton);
         GetButton((int)Buttons.Btn_Login).onClick.AddListener(OnClickLoginButton);

@@ -39,7 +39,13 @@ public abstract class UI_Base : MonoBehaviour
 		}
 	}
 
-	protected T Get<T>(int idx) where T : UnityEngine.Object
+	protected void BindObject(Type type) { Bind<GameObject>(type); }
+    protected void BindButton(Type type) { Bind<Button>(type); }
+    protected void BindImage(Type type) { Bind<Image>(type); }
+    protected void BindText(Type type) { Bind<TMP_Text>(type); }
+    protected void BindInput(Type type) { Bind<TMP_InputField>(type); }
+
+    protected T Get<T>(int idx) where T : UnityEngine.Object
 	{
 		UnityEngine.Object[] objects = null;
 		if (_objects.TryGetValue(typeof(T), out objects) == false)

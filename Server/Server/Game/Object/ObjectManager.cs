@@ -1,6 +1,8 @@
 ﻿using Google.Protobuf.Protocol;
+using Server.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Server.Game
@@ -14,6 +16,8 @@ namespace Server.Game
 
 		// [UNUSED(1)][TYPE(7)][ID(24)]
 		int _counter = 0;
+
+		Queue<int> _turn = new Queue<int>();
 
 		public T Add<T>() where T : GameObject, new()
 		{
@@ -74,6 +78,32 @@ namespace Server.Game
 			}
 
 			return null;
+        }
+
+        public int GetTurn()
+        {
+            if(_turn.Count == 0)
+            {
+                Dictionary<int, int> speedlist = new Dictionary<int, int>();
+                foreach (var player in _players)
+				{
+					int pokemonid = player.Value.PokemonList.Pokemon[0];
+					int speed = DataManager.MonsterDict[pokemonid].info.Spe;
+					speedlist.Add(speed, player.Key);
+                }
+
+                foreach (var key in speedlist.Keys.OrderBy(k => k))
+				{
+					_turn.Enqueue(key);
+				}
+            }
+
+            return _turn.Dequeue();
+        }
+
+		public void ClearTurn()
+		{
+			_turn.Clear();
 		}
-	}
+    }
 }

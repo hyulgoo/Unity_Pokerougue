@@ -20,8 +20,8 @@ public class UI_AnnouncePopup : UI_Popup
     {
         base.Init();
 
-        Bind<TMP_Text>(typeof(Texts));            
-        Bind<Button>(typeof(Buttons));
+        BindText(typeof(Texts));            
+        BindButton(typeof(Buttons));
         GetButton((int)Buttons.Btn_Accept).onClick.AddListener(OnClickAcceptButton);
     }
 

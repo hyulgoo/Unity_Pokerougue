@@ -16,7 +16,7 @@ public class UI_MainScene : UI_Scene
     {
         base.Init();
 
-        Bind<Button>(typeof(Buttons));
+        BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.Btn_Start).onClick.AddListener(OnClickStartButton);
         GetButton((int)Buttons.Btn_Setting).onClick.AddListener(OnClickSettingButton);
