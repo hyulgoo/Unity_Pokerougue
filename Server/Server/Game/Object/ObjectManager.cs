@@ -9,27 +9,35 @@ namespace Server.Game
 {
 	public class ObjectManager
 	{
-		//public static ObjectManager Instance { get; } = new ObjectManager();
+		public static ObjectManager Instance { get; } = new ObjectManager();
 
 		object _lock = new object();
-		Dictionary<int, Player> _players = new Dictionary<int, Player>();
+		Dictionary<int, Dictionary<int, Player>> _players = new Dictionary<int, Dictionary<int, Player>>();
 
-		// [UNUSED(1)][TYPE(7)][ID(24)]
 		int _counter = 0;
+		// [UNUSED(1)][TYPE(7)][ID(24)]
+		Dictionary<int, Queue<int>> _turn = new Dictionary<int, Queue<int>>();
 
-		Queue<int> _turn = new Queue<int>();
-
-		public T Add<T>() where T : GameObject, new()
+		public T Add<T>(int roomId) where T : GameObject, new()
 		{
 			T gameObject = new T();
 
 			lock (_lock)
 			{
+				Dictionary<int, Player> dict;
+				bool find = _players.TryGetValue(roomId, out dict);
+
+				if(!find)
+                {
+					dict = new Dictionary<int, Player>();
+                    _players.Add(roomId, dict);
+                }
+
 				gameObject.Id = GenerateId(gameObject.ObjectType);
 
 				if (gameObject.ObjectType == GameObjectType.Player)
 				{
-					_players.Add(gameObject.Id, gameObject as Player);
+					_players[roomId].Add(gameObject.Id, gameObject as Player);
 				}
 			}
 
@@ -50,20 +58,20 @@ namespace Server.Game
 			return (GameObjectType)type;
 		}
 
-		public bool Remove(int objectId)
+		public bool Remove(int roomId, int objectId)
 		{
 			GameObjectType objectType = GetObjectTypeById(objectId);
 
 			lock (_lock)
 			{
 				if (objectType == GameObjectType.Player)
-					return _players.Remove(objectId);
+					return _players[roomId].Remove(objectId);
 			}
 
 			return false;
 		}
 
-		public Player Find(int objectId)
+		public Player Find(int roomId, int objectId)
 		{
 			GameObjectType objectType = GetObjectTypeById(objectId);
 
@@ -72,7 +80,7 @@ namespace Server.Game
 				if (objectType == GameObjectType.Player)
 				{
 					Player player = null;
-					if (_players.TryGetValue(objectId, out player))
+					if (_players[roomId].TryGetValue(objectId, out player))
 						return player;
 				}
 			}
@@ -80,30 +88,40 @@ namespace Server.Game
 			return null;
         }
 
-        public int GetTurn()
+        public int GetTurn(int roomId)
         {
-            if(_turn.Count == 0)
-            {
-                Dictionary<int, int> speedlist = new Dictionary<int, int>();
-                foreach (var player in _players)
+			lock (_lock)
+			{
+				Queue<int> queue;
+				bool find = _turn.TryGetValue(roomId, out queue);
+				if(!find)
 				{
-					int pokemonid = player.Value.PokemonList.Pokemon[0];
-					int speed = DataManager.MonsterDict[pokemonid].info.Spe;
-					speedlist.Add(speed, player.Key);
-                }
-
-                foreach (var key in speedlist.Keys.OrderBy(k => k))
-				{
-					_turn.Enqueue(key);
+					_turn.Add(roomId, new Queue<int>());
 				}
-            }
 
-            return _turn.Dequeue();
+				if (_turn[roomId].Count == 0)
+				{
+					Dictionary<int, int> speedlist = new Dictionary<int, int>();
+					foreach (var player in _players[roomId])
+					{
+						int pokemonid = player.Value.PokemonList.Pokemon[0];
+						int speed = DataManager.MonsterDict[pokemonid].info.Spe;
+						speedlist.Add(speed, player.Key);
+					}
+
+					foreach (var key in speedlist.Keys.OrderBy(k => k))
+					{
+						_turn[roomId].Enqueue(speedlist[key]);
+                    }
+				}
+
+				return _turn[roomId].Dequeue();
+			}
         }
 
-		public void ClearTurn()
+		public void ClearTurn(int roomId)
 		{
-			_turn.Clear();
+            _turn[roomId].Clear();
 		}
     }
 }

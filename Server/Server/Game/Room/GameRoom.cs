@@ -16,7 +16,6 @@ namespace Server.Game
 		Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
 		Dictionary<int, bool> _playerReady = new Dictionary<int, bool>();
-		public ObjectManager ObjManager { get; } = new ObjectManager();
 
 		public void Init()
 		{			
@@ -150,7 +149,7 @@ namespace Server.Game
                 S_StartBattle packet = new S_StartBattle();
 				Random random = new Random();				
 				packet.ArenaType = random.Next(0, (int)Arenas.End);
-				int turnorder = ObjManager.GetTurn();
+				int turnorder = ObjectManager.Instance.GetTurn(RoomId);
 
                 for (int i = 0; i < 2; ++i)
 				{
@@ -161,15 +160,15 @@ namespace Server.Game
                     packet.MyMst = _players[myid].PokemonList;
                     packet.OpponentInfo = _players[opponentid].Info;
                     packet.OpponentMst = _players[opponentid].PokemonList;
+                    packet.Myturn = myid == turnorder ? 1 : 0;
                     _players[myid].Session.Send(packet);
-					packet.Myturn = myid == turnorder ? 1 : 0;
                 }
             }
 		}
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
 		{
-			Player player = ObjManager.Add<Player>();
+			Player player = ObjectManager.Instance.Add<Player>(RoomId);
 			player.PlayerDbId = info.PlayerDbId;
 			player.Info.Name = info.Name;
 			player.Session = session;

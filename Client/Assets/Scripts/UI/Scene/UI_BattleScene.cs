@@ -113,6 +113,8 @@ public class UI_BattleScene : UI_Scene
         GetText((int)Texts.Text).text = text;
     }
 
+    #region HP
+
     int _prevValue;
     int _targetValue;
     bool _isEnemy = false;
@@ -173,4 +175,6 @@ public class UI_BattleScene : UI_Scene
             curvalue = nextValue;
         } while (curvalue > _targetValue);
     }
+
+    #endregion
 }

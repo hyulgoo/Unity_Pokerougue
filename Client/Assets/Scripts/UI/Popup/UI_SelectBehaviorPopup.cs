@@ -28,7 +28,8 @@ public class UI_SelectBehaviorPopup : UI_Popup
     void OnClickBattleButton()
     {
         // SkillSelect popup을 띄움
-        // Managers.UI.ShowPopupUI<UI_SkillSelectPopup>();
+        Managers.UI.ShowPopupUI<UI_SkillSelectPopup>();
+        Managers.UI.ClosePopupUI();
     }
 
     void OnClickPokemonButton()
@@ -43,5 +44,6 @@ public class UI_SelectBehaviorPopup : UI_Popup
 
     void OnClickRunAwayButton()
     {
+        // 항복 패킷 보내기
     }
 }

@@ -64,7 +64,12 @@ namespace Server
 
 				MyPlayer = player;
 				room = GameLogic.Instance.Find(roomId);
-				room.Push(room.EnterGame, player);
+				ClientSession session = player.Session;
+
+                LobbyPlayerInfo info = session.LobbyPlayers.Find(p => p.Name == player.Info.Name);
+
+				room.Push(room.SetPlayerBySession, session, info);
+				//room.Push(room.EnterGame, player);
             }
 
 			Send(packet);

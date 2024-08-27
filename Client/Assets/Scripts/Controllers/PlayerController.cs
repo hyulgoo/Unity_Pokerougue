@@ -1,4 +1,5 @@
 using Data;
+using Google.Protobuf.Collections;
 using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,10 @@ public class PlayerController : MonoBehaviour
 {
     public string Name { get; set; }
     public int Id { get; set; }
+
     List<PokemonData> _pokemonDatas = new List<PokemonData>();
+
+    public Dictionary<int, Dictionary<int, int>> SkillPP { get; set; } = new Dictionary<int, Dictionary<int, int>>();
 
     private void Awake()
     {
@@ -57,6 +61,18 @@ public class PlayerController : MonoBehaviour
     public void SetMonsterData(PokemonList list)
     {
         for (int i = 0; i < list.Pokemon.Count(); ++i)
+        { 
+            // 포켓몬 정보 추가
             _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon[i]]);
+
+            // 스킬 pp 정보 추가
+            RepeatedField<int> skilllist = Managers.Data.MonsterDict[list.Pokemon[i]].info.SkillId;
+            Dictionary<int, int> skillpp = new Dictionary<int, int>();
+            for(int j = 0; j < skilllist.Count(); ++j)
+            {
+                skillpp.Add(skilllist[j], Managers.Data.SkillDict[skilllist[j]].info.Pp);
+            }
+            SkillPP.Add(list.Pokemon[i], skillpp);
+        }
     }
 }

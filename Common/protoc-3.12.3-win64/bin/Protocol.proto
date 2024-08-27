@@ -253,6 +253,11 @@ message S_StartBattle {
   int32 myturn = 6;
 }
 
+message C_Turn {
+  int32 playerId = 1;
+  TurnInfo turnInfo = 2;
+}
+
 message LobbyPlayerInfo {
   int32 playerDbId = 1;
   string name = 2;
