@@ -4,6 +4,7 @@ using Server.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -175,42 +176,59 @@ namespace Server.Game
 		public void Turn(C_Turn packet)
         {
             S_Turn turn = new S_Turn();
-            turn.Action = packet.TurnInfo.Action;
+            turn.Result.Action = packet.TurnInfo.Action;
 
-            List<ResultInfo> list = DefaultTurn(RoomId, _players[packet.PlayerId].Id);
+            List<BattleInfo> list = DefaultTurn(RoomId, _players[packet.PlayerId].Id);
 			
 			for(int i = 0; i < list.Count; ++i)
 			{
-				turn.
+				turn.Result.BattleInfo.Add(list[i]);
 			}
 
 			switch (packet.TurnInfo.Action)
 			{
 				case ActionType.Pass:
+					turn.Result.Action = ActionType.Pass;
 					break;
 				case ActionType.Fight:
-					break;
+                    int enemyId = 0;
+                    foreach (int id in _players.Keys)
+                    {
+                        if (id != packet.PlayerId)
+                            enemyId = id;
+                    }
+
+                    list = Fight(RoomId, _players[packet.PlayerId].Id, enemyId, packet.TurnInfo.SkillNum);
+
+                    for (int i = 0; i < list.Count; ++i)
+                    {
+                        turn.Result.BattleInfo.Add(list[i]);
+                    }
+                    break;
 				case ActionType.Pokeball:
-					break;
+					turn.Result.PokeballInfo = PokeBall();
+                    break;
 				case ActionType.Change:
-					break;
+					turn.Result.ChangeInfo = Change();
+                    break;
 				case ActionType.Runaway:
+					turn.Result.RunAway = true;
 					break;
 			}
 
 		}
 
-        List<ResultInfo> DefaultTurn(int roomId, int id)
+        List<BattleInfo> DefaultTurn(int roomId, int id)
         {
-            List<ResultInfo> resultlist = new List<ResultInfo>();
+            List<BattleInfo> resultlist = new List<BattleInfo>();
 			Random random = new Random();
             Player player = ObjectManager.Instance.Find(roomId, id);
             PokemonInfo pokemonInfo = player.Pokemon[0].info;
             PokemonInfo standardInfo = DataManager.MonsterDict[player.Pokemon[0].id].info;
 
-            if (player.Pokemon[0].info.State.Fire != 0)
+            if (pokemonInfo.State.Fire != 0)
             {
-                ResultInfo result = new ResultInfo();
+                BattleInfo result = new BattleInfo();
 				result.SkillType = SkillType.Dot;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Fire--;
@@ -218,9 +236,9 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (player.Pokemon[0].info.State.Dot != 0)
+            if (pokemonInfo.State.Dot != 0)
             {
-                ResultInfo result = new ResultInfo();
+                BattleInfo result = new BattleInfo();
                 result.SkillType = SkillType.Dot;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Dot--;
@@ -228,9 +246,9 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (player.Pokemon[0].info.State.Poison != 0)
+            if (pokemonInfo.State.Poison != 0)
             {
-                ResultInfo result = new ResultInfo();
+                BattleInfo result = new BattleInfo();
                 result.SkillType = SkillType.Dot;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Poison--;
@@ -238,9 +256,9 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (player.Pokemon[0].info.State.Confusion != 0)
+            if (pokemonInfo.State.Confusion != 0)
             {
-                ResultInfo result = new ResultInfo();
+                BattleInfo result = new BattleInfo();
 				result.SkillType = SkillType.Confusion;
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
@@ -251,11 +269,11 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (player.Pokemon[0].info.State.Sturn != 0)
+            if (pokemonInfo.State.Sturn != 0)
             {
-                ResultInfo result = new ResultInfo();
+                BattleInfo result = new BattleInfo();
                 result.SkillType = SkillType.Sturn;
-				bool recovery = random.Next(0, 100) > 60 ? true : false;
+                bool recovery = random.Next(0, 100) > 60 ? true : false;
 
 				result.StateInfo.RecoverFromSturn = recovery;
                 pokemonInfo.State.Sturn--;
@@ -268,7 +286,7 @@ namespace Server.Game
             return resultlist;
         }
 
-        ResultInfo[] Fight(int roomId, int id, int enemyId, int skillId)
+        List<BattleInfo> Fight(int roomId, int id, int enemyId, int skillId)
 		{
 			Player player = ObjectManager.Instance.Find(roomId, id);
 			Player Enemy = ObjectManager.Instance.Find(roomId, enemyId);
@@ -277,15 +295,28 @@ namespace Server.Game
 			SkillData skillData = DataManager.SkillDict[skillId];
 
             int count = skillData.info.SkillEffect.Count;
-			ResultInfo[] result = new ResultInfo[count];
+            List<BattleInfo> result = new List<BattleInfo>();
 
 			for (int i = 0; i < count; i++) 
 			{
-                result[i] = Util.CalcDamage(data, enemyData, skillData.info.SkillEffect[i]);
+                result.Add(Util.CalcDamage(data, enemyData, skillData.info.SkillEffect[i]));
             }
 			
 			return result;
         }
+
+		PokeballInfo PokeBall()
+        {
+            PokeballInfo info = new PokeballInfo();
+            return info;
+        }
+
+		ChangeInfo Change()
+		{
+            ChangeInfo info = new ChangeInfo();
+            return info;
+        }
+
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
 		{

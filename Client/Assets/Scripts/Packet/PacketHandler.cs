@@ -222,13 +222,14 @@ class PacketHandler
 		Managers.Scene.LoadScene(Define.Scene.Battle);
 
         Managers.Object.Add(startbattle.MyInfo, myPlayer: true);
-		Managers.Object.Add(startbattle.OpponentInfo, myPlayer: false);
+		Managers.Object.Add(startbattle.EnemyInfo, myPlayer: false);
 
 		Managers.Object.MyPlayer.SetMonsterData(startbattle.MyMst);
-        Managers.Object.Opponent.SetMonsterData(startbattle.OpponentMst);
+        Managers.Object.Enemy.SetMonsterData(startbattle.EnemyMst);
 		Managers.Object.ArenaType = startbattle.ArenaType;
 		Managers.Object.MyTurn = startbattle.MyTurn == 1 ? true : false;
     }
+
     public static void S_TurnHandler(PacketSession session, IMessage packet)
     {
         S_Turn turn = (S_Turn)packet;

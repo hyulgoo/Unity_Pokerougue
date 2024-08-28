@@ -58,21 +58,21 @@ public class PlayerController : MonoBehaviour
         _pokemonDatas.Insert(0, tmp);
     }
 
-    public void SetMonsterData(PokemonList list)
+    public void SetMonsterData(RepeatedField<int> list)
     {
-        for (int i = 0; i < list.Pokemon.Count(); ++i)
+        for (int i = 0; i < list.Count(); ++i)
         { 
             // 포켓몬 정보 추가
-            _pokemonDatas.Add(Managers.Data.MonsterDict[list.Pokemon[i]]);
+            _pokemonDatas.Add(Managers.Data.MonsterDict[list[i]]);
 
             // 스킬 pp 정보 추가
-            RepeatedField<int> skilllist = Managers.Data.MonsterDict[list.Pokemon[i]].info.SkillId;
-            Dictionary<int, int> skillpp = new Dictionary<int, int>();
-            for(int j = 0; j < skilllist.Count(); ++j)
+            RepeatedField<int> skillIdList = Managers.Data.MonsterDict[list[i]].info.SkillId;
+            Dictionary<int, int> skillppDict = new Dictionary<int, int>();
+            for(int j = 0; j < skillIdList.Count(); ++j)
             {
-                skillpp.Add(skilllist[j], Managers.Data.SkillDict[skilllist[j]].info.Pp);
+                skillppDict.Add(skillIdList[j], Managers.Data.SkillDict[skillIdList[j]].info.Pp);
             }
-            SkillPP.Add(list.Pokemon[i], skillpp);
+            SkillPP.Add(list[i], skillppDict);
         }
     }
 }

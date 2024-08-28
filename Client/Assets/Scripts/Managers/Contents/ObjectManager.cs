@@ -7,7 +7,7 @@ using UnityEngine;
 public class ObjectManager
 {
 	public MyPlayerController MyPlayer { get; set; }
-	public PlayerController Opponent { get; set; }
+	public PlayerController Enemy { get; set; }
 
 	public int ArenaType { get; set; }
 
@@ -51,7 +51,7 @@ public class ObjectManager
 
 				if(Managers.Scene.CurrentScene.SceneType == Define.Scene.Select)
 				{
-					Opponent = pc;
+					Enemy = pc;
 				}
 			}
 		}
@@ -96,7 +96,7 @@ public class ObjectManager
 			Managers.Resource.Destroy(obj);
 		_objects.Clear();
 		MyPlayer = null;
-		Opponent = null;
+		Enemy = null;
 	}
 
 	public KeyValuePair<int, GameObject>[] GetObjects()

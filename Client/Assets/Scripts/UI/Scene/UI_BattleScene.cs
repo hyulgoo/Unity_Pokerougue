@@ -58,7 +58,7 @@ public class UI_BattleScene : UI_Scene
     {
         _hpbarSprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
         _myMonsterId = Managers.Object.MyPlayer.GetCurMonsterData().id;
-        _enemyMonsterId = Managers.Object.Opponent.GetCurMonsterData().id;
+        _enemyMonsterId = Managers.Object.Enemy.GetCurMonsterData().id;
 
         SetBattleMonsterInfo();
     }

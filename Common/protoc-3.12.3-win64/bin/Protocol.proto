@@ -262,13 +262,8 @@ message C_Turn {
 }
 
 message S_Turn {
-  ActionType action = 1;
-  PokemonInfo myInfo = 2;
-  PokemonInfo enemyInfo = 3;
-  Type attackType = 4;
-  SkillType skillType = 5;
-  TargetType targetType = 6;
-  int32 myTurn = 7;
+  TurnResult result = 1;
+  int32 myTurn = 2;
 }
 
 message LobbyPlayerInfo {
@@ -281,21 +276,36 @@ message ObjectInfo {
   string name = 2;
 }
 
-message TurnInfo
-{
+message TurnInfo {
   ActionType action  = 1;
   int32 skillNum = 2;
   int32 ballType = 3;
   int32 changeNum = 4;
-  repeated ResultInfo result = 5;
 }
 
-message ResultInfo
-{
+message TurnResult {
+  ActionType action = 1;
+  repeated BattleInfo battleInfo = 2;
+  PokeballInfo pokeballInfo = 3;
+  ChangeInfo changeInfo = 4;
+  bool RunAway = 5;
+}
+
+message BattleInfo {
   SkillType skillType = 1;
-  PokemonInfo myInfo = 2;
-  PokemonInfo enemyInfo = 3;
-  StateInfo stateInfo = 4;
+  Type type = 2;
+  TargetType targetType = 3;
+  PokemonInfo myInfo = 4;
+  PokemonInfo enemyInfo = 5;
+  StateInfo stateInfo = 6;
+}
+
+message PokeballInfo {
+	int32 info = 1;
+}
+
+message ChangeInfo {
+	int32 info = 1;
 }
 
 message StateInfo {
