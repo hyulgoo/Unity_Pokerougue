@@ -22,6 +22,7 @@ public class UI_AcceptDenyPopup : UI_Popup
         base.Init();
         BindButton(typeof(Buttons));
         BindText(typeof(Texts));
+        InputMode = false;
 
         GetButton((int)Buttons.Btn_Apply).onClick.AddListener(OnClickApplyButton);
         GetButton((int)Buttons.Btn_Deny).onClick.AddListener(OnClickDenyButton);

@@ -1,5 +1,7 @@
-﻿using Google.Protobuf.Protocol;
+﻿using Google.Protobuf.Collections;
+using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore;
+using Server.Data;
 using Server.DB;
 using Server.Game;
 using System;
@@ -13,10 +15,20 @@ namespace Server.Game
 		public int PlayerDbId { get; set; }
 		public ClientSession Session { get; set; }
 		public Inventory Inven { get; private set; } = new Inventory();
-		public PokemonList PokemonList { get; set; } = new PokemonList();
+		public List<PokemonData> Pokemon { get; set; } = new List<PokemonData>();
         public Player()
 		{
 			ObjectType = GameObjectType.Player;
+		}
+
+		public int[] GetPokemonList()
+		{
+			int[] list = new int[Pokemon.Count];
+			for (int i = 0; i < Pokemon.Count; i++)
+			{
+				list[i] = Pokemon[i].id;
+			}
+			return list;
 		}
 
 		public void OnLeaveGame()

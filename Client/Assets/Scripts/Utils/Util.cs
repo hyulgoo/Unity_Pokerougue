@@ -51,170 +51,70 @@ public class Util
 
         return null;
     }
-          
-    #region CalcAttackType
-    public float CalcAttackType(Type type, Type opponent)
+              
+    public static string GetTypeName(Type type)
     {
-        float damageRatio = 1f;
+        string typeName = "";
         switch (type)
         {
-            case Type.Normal:
-                if (opponent == Type.Rock || opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Ghost)
-                    damageRatio = 0f;
-                break;
-            case Type.Fighting:
-                if (opponent == Type.Normal || opponent == Type.Ice
-                    || opponent == Type.Rock || opponent == Type.Dark
-                    || opponent == Type.Steel)
-                    damageRatio = 2f;
-                else if (opponent == Type.Poison || opponent == Type.Flying
-                    || opponent == Type.Psychic || opponent == Type.Bug
-                    || opponent == Type.Fairy)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Ghost)
-                    damageRatio = 0f;
-                break;
-            case Type.Flying:
-                if (opponent == Type.Grass || opponent == Type.Fighting
-                    || opponent == Type.Bug)
-                    damageRatio = 2f;
-                else if (opponent == Type.Electric || opponent == Type.Rock
-                    || opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Poison:
-                if (opponent == Type.Grass || opponent == Type.Fairy)
-                    damageRatio = 2f;
-                else if (opponent == Type.Poison || opponent == Type.Ground
-                    || opponent == Type.Rock || opponent == Type.Ghost)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Steel)
-                    damageRatio = 0f;
-                break;
-            case Type.Ground:
-                if (opponent == Type.Fire || opponent == Type.Electric
-                    || opponent == Type.Poison || opponent == Type.Rock
-                    || opponent == Type.Steel)
-                    damageRatio = 2f;
-                else if (opponent == Type.Grass || opponent == Type.Bug)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Flying)
-                    damageRatio = 0f;
-                break;
-            case Type.Rock:
-                if (opponent == Type.Fire || opponent == Type.Ice
-                    || opponent == Type.Flying || opponent == Type.Bug)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fighting || opponent == Type.Ground
-                    || opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Steel:
-                if (opponent == Type.Ice || opponent == Type.Rock
-                    || opponent == Type.Fairy)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fire || opponent == Type.Water
-                    || opponent == Type.Electric || opponent == Type.Steel)
-                    damageRatio = 0.5f;
+            case Type.Notype:
+                typeName = "없음";
                 break;
             case Type.Bug:
-                if (opponent == Type.Grass || opponent == Type.Psychic
-                    || opponent == Type.Dark)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fire || opponent == Type.Fighting
-                    || opponent == Type.Poison || opponent == Type.Flying 
-                    || opponent == Type.Ghost || opponent == Type.Steel
-                    || opponent == Type.Fairy)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Ghost:
-                if (opponent == Type.Psychic || opponent == Type.Ghost
-                    || opponent == Type.Flying || opponent == Type.Bug)
-                    damageRatio = 2f;
-                else if (opponent == Type.Dark)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Normal)
-                    damageRatio = 0f;
-                break;
-            case Type.Fire:
-                if (opponent == Type.Grass || opponent == Type.Ice
-                    || opponent == Type.Bug || opponent == Type.Steel)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fire || opponent == Type.Water
-                    || opponent == Type.Rock || opponent == Type.Dragon)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Water:
-                if (opponent == Type.Fire || opponent == Type.Ground
-                    || opponent == Type.Rock)
-                    damageRatio = 2f;
-                else if (opponent == Type.Water || opponent == Type.Grass
-                    || opponent == Type.Dragon)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Grass:
-                if (opponent == Type.Water || opponent == Type.Ground
-                    || opponent == Type.Rock)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fire || opponent == Type.Grass
-                    || opponent == Type.Poison || opponent == Type.Flying
-                    || opponent == Type.Bug || opponent == Type.Dragon
-                    || opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Electric:
-                if (opponent == Type.Water || opponent == Type.Flying)
-                    damageRatio = 2f;
-                else if (opponent == Type.Grass || opponent == Type.Electric
-                    || opponent == Type.Dragon)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Ground)
-                    damageRatio = 0f;
-                break;
-            case Type.Psychic:
-                if (opponent == Type.Fighting || opponent == Type.Poison)
-                    damageRatio = 2f;
-                else if (opponent == Type.Psychic || opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                else if (opponent == Type.Dark)
-                    damageRatio = 0f;
-                break;
-            case Type.Ice:
-                if (opponent == Type.Grass || opponent == Type.Ground
-                    || opponent == Type.Flying || opponent == Type.Dragon)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fire || opponent == Type.Water
-                    || opponent == Type.Ice || opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                break;
-            case Type.Dragon:
-                if (opponent == Type.Dragon)
-                    damageRatio = 2f;
-                else if(opponent == Type.Steel)
-                    damageRatio = 0.5f;
-                else if( opponent == Type.Fairy)
-                    damageRatio = 0f;
+                typeName = "벌레";
                 break;
             case Type.Dark:
-                if (opponent == Type.Psychic || opponent == Type.Ghost)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fighting || opponent == Type.Dark
-                    || opponent == Type.Fairy)
-                    damageRatio = 0.5f;
+                typeName = "악";
+                break;
+            case Type.Dragon:
+                typeName = "드래곤";
+                break;
+            case Type.Electric:
+                typeName = "전기";
                 break;
             case Type.Fairy:
-                if (opponent == Type.Fighting || opponent == Type.Dragon
-                    || opponent == Type.Dark)
-                    damageRatio = 2f;
-                else if (opponent == Type.Fire || opponent == Type.Poison
-                    || opponent == Type.Steel)
-                    damageRatio = 0.5f;
+                typeName = "페어리";
+                break;
+            case Type.Fighting:
+                typeName = "격투";
+                break;
+            case Type.Fire:
+                typeName = "불꽃";
+                break;
+            case Type.Flying:
+                typeName = "비행";
+                break;
+            case Type.Ghost:
+                typeName = "고스트";
+                break;
+            case Type.Grass:
+                typeName = "풀";
+                break;
+            case Type.Ground:
+                typeName = "땅";
+                break;
+            case Type.Ice:
+                typeName = "얼음";
+                break;
+            case Type.Normal:
+                typeName = "노말";
+                break;
+            case Type.Poison:
+                typeName = "독";
+                break;
+            case Type.Psychic:
+                typeName = "에스퍼";
+                break;
+            case Type.Rock:
+                typeName = "바위";
+                break;
+            case Type.Steel:
+                typeName = "강철";
+                break;
+            case Type.Water:
+                typeName = "물";
                 break;
         }
-
-        return damageRatio;
+        return typeName;
     }
-    #endregion
 }

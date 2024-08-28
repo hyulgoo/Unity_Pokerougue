@@ -17,6 +17,8 @@ public class UI_SelectBehaviorPopup : UI_Popup
     {
         base.Init();
 
+        InputMode = false;
+
         BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.Battle).onClick.AddListener(OnClickBattleButton);
@@ -28,8 +30,8 @@ public class UI_SelectBehaviorPopup : UI_Popup
     void OnClickBattleButton()
     {
         // SkillSelect popupÀ» ¶ç¿ò
-        Managers.UI.ShowPopupUI<UI_SkillSelectPopup>();
         Managers.UI.ClosePopupUI();
+        Managers.UI.ShowPopupUI<UI_SkillSelectPopup>();
     }
 
     void OnClickPokemonButton()

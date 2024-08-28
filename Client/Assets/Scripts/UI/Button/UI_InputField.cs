@@ -6,13 +6,14 @@ using UnityEngine.EventSystems;
 
 public class UI_InputField : MonoBehaviour, ISelectHandler, IDeselectHandler
 { 
+    public UI_Popup UI_Popup { get; set; }
     public void OnSelect(BaseEventData eventData)
     {
-        Managers.Object.MyPlayer._inputMode = true;
+        UI_Popup.InputMode = true;
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
-        Managers.Object.MyPlayer._inputMode = false;
+        UI_Popup.InputMode = false;
     }
 }

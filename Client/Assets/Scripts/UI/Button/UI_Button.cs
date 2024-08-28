@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UI_Button : MonoBehaviour, ISelectHandler
 {    
     // ISelectHandler 인터페이스
-    public void OnSelect(BaseEventData eventData)
+    public virtual void OnSelect(BaseEventData eventData)
     {
         GameObject go = Managers.Select.CurPanel;
 

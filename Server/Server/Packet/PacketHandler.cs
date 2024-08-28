@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using Server;
+using Server.Data;
 using Server.DB;
 using Server.Game;
 using ServerCore;
@@ -67,7 +68,7 @@ class PacketHandler
         if (room == null)
             return;
 
-        room.Push(room.RequestDuel, requestDuelPaceket.ApplyId, requestDuelPaceket.OpponentId);
+        room.Push(room.RequestDuel, requestDuelPaceket.ApplyId, requestDuelPaceket.EnemyId);
     }
 
     public static void C_RespondDuelHandler(PacketSession session, IMessage packet)
@@ -99,9 +100,28 @@ class PacketHandler
         if (room == null)
             return;
 
-		player.PokemonList = selectMstPacket.MstList;
+        for(int i = 0; i < selectMstPacket.MstList.Count; ++i)
+        {
+            player.Pokemon.Add(DataManager.MonsterDict[selectMstPacket.MstList.Pokemon[i]]);
+        }
         room.Push(room.SelectMst, selectMstPacket.PlayerId);
 
 		// TODO 각 플레이어에게 자신이 고른 리스트와 상대가 고른 리스트를 보내줌.
+    }
+
+    public static void C_TurnHandler(PacketSession session, IMessage packet)
+    {
+        C_Turn turnpacket = (C_Turn)packet;
+        ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+            return;
+
+        GameRoom room = player.Room;
+        if (room == null)
+            return;
+
+        room.Push(room.Turn, turnpacket);
     }
 }

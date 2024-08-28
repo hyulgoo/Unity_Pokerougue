@@ -119,20 +119,26 @@ public class UI_BattleScene : UI_Scene
     int _targetValue;
     bool _isEnemy = false;
 
-    public void SetHPBar(int curHp, bool isEnemy = false)
+    public void SetHPBar(int diff, bool isEnemy = false)
     {
         _isEnemy = isEnemy;
         PokemonData data = isEnemy ? Managers.Data.MonsterDict[_enemyMonsterId]: Managers.Data.MonsterDict[_myMonsterId];
         int maxHp = data.info.Hp;
-        _targetValue = maxHp - curHp;
-        StartCoroutine(HPChangeAnimation());
+        _targetValue = maxHp - diff;
+        if(isEnemy)
+        {
+            StartCoroutine(SetEnemyHPbar());
+        }
+        else
+        {
+            StartCoroutine(SetMyHpbar());
+        }
     }
 
-    IEnumerator HPChangeAnimation()
+    IEnumerator SetEnemyHPbar()
     {
         float curvalue = _prevValue;
-        int targetId = _isEnemy ? _enemyMonsterId : _myMonsterId;
-        float maxHP = (float)Managers.Data.MonsterDict[targetId].info.Hp;
+        float maxHP = (float)Managers.Data.MonsterDict[_enemyMonsterId].info.Hp;
 
         // 수치가 목표 값에 도달할 때까지 반복
         do
@@ -153,7 +159,54 @@ public class UI_BattleScene : UI_Scene
                 GetObject(target).GetComponent<Slider>().value = newvalue;
 
                 Sprite hpsprite = null;
-                if(GetObject(target).GetComponent<Slider>().value < 0.33f)
+                if (GetObject(target).GetComponent<Slider>().value < 0.33f)
+                {
+                    hpsprite = _hpbarSprites[2];
+                }
+                else if (GetObject(target).GetComponent<Slider>().value > 0.66f)
+                {
+                    hpsprite = _hpbarSprites[0];
+                }
+                else
+                {
+                    hpsprite = _hpbarSprites[1];
+                }
+
+                Util.FindChild(GetObject(target), "Fill", true).GetComponent<Image>().sprite = hpsprite;
+                // 다음 프레임까지 대기
+                yield return null;
+            }
+
+            // 정확히 다음 값으로 설정
+            curvalue = nextValue;
+        } while (curvalue > _targetValue);
+    }
+
+    IEnumerator SetMyHpbar()
+    {
+        float curvalue = _prevValue;
+        float maxHP = (float)Managers.Data.MonsterDict[_myMonsterId].info.Hp;
+
+        // 수치가 목표 값에 도달할 때까지 반복
+        do
+        {
+            // 현재 수치와 50 감소한 값을 계산
+            float nextValue = Mathf.Max(curvalue - 50f, _targetValue);
+
+            // 1초 동안의 선형 보간 수행
+            float elapsedTime = 0f;
+            while (elapsedTime < 1f)
+            {
+                elapsedTime += Time.deltaTime;
+                curvalue = Mathf.Lerp(curvalue, nextValue, elapsedTime / 1f);
+
+                // 여기서 원하는 작업 수행 (예: UI 업데이트)
+                int target = _isEnemy ? (int)GameObjects.EnemyHpbar : (int)GameObjects.MyHpbar;
+                float newvalue = curvalue / maxHP;
+                GetObject(target).GetComponent<Slider>().value = newvalue;
+
+                Sprite hpsprite = null;
+                if (GetObject(target).GetComponent<Slider>().value < 0.33f)
                 {
                     hpsprite = _hpbarSprites[2];
                 }

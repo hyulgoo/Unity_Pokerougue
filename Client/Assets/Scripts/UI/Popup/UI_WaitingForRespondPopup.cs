@@ -18,20 +18,11 @@ public class UI_WaitingForRespondPopup : UI_Popup
     }
 
     // 대기 중일 때는 창을 끄거나 다른 행동을 할 수 없음.
-    UI_WaitingForRespondPopup()
-    {
-        Managers.Object.MyPlayer._inputMode = true;
-    }
-
-    ~UI_WaitingForRespondPopup()
-    {
-        Managers.Object.MyPlayer._inputMode = false;
-    }
-
     public override void Init()
     {
         base.Init();
         BindText(typeof(Texts));
+        InputMode = false;
 
         StartCoroutine(ChangeText(_updateDelay));
     }

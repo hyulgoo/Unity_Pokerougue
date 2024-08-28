@@ -28,6 +28,8 @@ enum MsgId {
   S_RESPOND_DUEL = 21;
   C_SELECT_MST = 22;
   S_START_BATTLE = 23;
+  C_TURN = 24;
+  S_TURN = 25;
 }
 
 enum GameObjectType {
@@ -125,6 +127,7 @@ enum Arenas {
 enum TargetType {
   ONESELF = 0;
   OPPONENT = 1;
+  BOTH = 2;
 }
 
 enum SkillType
@@ -189,7 +192,7 @@ message C_EnterGame {
 
 message C_RequestDuel {		
   int32 applyId = 1;
-  int32 opponentId = 2;
+  int32 enemyId = 2;
 }
 
 message S_RequestSendOk {
@@ -202,13 +205,13 @@ message S_RequestDuel {
 
 message C_RespondDuel {
   int32 respondId = 1;
-  int32 opponentId = 2;
+  int32 enemyId = 2;
   int32 duelOK = 3;
 }
 
 message S_RespondDuel {
   int32 duelOK = 1;
-  int32 opponentId = 2;
+  int32 enemyId = 2;
 }
 
 message S_ItemList {
@@ -241,21 +244,31 @@ message C_Pong {
 
 message C_SelectMst {
   int32 playerId = 1;
-  PokemonList mstList = 2;
+  int32 mstList = 2;
 }
 
 message S_StartBattle {
   int32 arenaType = 1;
   ObjectInfo myInfo = 2;
-  ObjectInfo opponentInfo = 3;
-  PokemonList myMst = 4;
-  PokemonList opponentMst = 5;
-  int32 myturn = 6;
+  ObjectInfo enemyInfo = 3;
+  repeated int32 myMst = 4;
+  repeated int32 enemyMst = 5;
+  int32 myTurn = 6;
 }
 
 message C_Turn {
   int32 playerId = 1;
   TurnInfo turnInfo = 2;
+}
+
+message S_Turn {
+  ActionType action = 1;
+  PokemonInfo myInfo = 2;
+  PokemonInfo enemyInfo = 3;
+  Type attackType = 4;
+  SkillType skillType = 5;
+  TargetType targetType = 6;
+  int32 myTurn = 7;
 }
 
 message LobbyPlayerInfo {
@@ -274,11 +287,23 @@ message TurnInfo
   int32 skillNum = 2;
   int32 ballType = 3;
   int32 changeNum = 4;
+  repeated ResultInfo result = 5;
 }
 
-message PokemonList
+message ResultInfo
 {
-  repeated int32 pokemon = 1;
+  SkillType skillType = 1;
+  PokemonInfo myInfo = 2;
+  PokemonInfo enemyInfo = 3;
+  StateInfo stateInfo = 4;
+}
+
+message StateInfo {
+  bool isMiss = 1;
+  bool isSturn = 2;
+  bool isConfusion = 3;
+  bool recoverFromSturn = 4;
+  bool recoverFromConfusion = 5;
 }
 
 message PokemonInfo 
@@ -291,8 +316,17 @@ message PokemonInfo
   int32 spD = 6;
   int32 spe = 7;
   int32 exp = 8;
-  repeated Type type = 9;
-  repeated int32 skillId = 10;
+  ConditionAbnormality state = 9;
+  repeated Type type = 10;
+  repeated int32 skillId = 11;
+}
+
+message ConditionAbnormality {
+  int32 sturn = 1;
+  int32 confusion = 2;
+  int32 fire = 3;
+  int32 poison = 4;
+  int32 dot = 5;
 }
 
 message SkillEffect {

@@ -41,7 +41,6 @@ class PacketHandler
 
 	public static void S_ConnectedHandler(PacketSession session, IMessage packet)
 	{
-		Debug.Log("S_ConnectedHandler");
 		C_Login loginPacket = new C_Login();
 
 		string path = Managers.Network.Name;
@@ -53,7 +52,6 @@ class PacketHandler
 	public static void S_LoginHandler(PacketSession session, IMessage packet)
 	{
 		S_Login loginPacket = (S_Login)packet;
-		Debug.Log($"LoginOk({loginPacket.LoginOk})");
 
 		// TODO : 로비 UI에서 캐릭터 보여주고, 선택할 수 있도록
 		if (loginPacket.Players == null || loginPacket.Players.Count == 0)
@@ -88,7 +86,6 @@ class PacketHandler
 
 	public static void S_CreatePlayerHandler(PacketSession session, IMessage packet)
     {
-        Debug.Log("S_CreatePlayerHandler");
         S_CreatePlayer createOkPacket = (S_CreatePlayer)packet;
 
 		if (createOkPacket.Player == null)
@@ -107,7 +104,6 @@ class PacketHandler
 
 	public static void S_ItemListHandler(PacketSession session, IMessage packet)
     {
-        Debug.Log("S_ItemListHandler");
         S_ItemList itemList = (S_ItemList)packet;
 
 		Managers.Inven.Clear();
@@ -171,7 +167,6 @@ class PacketHandler
 
 	public static void S_RequestSendOkHandler(PacketSession session, IMessage packet)
     {
-        Debug.Log("S_RequestSendOkHandler");
         S_RequestSendOk requestSendOK = (S_RequestSendOk)packet;
 
 		if(requestSendOK.SendOK == 1)
@@ -192,7 +187,6 @@ class PacketHandler
 
     public static void S_RequestDuelHandler(PacketSession session, IMessage packet)
     {
-        Debug.Log("S_RequestDuelHandler");
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
         UI_DualRespondPopup popup = Managers.UI.ShowPopupUI<UI_DualRespondPopup>("UI_AcceptDenyPopup");
 		popup.SetApplyDuelAnnounce(requestDuel.RequestId);
@@ -200,7 +194,6 @@ class PacketHandler
 
     public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
     {
-        Debug.Log("S_RespondDuelHandler");
         S_RespondDuel respenDuel = (S_RespondDuel)packet;
 
 		bool letsDuel = respenDuel.DuelOK == 1 ? true : false;
@@ -224,7 +217,6 @@ class PacketHandler
 
     public static void S_StartBattleHandler(PacketSession session, IMessage packet)
     {
-        Debug.Log("S_StartBattleHandler");
         S_StartBattle startbattle = (S_StartBattle)packet;
 
 		Managers.Scene.LoadScene(Define.Scene.Battle);
@@ -235,6 +227,11 @@ class PacketHandler
 		Managers.Object.MyPlayer.SetMonsterData(startbattle.MyMst);
         Managers.Object.Opponent.SetMonsterData(startbattle.OpponentMst);
 		Managers.Object.ArenaType = startbattle.ArenaType;
-		Managers.Object.MyTurn = startbattle.Myturn == 1 ? true : false;
+		Managers.Object.MyTurn = startbattle.MyTurn == 1 ? true : false;
+    }
+    public static void S_TurnHandler(PacketSession session, IMessage packet)
+    {
+        S_Turn turn = (S_Turn)packet;
+
     }
 }

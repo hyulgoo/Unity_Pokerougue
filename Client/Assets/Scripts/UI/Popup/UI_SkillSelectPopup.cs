@@ -41,22 +41,15 @@ public class UI_SkillSelectPopup : UI_Popup
         BindButton(typeof(Buttons));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
-
+              
         SetSkillInfo();
-
-        for(int i = (int)Buttons.Btn_Skill_00; i <=  (int)Buttons.Btn_Skill_03; ++i)
-        {
-            GetButton(i).onClick.AddListener(OnClickSkillButton);
-            UI_SelectSkillButton button = GetButton(i).gameObject.AddComponent<UI_SelectSkillButton>();
-            button.SkillSelectPopup = this;
-        }
     }
 
-    private void Update()
+    protected override void Update()
     {
         if(Input.GetKey(KeyCode.Backspace))
         {
-            Managers.UI.ClosePopupUI();
+            ClosePopupUI();
             Managers.UI.ShowPopupUI<UI_SelectBehaviorPopup>();
         }
     }
@@ -73,6 +66,7 @@ public class UI_SkillSelectPopup : UI_Popup
             GetText(i).text = name;
             // 버튼에 스크립트 넣고 멤버로 info 넣어주기.
             UI_SelectSkillButton button = GetButton(i).gameObject.GetOrAddComponent<UI_SelectSkillButton>();
+            button.SkillSelectPopup = this;
             button.SkillId = skillId;
         }
     }
@@ -86,6 +80,7 @@ public class UI_SkillSelectPopup : UI_Popup
         sprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/type_bgs");
         type = (int)Managers.Data.SkillDict[skillId].info.SkillEffect[0].Type;
         GetImage((int)Images.Image_SkillAttribute).sprite = sprites[type];
+        GetText((int)Texts.Text_SkillAttribute).text = Util.GetTypeName((Type)type);
 
         sprites = Managers.Resource.LoadAll<Sprite>("Sprite/categories_legacy");
         SkillType category = Managers.Data.SkillDict[skillId].info.SkillEffect[0].SkillType;
@@ -111,7 +106,13 @@ public class UI_SkillSelectPopup : UI_Popup
         int curpp = Managers.Object.MyPlayer.SkillPP[pokemonid][skillId];
 
         GetText((int)Texts.Text_SkillPP).text = $"{curpp}/{info.Pp}";
-        GetText((int)Texts.Text_SkillPower).text = $"{info.SkillEffect[0].Value}";
+
+        // 공격 스킬이 아닐 경우에는 위력을 0으로 설정함
+        if(category == SkillType.Atk || category == SkillType.Spa )
+            GetText((int)Texts.Text_SkillPower).text = $"{info.SkillEffect[0].Value}";
+        else
+            GetText((int)Texts.Text_SkillPower).text = "0";
+
         GetText((int)Texts.Text_SkillAccuracy).text = $"{info.SkillEffect[0].Accuracy}";
     }
 

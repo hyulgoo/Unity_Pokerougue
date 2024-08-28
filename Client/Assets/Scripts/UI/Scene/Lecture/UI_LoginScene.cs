@@ -32,8 +32,8 @@ public class UI_LoginScene : UI_Scene
 
     public void OnClickCreateButton()
     {
-        string account = GetInputField((int)InputFields.AccountName).text;
-        string password = GetInputField((int)InputFields.Password).text;
+        string account = GetInput((int)InputFields.AccountName).text;
+        string password = GetInput((int)InputFields.Password).text;
 
         CreateAccountPacketReq packet = new CreateAccountPacketReq()
         {
@@ -44,8 +44,8 @@ public class UI_LoginScene : UI_Scene
         Managers.Web.SendPostRequest<CreateAccountPacketRes>("account/create", packet, (res) =>
         {
             Debug.Log(res.CreateOk);
-            GetInputField((int)InputFields.AccountName).text = "";
-            GetInputField((int)InputFields.Password).text = "";
+            GetInput((int)InputFields.AccountName).text = "";
+            GetInput((int)InputFields.Password).text = "";
         });
     }
 
@@ -53,8 +53,8 @@ public class UI_LoginScene : UI_Scene
     {
         Debug.Log("OnClickLoginButton");
 
-        string account = GetInputField((int)InputFields.AccountName).text;
-        string password = GetInputField((int)InputFields.Password).text;
+        string account = GetInput((int)InputFields.AccountName).text;
+        string password = GetInput((int)InputFields.Password).text;
 
         LoginAccountPacketReq packet = new LoginAccountPacketReq()
         {
@@ -65,8 +65,8 @@ public class UI_LoginScene : UI_Scene
         Managers.Web.SendPostRequest<LoginAccountPacketRes>("account/login", packet, (res) =>
         {
             Debug.Log(res.LoginOk);
-            GetInputField((int)InputFields.AccountName).text = "";
-            GetInputField((int)InputFields.Password).text = "";
+            GetInput((int)InputFields.AccountName).text = "";
+            GetInput((int)InputFields.Password).text = "";
 
             if (res.LoginOk)
             {

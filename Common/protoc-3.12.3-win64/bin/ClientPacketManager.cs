@@ -54,7 +54,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SRespondDuel, MakePacket<S_RespondDuel>);
 		_handler.Add((ushort)MsgId.SRespondDuel, PacketHandler.S_RespondDuelHandler);		
 		_onRecv.Add((ushort)MsgId.SStartBattle, MakePacket<S_StartBattle>);
-		_handler.Add((ushort)MsgId.SStartBattle, PacketHandler.S_StartBattleHandler);
+		_handler.Add((ushort)MsgId.SStartBattle, PacketHandler.S_StartBattleHandler);		
+		_onRecv.Add((ushort)MsgId.STurn, MakePacket<S_Turn>);
+		_handler.Add((ushort)MsgId.STurn, PacketHandler.S_TurnHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

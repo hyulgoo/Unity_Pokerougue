@@ -16,7 +16,7 @@ namespace Server.Game
 
 		int _counter = 0;
 		// [UNUSED(1)][TYPE(7)][ID(24)]
-		Dictionary<int, Queue<int>> _turn = new Dictionary<int, Queue<int>>();
+		Dictionary<int, Stack<int>> _turn = new Dictionary<int, Stack<int>>();
 
 		public T Add<T>(int roomId) where T : GameObject, new()
 		{
@@ -92,11 +92,11 @@ namespace Server.Game
         {
 			lock (_lock)
 			{
-				Queue<int> queue;
-				bool find = _turn.TryGetValue(roomId, out queue);
+                Stack<int> stack;
+				bool find = _turn.TryGetValue(roomId, out stack);
 				if(!find)
 				{
-					_turn.Add(roomId, new Queue<int>());
+					_turn.Add(roomId, new Stack<int>());
 				}
 
 				if (_turn[roomId].Count == 0)
@@ -111,11 +111,11 @@ namespace Server.Game
 
 					foreach (var key in speedlist.Keys.OrderBy(k => k))
 					{
-						_turn[roomId].Enqueue(speedlist[key]);
+						_turn[roomId].Push(speedlist[key]);
                     }
 				}
 
-				return _turn[roomId].Dequeue();
+				return _turn[roomId].Pop();
 			}
         }
 

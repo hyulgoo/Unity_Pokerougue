@@ -28,12 +28,15 @@ public class UI_LoginPopup : UI_Popup
 
         GetButton((int)Buttons.Btn_Create).onClick.AddListener(OnClickCreateButton);
         GetButton((int)Buttons.Btn_Login).onClick.AddListener(OnClickLoginButton);
+
+        GetInput((int)InputFields.AccountName).gameObject.GetOrAddComponent<UI_InputField>().UI_Popup = this;
+        GetInput((int)InputFields.Password).gameObject.GetOrAddComponent<UI_InputField>().UI_Popup = this;
     }
 
     public void OnClickCreateButton()
     {
-        string account = GetInputField((int)InputFields.AccountName).text;
-        string password = GetInputField((int)InputFields.Password).text;
+        string account = GetInput((int)InputFields.AccountName).text;
+        string password = GetInput((int)InputFields.Password).text;
 
         CreateAccountPacketReq packet = new CreateAccountPacketReq()
         { 
@@ -44,8 +47,8 @@ public class UI_LoginPopup : UI_Popup
         Managers.Web.SendPostRequest<CreateAccountPacketRes>("account/create", packet, (res) =>
         {
             Debug.Log(res.CreateOk);
-            GetInputField((int)InputFields.AccountName).text = "";
-            GetInputField((int)InputFields.Password).text = "";
+            GetInput((int)InputFields.AccountName).text = "";
+            GetInput((int)InputFields.Password).text = "";
         });
     }
 
@@ -53,8 +56,8 @@ public class UI_LoginPopup : UI_Popup
     {
         Debug.Log("OnClickLoginButton");
 
-        string account = GetInputField((int)InputFields.AccountName).text;
-        string password = GetInputField((int)InputFields.Password).text;
+        string account = GetInput((int)InputFields.AccountName).text;
+        string password = GetInput((int)InputFields.Password).text;
 
         LoginAccountPacketReq packet = new LoginAccountPacketReq()
         {
@@ -65,8 +68,8 @@ public class UI_LoginPopup : UI_Popup
         Managers.Web.SendPostRequest<LoginAccountPacketRes>("account/login", packet, (res) =>
         {
             Debug.Log(res.LoginOk);
-            GetInputField((int)InputFields.AccountName).text = "";
-            GetInputField((int)InputFields.Password).text = "";
+            GetInput((int)InputFields.AccountName).text = "";
+            GetInput((int)InputFields.Password).text = "";
 
             if(res.LoginOk)
             {

@@ -108,7 +108,7 @@ namespace Server.Game
 			respondDuelpacket.DuelOK = packet.DuelOK;
 
             Player Respond = _players[packet.RespondId];
-            Player opponent = _players[packet.OpponentId];
+            Player opponent = _players[packet.EnemyId];
 
             // 대결을 신청한 상대에게 응답패킷을 보냄
 			// 대결을 승낙하면 씬 전환을 해야하므로 본인에게도 다시 보냄
@@ -118,16 +118,16 @@ namespace Server.Game
 				{
                     GameRoom room = GameLogic.Instance.Add();
 
-                    respondDuelpacket.OpponentId = packet.RespondId;
+                    respondDuelpacket.EnemyId = packet.RespondId;
                     opponent.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
 
-                    respondDuelpacket.OpponentId = packet.OpponentId;
+                    respondDuelpacket.EnemyId = packet.EnemyId;
                     Respond.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
                 });				
             }
 			else
 			{
-                respondDuelpacket.OpponentId = packet.RespondId;
+                respondDuelpacket.EnemyId = packet.RespondId;
                 opponent.Session.HandleRespondDuel(respondDuelpacket, 0);
             }
         }
@@ -154,17 +154,138 @@ namespace Server.Game
                 for (int i = 0; i < 2; ++i)
 				{
 					int myid = list[i];
-					int opponentid = i == 0 ? list[1] : list[0];
+					int enemyid = i == 0 ? list[1] : list[0];
 
                     packet.MyInfo = _players[myid].Info;
-                    packet.MyMst = _players[myid].PokemonList;
-                    packet.OpponentInfo = _players[opponentid].Info;
-                    packet.OpponentMst = _players[opponentid].PokemonList;
-                    packet.Myturn = myid == turnorder ? 1 : 0;
+					for(int j = 0; j < _players[myid].Pokemon.Count; ++j)
+					{
+						packet.MyMst.Add(_players[myid].Pokemon[j].id);
+                    }
+                    packet.EnemyInfo = _players[enemyid].Info;
+                    for (int j = 0; j < _players[enemyid].Pokemon.Count; ++j)
+                    {
+                        packet.EnemyMst.Add(_players[enemyid].Pokemon[j].id);
+                    }
+                    packet.MyTurn = myid == turnorder ? 1 : 0;
                     _players[myid].Session.Send(packet);
                 }
             }
 		}
+
+		public void Turn(C_Turn packet)
+        {
+            S_Turn turn = new S_Turn();
+            turn.Action = packet.TurnInfo.Action;
+
+            List<ResultInfo> list = DefaultTurn(RoomId, _players[packet.PlayerId].Id);
+			
+			for(int i = 0; i < list.Count; ++i)
+			{
+				turn.
+			}
+
+			switch (packet.TurnInfo.Action)
+			{
+				case ActionType.Pass:
+					break;
+				case ActionType.Fight:
+					break;
+				case ActionType.Pokeball:
+					break;
+				case ActionType.Change:
+					break;
+				case ActionType.Runaway:
+					break;
+			}
+
+		}
+
+        List<ResultInfo> DefaultTurn(int roomId, int id)
+        {
+            List<ResultInfo> resultlist = new List<ResultInfo>();
+			Random random = new Random();
+            Player player = ObjectManager.Instance.Find(roomId, id);
+            PokemonInfo pokemonInfo = player.Pokemon[0].info;
+            PokemonInfo standardInfo = DataManager.MonsterDict[player.Pokemon[0].id].info;
+
+            if (player.Pokemon[0].info.State.Fire != 0)
+            {
+                ResultInfo result = new ResultInfo();
+				result.SkillType = SkillType.Dot;
+                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
+                pokemonInfo.State.Fire--;
+                result.MyInfo = pokemonInfo;
+                resultlist.Add(result);
+            }
+
+            if (player.Pokemon[0].info.State.Dot != 0)
+            {
+                ResultInfo result = new ResultInfo();
+                result.SkillType = SkillType.Dot;
+                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
+                pokemonInfo.State.Dot--;
+                result.MyInfo = pokemonInfo;
+                resultlist.Add(result);
+            }
+
+            if (player.Pokemon[0].info.State.Poison != 0)
+            {
+                ResultInfo result = new ResultInfo();
+                result.SkillType = SkillType.Dot;
+                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
+                pokemonInfo.State.Poison--;
+                result.MyInfo = pokemonInfo;
+                resultlist.Add(result);
+            }
+
+            if (player.Pokemon[0].info.State.Confusion != 0)
+            {
+                ResultInfo result = new ResultInfo();
+				result.SkillType = SkillType.Confusion;
+                bool recovery = random.Next(0, 100) > 60 ? true : false;
+
+                pokemonInfo.State.Confusion--;
+                if (recovery)
+                    pokemonInfo.State.Confusion = 0;
+
+                resultlist.Add(result);
+            }
+
+            if (player.Pokemon[0].info.State.Sturn != 0)
+            {
+                ResultInfo result = new ResultInfo();
+                result.SkillType = SkillType.Sturn;
+				bool recovery = random.Next(0, 100) > 60 ? true : false;
+
+				result.StateInfo.RecoverFromSturn = recovery;
+                pokemonInfo.State.Sturn--;
+                if (recovery)
+					pokemonInfo.State.Sturn = 0;
+
+                resultlist.Add(result);
+            }
+
+            return resultlist;
+        }
+
+        ResultInfo[] Fight(int roomId, int id, int enemyId, int skillId)
+		{
+			Player player = ObjectManager.Instance.Find(roomId, id);
+			Player Enemy = ObjectManager.Instance.Find(roomId, enemyId);
+			PokemonData data = player.Pokemon[0];
+			PokemonData enemyData = Enemy.Pokemon[0];
+			SkillData skillData = DataManager.SkillDict[skillId];
+
+            int count = skillData.info.SkillEffect.Count;
+			ResultInfo[] result = new ResultInfo[count];
+
+			for (int i = 0; i < count; i++) 
+			{
+                result[i] = Util.CalcDamage(data, enemyData, skillData.info.SkillEffect[i]);
+            }
+			
+			return result;
+        }
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
 		{
