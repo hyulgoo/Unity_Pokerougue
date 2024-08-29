@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 public class UI_SelectPlayerPopup : UI_AcceptDenyPopup
 {
-    int _oponentId;
+    int _enemyId;
+
     public override void Init()
     {
         base.Init();
@@ -15,7 +16,7 @@ public class UI_SelectPlayerPopup : UI_AcceptDenyPopup
 
     public void SetOpponentPlayer(int playerid)
     {
-        _oponentId = playerid;
+        _enemyId = playerid;
         string playerName = Managers.Object.GetPlayerName(playerid);
         playerName += "님에게 \n 대결 신청?";
 
@@ -27,7 +28,7 @@ public class UI_SelectPlayerPopup : UI_AcceptDenyPopup
     {
         C_RequestDuel requestduelpacket = new C_RequestDuel();
         requestduelpacket.ApplyId = Managers.Object.MyPlayer.Id;
-        requestduelpacket.OpponentId = _oponentId;
+        requestduelpacket.EnemyId = _enemyId;
         Managers.Network.Send(requestduelpacket);
 
         ClosePopupUI();

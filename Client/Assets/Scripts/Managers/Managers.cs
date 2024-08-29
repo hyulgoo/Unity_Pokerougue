@@ -14,6 +14,7 @@ public class Managers : MonoBehaviour
     NetworkManager _network = new NetworkManager();
     WebManager _web = new WebManager();
     UISelectManager _select = new UISelectManager();
+    JobManager _job = new JobManager();
 
     public static InventoryManager Inven { get { return Instance._inven; } }
     public static MapManager Map { get { return Instance._map; } }
@@ -21,6 +22,7 @@ public class Managers : MonoBehaviour
     public static NetworkManager Network { get { return Instance._network; } }
     public static WebManager Web { get { return Instance._web; } }
     public static UISelectManager Select { get { return Instance._select; } }
+    public static JobManager Job { get { return Instance._job; } }
 	#endregion
 
 	#region Core

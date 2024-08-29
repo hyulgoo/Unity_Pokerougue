@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.Protocol;
+﻿using Google.Protobuf.Collections;
+using Google.Protobuf.Protocol;
 using Server.Data;
 using Server.Game;
 using System.Collections.Generic;
@@ -175,7 +176,7 @@ namespace Server
             return damageRatio;
         }
 
-        public static ResultInfo CalcDamage(PokemonData myData, PokemonData enemyData, SkillEffect effect)
+        public static BattleInfo CalcDamage(PokemonData myData, PokemonData enemyData, SkillEffect effect)
         {
             System.Random r = new System.Random();
             bool isMiss = r.Next(0, 99) >= effect.Accuracy ? true : false;
@@ -185,24 +186,26 @@ namespace Server
             float damage = 0;
             SkillType skillType = effect.SkillType;
 
-            ResultInfo result = new ResultInfo();
+            BattleInfo result = new BattleInfo();
+            result.StateInfo = new StateInfo();
             result.SkillType = effect.SkillType;
             result.MyInfo = myInfo;
             result.EnemyInfo = enemyInfo;
-            result.IsMiss = isMiss;
+            result.StateInfo.IsMiss = isMiss;
 
             // 빗나갔다면 바로 return
             if (isMiss)
                 return result;
 
-            PokemonInfo info = effect.Target == TargetType.Oneself ? myInfo : enemyInfo;
-            PokemonInfo target = effect.Target == TargetType.Oneself ? enemyInfo : myInfo;
+            PokemonInfo info = myInfo;
+            PokemonInfo target = effect.Target == TargetType.Oneself ? myInfo : enemyInfo;
+;
             int targetId = effect.Target == TargetType.Oneself ? myData.id : enemyData.id;
             PokemonInfo standard = DataManager.MonsterDict[targetId].info;
 
             int power = effect.Value;            
             int critical = r.Next(0, 1000) < 65 ? 2 : 1;
-            float random = 1f;
+            int random = (r.Next(217, 256) * 100) / 255;
             float myType = 1f;
             for(int t = 0; t < myInfo.Type.Count; ++t)
             {
@@ -279,6 +282,22 @@ namespace Server
                 result.EnemyInfo = info;
 
             return result;
+        }
+
+        public static void AddtoTargetList(RepeatedField<int> targetList, List<int> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                targetList.Add(list[i]);
+            }
+        }
+
+        public static void AddtoTargetList(RepeatedField<BattleInfo> targetList, List< BattleInfo> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                targetList.Add(list[i]);
+            }
         }
     }
 }

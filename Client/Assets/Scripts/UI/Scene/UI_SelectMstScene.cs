@@ -150,10 +150,8 @@ public class UI_SelectMstScene : UI_Scene
         C_SelectMst packet = new C_SelectMst();
         packet.PlayerId = Managers.Object.MyPlayer.Id;
 
-        PokemonList list = new PokemonList();
         for (int i = 0; i < _pokemonList.Count(); ++i)
-            list.Pokemon.Add(_pokemonList[i]);        
-        packet.MstList = list;
+            packet.MstList.Add(_pokemonList[i]);       
 
         Managers.Network.Send(packet);
 

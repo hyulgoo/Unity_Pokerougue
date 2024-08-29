@@ -230,9 +230,56 @@ class PacketHandler
 		Managers.Object.MyTurn = startbattle.MyTurn == 1 ? true : false;
     }
 
-    public static void S_TurnHandler(PacketSession session, IMessage packet)
+    public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
     {
-        S_Turn turn = (S_Turn)packet;
+        S_TurnBattle battle = (S_TurnBattle)packet;
+		bool isMe = battle.PlayerId == Managers.Object.MyPlayer.Id ? true : false;
 
+        for (int i = 0; i < battle.TurnInfo.Count; ++i)
+        {
+			if(battle.TurnInfo[i].StateInfo.IsSturn)
+			{
+				// 기절했을 때
+				break;
+			}
+			
+			
+
+        }
+
+
+        // 내 턴의 결과일 경우
+        if (isMe)
+		{
+			for(int i = 0; i < battle.TurnInfo.Count; ++i)
+			{
+				StateInfo info = new StateInfo();
+				battle.TurnInfo[i].StateInfo
+			}
+            UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
+			scene.SetHPBar(battle.TurnInfo)
+		}
+		else
+		{
+
+		}
+		battle.TurnInfo.Count;
+		battle.Info;
+    }
+    public static void S_TurnPokeballHandler(PacketSession session, IMessage packet)
+    {
+        S_TurnPokeball pokeball = (S_TurnPokeball)packet;
+    }
+    public static void S_TurnChangeHandler(PacketSession session, IMessage packet)
+    {
+        S_TurnChange change = (S_TurnChange)packet;
+    }
+    public static void S_TurnRunawayHandler(PacketSession session, IMessage packet)
+    {
+        S_TurnRunaway runaway = (S_TurnRunaway)packet;
+    }
+    public static void S_TurnPassHandler(PacketSession session, IMessage packet)
+    {
+        S_TurnPass turn = (S_TurnPass)packet;
     }
 }

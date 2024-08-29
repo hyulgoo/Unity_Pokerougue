@@ -41,6 +41,11 @@ public class UI_SkillSelectPopup : UI_Popup
         BindButton(typeof(Buttons));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
+
+        for(int i = (int)Buttons.Btn_Skill_00; i < (int)Buttons.Btn_Skill_03; ++i)
+        {
+            GetButton(i).onClick.AddListener(OnClickSkillButton);
+        }
               
         SetSkillInfo();
     }
@@ -129,5 +134,10 @@ public class UI_SkillSelectPopup : UI_Popup
 
         Managers.Network.Send(turnpacket);
         Managers.UI.CloseAllPopupUI();
+        UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
+        string monsterName = Managers.Object.MyPlayer.GetCurMonsterName();
+        string skillName = Managers.Data.SkillDict[_selectedId].name;
+        scene.SetText($"{monsterName}ÀÇ {skillName}!");
+            
     }
 }

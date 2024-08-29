@@ -29,7 +29,11 @@ enum MsgId {
   C_SELECT_MST = 22;
   S_START_BATTLE = 23;
   C_TURN = 24;
-  S_TURN = 25;
+  S_TURN_BATTLE = 25;
+  S_TURN_POKEBALL = 26;
+  S_TURN_CHANGE = 27;
+  S_TURN_RUNAWAY = 28;
+  S_TURN_PASS = 29;
 }
 
 enum GameObjectType {
@@ -65,7 +69,7 @@ enum ActionType {
   RUNAWAY = 4;
 }
 
- enum Type {   
+enum Type {   
   NOTYPE = 0;
   BUG = 1;
   DARK = 2;
@@ -92,36 +96,37 @@ enum Arenas {
   BADLANDS_ = 1;
   BEACH_ = 2;
   CAVE_ = 3;
-  CONSTRUCTION_ = 4;
+  CONSTRUCTIONSITE_ = 4;
   DESERT_ = 5;
-  FACTORY_ = 6;
-  FAIRY_CAVE_ = 7;
-  FOREST_ = 8;
-  GRASS_ = 9;
-  GRAVEYARD_ = 10;
-  ICE_CAVE_ = 11;
-  ISLAND_ = 12;
-  JUNGLE_ = 13;
-  LABORATORY_ = 14;
-  LAKE_ = 15;
-  MEADOW_ = 16;
-  METROPOLIS_ = 17;
-  MOUNTAIN_ = 18;
-  PLAINS_ = 19;
-  POWER_PLANT_ = 20;
-  RUINS_ = 21;
-  SEA_ = 22;
-  SEABED_ = 23;
-  SLUM_ = 24;
-  SNOWY_FOREST_ = 25;
-  SPACE_ = 26;
-  SWAMP_ = 27;
-  TALL_GRASS_ = 28;
-  TEMPLE_ = 29;
-  TOWN_ = 30;
-  VOLCANO_ = 31;
-  WASTELAND_ = 32;
-  END_ = 33;
+  DOJO = 6;
+  FACTORY_ = 7;
+  FAIRYCAVE_ = 8;
+  FOREST_ = 9;
+  GRASS_ = 10;
+  GRAVEYARD_ = 11;
+  ICECAVE_ = 12;
+  ISLAND_ = 13;
+  JUNGLE_ = 14;
+  LABORATORY_ = 15;
+  LAKE_ = 16;
+  MEADOW_ = 17;
+  METROPOLIS_ = 18;
+  MOUNTAIN_ = 19;
+  PLAINS_ = 20;
+  POWERPLANT_ = 21;
+  RUINS_ = 22;
+  SEA_ = 23;
+  SEABED_ = 24;
+  SLUM_ = 25;
+  SNOWYFOREST_ = 26;
+  SPACE_ = 27;
+  SWAMP_ = 28;
+  TALLGRASS_ = 29;
+  TEMPLE_ = 30;
+  TOWN_ = 31;
+  VOLCANO_ = 32;
+  WASTELAND_ = 33;
+  END_ = 34;
 }
 
 enum TargetType {
@@ -130,8 +135,7 @@ enum TargetType {
   BOTH = 2;
 }
 
-enum SkillType
-{	
+enum SkillType {	
   NONE = 0;
   ATK = 1;
   SPA = 2;
@@ -244,7 +248,7 @@ message C_Pong {
 
 message C_SelectMst {
   int32 playerId = 1;
-  int32 mstList = 2;
+  repeated int32 mstList = 2;
 }
 
 message S_StartBattle {
@@ -261,9 +265,30 @@ message C_Turn {
   TurnInfo turnInfo = 2;
 }
 
-message S_Turn {
-  TurnResult result = 1;
-  int32 myTurn = 2;
+message S_TurnBattle {
+  int32 playerId = 1;
+  repeated BattleInfo turnInfo = 2;
+  repeated BattleInfo info = 3;
+}
+
+message S_TurnPokeball {
+  int32 playerId = 1;
+  repeated BattleInfo turnInfo = 2;
+  PokeballInfo info = 3;
+}
+
+message S_TurnChange {
+  int32 playerId = 1;
+  ChangeInfo info = 3;
+}
+
+message S_TurnRunaway {
+  int32 playerId = 1;
+}
+
+message S_TurnPass {
+  int32 playerId = 1;
+  repeated BattleInfo turnInfo = 2;
 }
 
 message LobbyPlayerInfo {
@@ -283,14 +308,6 @@ message TurnInfo {
   int32 changeNum = 4;
 }
 
-message TurnResult {
-  ActionType action = 1;
-  repeated BattleInfo battleInfo = 2;
-  PokeballInfo pokeballInfo = 3;
-  ChangeInfo changeInfo = 4;
-  bool RunAway = 5;
-}
-
 message BattleInfo {
   SkillType skillType = 1;
   Type type = 2;
@@ -301,11 +318,11 @@ message BattleInfo {
 }
 
 message PokeballInfo {
-	int32 info = 1;
+  int32 info = 1;
 }
 
 message ChangeInfo {
-	int32 info = 1;
+  int32 info = 1;
 }
 
 message StateInfo {
@@ -316,8 +333,7 @@ message StateInfo {
   bool recoverFromConfusion = 5;
 }
 
-message PokemonInfo 
-{
+message PokemonInfo {
   int32 level = 1;
   int32 hp = 2;
   int32 atk = 3;

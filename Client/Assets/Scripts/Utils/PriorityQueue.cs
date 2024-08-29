@@ -72,7 +72,13 @@ public class PriorityQueue<T> where T : IComparable<T>
 		}
 
 		return ret;
-	}
+    }
+    public T Peek()
+    {
+        if (_heap.Count == 0)
+            return default(T);
+        return _heap[0];
+    }
 
-	public int Count { get { return _heap.Count; } }
+    public int Count { get { return _heap.Count; } }
 }

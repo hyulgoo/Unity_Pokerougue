@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Google.Protobuf.Protocol;
 using Server.Data;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Server.Game
@@ -148,81 +150,62 @@ namespace Server.Game
 				int[] list = _players.Keys.ToArray();
 
                 S_StartBattle packet = new S_StartBattle();
-				Random random = new Random();				
-				packet.ArenaType = random.Next(0, (int)Arenas.End);
+                Random random = new Random();
+                packet.ArenaType = random.Next(0, (int)Arenas.End);
 				int turnorder = ObjectManager.Instance.GetTurn(RoomId);
-
                 for (int i = 0; i < 2; ++i)
-				{
-					int myid = list[i];
-					int enemyid = i == 0 ? list[1] : list[0];
+                {
+                    int myid = list[i];
+                    int enemyid = i == 0 ? list[1] : list[0];
+
+                    packet.MyMst.Clear();
+                    packet.EnemyMst.Clear();
 
                     packet.MyInfo = _players[myid].Info;
-					for(int j = 0; j < _players[myid].Pokemon.Count; ++j)
+                    packet.EnemyInfo = _players[enemyid].Info;
+
+                    for (int j = 0; j < 3; ++j)
 					{
 						packet.MyMst.Add(_players[myid].Pokemon[j].id);
-                    }
-                    packet.EnemyInfo = _players[enemyid].Info;
-                    for (int j = 0; j < _players[enemyid].Pokemon.Count; ++j)
-                    {
                         packet.EnemyMst.Add(_players[enemyid].Pokemon[j].id);
+						_players[myid].Pokemon[j].info.State = new ConditionAbnormality();
+                        _players[enemyid].Pokemon[j].info.State = new ConditionAbnormality();
                     }
+                    
                     packet.MyTurn = myid == turnorder ? 1 : 0;
+
                     _players[myid].Session.Send(packet);
                 }
             }
 		}
 
 		public void Turn(C_Turn packet)
-        {
-            S_Turn turn = new S_Turn();
-            turn.Result.Action = packet.TurnInfo.Action;
-
-            List<BattleInfo> list = DefaultTurn(RoomId, _players[packet.PlayerId].Id);
-			
-			for(int i = 0; i < list.Count; ++i)
-			{
-				turn.Result.BattleInfo.Add(list[i]);
-			}
-
+        {			
 			switch (packet.TurnInfo.Action)
 			{
 				case ActionType.Pass:
-					turn.Result.Action = ActionType.Pass;
+					Pass(packet);
 					break;
 				case ActionType.Fight:
-                    int enemyId = 0;
-                    foreach (int id in _players.Keys)
-                    {
-                        if (id != packet.PlayerId)
-                            enemyId = id;
-                    }
-
-                    list = Fight(RoomId, _players[packet.PlayerId].Id, enemyId, packet.TurnInfo.SkillNum);
-
-                    for (int i = 0; i < list.Count; ++i)
-                    {
-                        turn.Result.BattleInfo.Add(list[i]);
-                    }
+					Fight(packet);					
                     break;
 				case ActionType.Pokeball:
-					turn.Result.PokeballInfo = PokeBall();
+					PokeBall(packet);
                     break;
 				case ActionType.Change:
-					turn.Result.ChangeInfo = Change();
+					Change(packet);
                     break;
 				case ActionType.Runaway:
-					turn.Result.RunAway = true;
+					Runaway(packet);
 					break;
 			}
-
 		}
 
-        List<BattleInfo> DefaultTurn(int roomId, int id)
+        List<BattleInfo> DefaultTurn(C_Turn packet)
         {
             List<BattleInfo> resultlist = new List<BattleInfo>();
 			Random random = new Random();
-            Player player = ObjectManager.Instance.Find(roomId, id);
+            Player player = ObjectManager.Instance.Find(RoomId, packet.PlayerId);
             PokemonInfo pokemonInfo = player.Pokemon[0].info;
             PokemonInfo standardInfo = DataManager.MonsterDict[player.Pokemon[0].id].info;
 
@@ -230,6 +213,7 @@ namespace Server.Game
             {
                 BattleInfo result = new BattleInfo();
 				result.SkillType = SkillType.Dot;
+				result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Fire--;
                 result.MyInfo = pokemonInfo;
@@ -240,6 +224,7 @@ namespace Server.Game
             {
                 BattleInfo result = new BattleInfo();
                 result.SkillType = SkillType.Dot;
+                result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Dot--;
                 result.MyInfo = pokemonInfo;
@@ -250,6 +235,7 @@ namespace Server.Game
             {
                 BattleInfo result = new BattleInfo();
                 result.SkillType = SkillType.Dot;
+                result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Poison--;
                 result.MyInfo = pokemonInfo;
@@ -260,6 +246,7 @@ namespace Server.Game
             {
                 BattleInfo result = new BattleInfo();
 				result.SkillType = SkillType.Confusion;
+                result.TargetType = TargetType.Oneself;
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
                 pokemonInfo.State.Confusion--;
@@ -273,6 +260,7 @@ namespace Server.Game
             {
                 BattleInfo result = new BattleInfo();
                 result.SkillType = SkillType.Sturn;
+                result.TargetType = TargetType.Oneself;
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
 				result.StateInfo.RecoverFromSturn = recovery;
@@ -286,37 +274,77 @@ namespace Server.Game
             return resultlist;
         }
 
-        List<BattleInfo> Fight(int roomId, int id, int enemyId, int skillId)
+		void Pass(C_Turn packet)
+        {
+            S_TurnPass passPacket = new S_TurnPass();
+
+            passPacket.PlayerId = packet.PlayerId;
+
+            List<BattleInfo> turnInfo = DefaultTurn(packet);
+            Util.AddtoTargetList(passPacket.TurnInfo, turnInfo);
+
+			Broadcast(passPacket);
+        }
+
+        void Fight(C_Turn packet)
 		{
-			Player player = ObjectManager.Instance.Find(roomId, id);
-			Player Enemy = ObjectManager.Instance.Find(roomId, enemyId);
+            S_TurnBattle battlePacket = new S_TurnBattle();
+            int enemyId = 0;
+
+            foreach (int id in _players.Keys)
+            {
+                if (id != packet.PlayerId)
+                    enemyId = id;
+            }
+
+            battlePacket.PlayerId = packet.PlayerId;
+
+            Player player = ObjectManager.Instance.Find(RoomId, packet.PlayerId);
+			Player Enemy = ObjectManager.Instance.Find(RoomId, enemyId);
 			PokemonData data = player.Pokemon[0];
 			PokemonData enemyData = Enemy.Pokemon[0];
-			SkillData skillData = DataManager.SkillDict[skillId];
+			SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillNum];
 
-            int count = skillData.info.SkillEffect.Count;
             List<BattleInfo> result = new List<BattleInfo>();
 
-			for (int i = 0; i < count; i++) 
+			for (int i = 0; i < skillData.info.SkillEffect.Count; i++) 
 			{
                 result.Add(Util.CalcDamage(data, enemyData, skillData.info.SkillEffect[i]));
             }
-			
-			return result;
+
+            Util.AddtoTargetList(battlePacket.TurnInfo, result);
+            Util.AddtoTargetList(battlePacket.Info, DefaultTurn(packet));
+
+			Broadcast(battlePacket);
         }
 
-		PokeballInfo PokeBall()
+		void PokeBall(C_Turn packet)
         {
+            S_TurnPokeball pokeballPacket = new S_TurnPokeball();
+            pokeballPacket.PlayerId = packet.PlayerId; 
+			PokeballInfo info = new PokeballInfo();
+			pokeballPacket.Info = info;
+
+			Broadcast(pokeballPacket);
+        }
+
+		void Change(C_Turn packet)
+        {
+            S_TurnPokeball pokeballPacket = new S_TurnPokeball();
+            pokeballPacket.PlayerId = packet.PlayerId;
             PokeballInfo info = new PokeballInfo();
-            return info;
+            pokeballPacket.Info = info;
+
+            Broadcast(pokeballPacket);
         }
 
-		ChangeInfo Change()
+		void Runaway(C_Turn packet)
 		{
-            ChangeInfo info = new ChangeInfo();
-            return info;
-        }
+            S_TurnRunaway runawayPacket = new S_TurnRunaway();
+            runawayPacket.PlayerId = packet.PlayerId;
 
+            Broadcast(runawayPacket);
+        }
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
 		{
@@ -327,7 +355,7 @@ namespace Server.Game
 
 			session.MyPlayer = player;
 
-			Push(EnterGame,player);
+			EnterGame(player);
 		}
 
 		Player FindPlayer(Func<GameObject, bool> condition)

@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 
     List<PokemonData> _pokemonDatas = new List<PokemonData>();
 
-    public Dictionary<int, Dictionary<int, int>> SkillPP { get; set; } = new Dictionary<int, Dictionary<int, int>>();
+    public Dictionary<int, Dictionary<int, int>> SkillPP { get; } = new Dictionary<int, Dictionary<int, int>>();
 
     private void Awake()
     {

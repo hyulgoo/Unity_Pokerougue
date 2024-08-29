@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UI_DualRespondPopup : UI_AcceptDenyPopup
 {
-    int _opponentId;
+    int _EnemyId;
 
     public override void Init()
     {
@@ -17,7 +17,7 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
     public void SetApplyDuelAnnounce(int opponentId)
     {
         // 상대 Id 지정
-        _opponentId = opponentId;
+        _EnemyId = opponentId;
 
         // 상대방의 name을 알아내고 ~가 대결을 신청했다는 창을 띄움
         GameObject opponentplayer = Managers.Object.FindById(opponentId);
@@ -33,7 +33,7 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 1;
         respondDuelPacket.RespondId = Managers.Object.MyPlayer.Id;
-        respondDuelPacket.OpponentId = _opponentId;
+        respondDuelPacket.EnemyId = _EnemyId;
         Managers.Network.Send(respondDuelPacket);
 
         //대결 신청 창을 닫음
@@ -50,7 +50,7 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 0;
         respondDuelPacket.RespondId = Managers.Object.MyPlayer.Id;
-        respondDuelPacket.OpponentId = _opponentId;
+        respondDuelPacket.EnemyId = _EnemyId;
         Managers.Network.Send(respondDuelPacket);
 
         //대결 신청 창을 닫음

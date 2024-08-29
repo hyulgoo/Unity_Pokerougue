@@ -55,8 +55,16 @@ class PacketManager
 		_handler.Add((ushort)MsgId.SRespondDuel, PacketHandler.S_RespondDuelHandler);		
 		_onRecv.Add((ushort)MsgId.SStartBattle, MakePacket<S_StartBattle>);
 		_handler.Add((ushort)MsgId.SStartBattle, PacketHandler.S_StartBattleHandler);		
-		_onRecv.Add((ushort)MsgId.STurn, MakePacket<S_Turn>);
-		_handler.Add((ushort)MsgId.STurn, PacketHandler.S_TurnHandler);
+		_onRecv.Add((ushort)MsgId.STurnBattle, MakePacket<S_TurnBattle>);
+		_handler.Add((ushort)MsgId.STurnBattle, PacketHandler.S_TurnBattleHandler);		
+		_onRecv.Add((ushort)MsgId.STurnPokeball, MakePacket<S_TurnPokeball>);
+		_handler.Add((ushort)MsgId.STurnPokeball, PacketHandler.S_TurnPokeballHandler);		
+		_onRecv.Add((ushort)MsgId.STurnChange, MakePacket<S_TurnChange>);
+		_handler.Add((ushort)MsgId.STurnChange, PacketHandler.S_TurnChangeHandler);		
+		_onRecv.Add((ushort)MsgId.STurnRunaway, MakePacket<S_TurnRunaway>);
+		_handler.Add((ushort)MsgId.STurnRunaway, PacketHandler.S_TurnRunawayHandler);		
+		_onRecv.Add((ushort)MsgId.STurnPass, MakePacket<S_TurnPass>);
+		_handler.Add((ushort)MsgId.STurnPass, PacketHandler.S_TurnPassHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
