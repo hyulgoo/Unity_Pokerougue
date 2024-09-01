@@ -240,6 +240,7 @@ class PacketHandler
 			if(battle.TurnInfo[i].StateInfo.IsSturn)
 			{
 				// 기절했을 때
+				Managers.Job.Push(() => { });
 				break;
 			}
 			
@@ -249,22 +250,22 @@ class PacketHandler
 
 
         // 내 턴의 결과일 경우
-        if (isMe)
-		{
-			for(int i = 0; i < battle.TurnInfo.Count; ++i)
-			{
-				StateInfo info = new StateInfo();
-				battle.TurnInfo[i].StateInfo
-			}
-            UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
-			scene.SetHPBar(battle.TurnInfo)
-		}
-		else
-		{
-
-		}
-		battle.TurnInfo.Count;
-		battle.Info;
+        //if (isMe)
+		//{
+		//	for(int i = 0; i < battle.TurnInfo.Count; ++i)
+		//	{
+		//		StateInfo info = new StateInfo();
+		//		battle.TurnInfo[i].StateInfo
+		//	}
+        //    UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
+		//	scene.SetHPBar(battle.TurnInfo)
+		//}
+		//else
+		//{
+		//
+		//}
+		//battle.TurnInfo.Count;
+		//battle.Info;
     }
     public static void S_TurnPokeballHandler(PacketSession session, IMessage packet)
     {
