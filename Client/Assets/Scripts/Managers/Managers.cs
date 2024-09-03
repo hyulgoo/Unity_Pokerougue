@@ -49,6 +49,7 @@ public class Managers : MonoBehaviour
     void Update()
     {
         _network.Update();
+        _job.Update();
     }
 
     static void Init()

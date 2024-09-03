@@ -131,8 +131,8 @@ enum Arenas {
 
 enum TargetType {
   ONESELF = 0;
-  OPPONENT = 1;
-  BOTH = 2;
+  ENEMY = 1;
+  END = 2;
 }
 
 enum SkillType {	
@@ -146,13 +146,20 @@ enum SkillType {
   BUFF_SPD = 7;
   BUFF_SPE = 8;
   DOT = 9;
-  DEBUFF_ATK = 10;
-  DEBUFF_SPA = 11;
-  DEBUFF_DEF = 12;
-  DEBUFF_SPD = 13;
-  DEBUFF_SPE = 14;
-  STURN = 15;
-  CONFUSION = 16;
+  STATUS_EFFECT = 10;
+  DEBUFF_ATK = 11;
+  DEBUFF_SPA = 12;
+  DEBUFF_DEF = 13;
+  DEBUFF_SPD = 14;
+  DEBUFF_SPE = 15;
+  STURN = 16;
+  CONFUSION = 17;
+}
+
+enum EffectiveType {
+  COMMONEFFECT = 0;
+  EFFECTIVE = 1;
+  INEFFECTIVE = 2;
 }
 
 message S_EnterGame {
@@ -279,11 +286,10 @@ message S_TurnPokeball {
 
 message S_TurnChange {
   int32 playerId = 1;
-  ChangeInfo info = 3;
+  ChangeInfo info = 2;
 }
 
 message S_TurnRunaway {
-  int32 playerId = 1;
 }
 
 message S_TurnPass {
@@ -310,8 +316,8 @@ message TurnInfo {
 
 message BattleInfo {
   SkillType skillType = 1;
-  Type type = 2;
-  TargetType targetType = 3;
+  TargetType targetType = 2;
+  EffectiveType effective = 3;
   PokemonInfo myInfo = 4;
   PokemonInfo enemyInfo = 5;
   StateInfo stateInfo = 6;
@@ -331,6 +337,7 @@ message StateInfo {
   bool isConfusion = 3;
   bool recoverFromSturn = 4;
   bool recoverFromConfusion = 5;
+  int32 skillId = 6;
 }
 
 message PokemonInfo {

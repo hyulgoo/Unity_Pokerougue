@@ -1,6 +1,9 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using ServerCore;
+using System;
+using System.Drawing;
+using UnityEditor;
 using UnityEngine;
 
 class PacketHandler
@@ -233,40 +236,72 @@ class PacketHandler
     public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
     {
         S_TurnBattle battle = (S_TurnBattle)packet;
-		bool isMe = battle.PlayerId == Managers.Object.MyPlayer.Id ? true : false;
-
-        for (int i = 0; i < battle.TurnInfo.Count; ++i)
-        {
-			if(battle.TurnInfo[i].StateInfo.IsSturn)
-			{
-				// 기절했을 때
-				Managers.Job.Push(() => { });
-				break;
-			}
-			
-			
-
-        }
-
-
-        // 내 턴의 결과일 경우
-        //if (isMe)
-		//{
-		//	for(int i = 0; i < battle.TurnInfo.Count; ++i)
-		//	{
-		//		StateInfo info = new StateInfo();
-		//		battle.TurnInfo[i].StateInfo
-		//	}
-        //    UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
-		//	scene.SetHPBar(battle.TurnInfo)
-		//}
-		//else
-		//{
-		//
-		//}
-		//battle.TurnInfo.Count;
-		//battle.Info;
+		bool reverse = Managers.Object.MyPlayer.Id == battle.PlayerId ? true : false;
+		Battle(battle, reverse);
     }
+
+	static void Battle(S_TurnBattle battle, bool reverse)
+	{
+		// 상태이상에 의한 턴 정보
+		for (int i = 0; i < battle.TurnInfo.Count; ++i)
+        {
+            BattleInfo info = battle.TurnInfo[i];
+			PokemonInfo pokeinfo = reverse ? info.EnemyInfo : info.MyInfo;
+            string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
+            string announce = "";
+
+			if (info.SkillType == SkillType.Dot)
+			{
+                string skillName = Managers.Data.SkillDict[info.StateInfo.SkillId].name;
+                announce = $"{targetName}은(는) {skillName}에 의해 지속데미지를 받고있다.";
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
+            }
+			else if(info.SkillType == SkillType.StatusEffect)
+			{
+                announce = $"{targetName}은(는) 지속데미지를 받고있다.";
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
+            }
+        }
+		 
+		// 전투에 의한 턴 정보
+		for(int i = 0; i < battle.Info.Count; ++i)
+        {
+            BattleInfo info = battle.Info[i];
+            string announce = "";
+            if (info.StateInfo.IsMiss)
+            {
+                string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
+
+                announce = $"{targetName}의 공격은 빗나갔다!";
+
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                return;
+            }
+
+            if (info.TargetType == TargetType.Oneself)
+            {
+				PokemonInfo pokeinfo = reverse ? info.EnemyInfo : info.MyInfo;
+                string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
+
+                announce = $"{targetName}은(는) 반동으로 인해 데미지를 입었다.";
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: !reverse); });
+            }
+            else
+            {
+                PokemonInfo pokeinfo = reverse ? info.MyInfo : info.EnemyInfo;
+                if (info.Effective != EffectiveType.Commoneffect)
+                {
+                    announce = info.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
+                    Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                }
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
+            }
+        }
+	}
+
     public static void S_TurnPokeballHandler(PacketSession session, IMessage packet)
     {
         S_TurnPokeball pokeball = (S_TurnPokeball)packet;

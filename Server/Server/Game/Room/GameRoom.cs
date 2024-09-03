@@ -212,7 +212,7 @@ namespace Server.Game
             if (pokemonInfo.State.Fire != 0)
             {
                 BattleInfo result = new BattleInfo();
-				result.SkillType = SkillType.Dot;
+				result.SkillType = SkillType.StatusEffect;
 				result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Fire--;
@@ -223,9 +223,11 @@ namespace Server.Game
             if (pokemonInfo.State.Dot != 0)
             {
                 BattleInfo result = new BattleInfo();
+				result.StateInfo = new StateInfo();
                 result.SkillType = SkillType.Dot;
                 result.TargetType = TargetType.Oneself;
-                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
+				result.StateInfo.SkillId = packet.TurnInfo.SkillNum;
+                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 7;
                 pokemonInfo.State.Dot--;
                 result.MyInfo = pokemonInfo;
                 resultlist.Add(result);
@@ -234,7 +236,7 @@ namespace Server.Game
             if (pokemonInfo.State.Poison != 0)
             {
                 BattleInfo result = new BattleInfo();
-                result.SkillType = SkillType.Dot;
+                result.SkillType = SkillType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Poison--;
@@ -288,7 +290,12 @@ namespace Server.Game
 
         void Fight(C_Turn packet)
 		{
-            S_TurnBattle battlePacket = new S_TurnBattle();
+			// 전투 정보를 담는
+            S_TurnBattle[] BattlePacket = new S_TurnBattle[2];
+            for (int i = 0; i < 2; ++i)
+            {
+                BattlePacket[i] = new S_TurnBattle();
+            }
             int enemyId = 0;
 
             foreach (int id in _players.Keys)
@@ -296,32 +303,41 @@ namespace Server.Game
                 if (id != packet.PlayerId)
                     enemyId = id;
             }
-
-            battlePacket.PlayerId = packet.PlayerId;
-
+			
             Player player = ObjectManager.Instance.Find(RoomId, packet.PlayerId);
 			Player Enemy = ObjectManager.Instance.Find(RoomId, enemyId);
 			PokemonData data = player.Pokemon[0];
 			PokemonData enemyData = Enemy.Pokemon[0];
 			SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillNum];
 
-            List<BattleInfo> result = new List<BattleInfo>();
-
+            List<BattleInfo>[] result = new List<BattleInfo>[2];
+			for(int i = 0; i < 2; ++i)
+			{
+				result[i] = new List<BattleInfo>();
+            }
 			for (int i = 0; i < skillData.info.SkillEffect.Count; i++) 
 			{
-                result.Add(Util.CalcDamage(data, enemyData, skillData.info.SkillEffect[i]));
+				BattleInfo[] infos = Util.CalcDamage(data, enemyData, skillData.info.SkillEffect[i]);
+				for(int j = 0; j < 2; ++j)
+                {
+					result[j].Add(infos[j]);
+                }
             }
 
-            Util.AddtoTargetList(battlePacket.TurnInfo, result);
-            Util.AddtoTargetList(battlePacket.Info, DefaultTurn(packet));
+			for(int i = 0; i < 2; ++i)
+            {
+				BattlePacket[i].PlayerId = packet.PlayerId;
+				Util.AddtoTargetList(BattlePacket[i].Info, result[i]);
+				Util.AddtoTargetList(BattlePacket[i].TurnInfo, DefaultTurn(packet));
+            }
 
-			Broadcast(battlePacket);
+			_players[packet.PlayerId].Session.Send(BattlePacket[0]);
+			_players[enemyId].Session.Send(BattlePacket[1]);
         }
 
 		void PokeBall(C_Turn packet)
         {
             S_TurnPokeball pokeballPacket = new S_TurnPokeball();
-            pokeballPacket.PlayerId = packet.PlayerId; 
 			PokeballInfo info = new PokeballInfo();
 			pokeballPacket.Info = info;
 
@@ -331,7 +347,6 @@ namespace Server.Game
 		void Change(C_Turn packet)
         {
             S_TurnPokeball pokeballPacket = new S_TurnPokeball();
-            pokeballPacket.PlayerId = packet.PlayerId;
             PokeballInfo info = new PokeballInfo();
             pokeballPacket.Info = info;
 
@@ -341,7 +356,6 @@ namespace Server.Game
 		void Runaway(C_Turn packet)
 		{
             S_TurnRunaway runawayPacket = new S_TurnRunaway();
-            runawayPacket.PlayerId = packet.PlayerId;
 
             Broadcast(runawayPacket);
         }

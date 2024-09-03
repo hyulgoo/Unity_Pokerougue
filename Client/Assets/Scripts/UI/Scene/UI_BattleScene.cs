@@ -11,8 +11,11 @@ public class UI_BattleScene : UI_Scene
 {
     int _myMonsterId;
     int _enemyMonsterId;
+    bool _isExcute = false;
 
     Sprite[] _hpbarSprites;
+
+    string _curAnnounce;
 
     enum GameObjects
     {
@@ -42,7 +45,7 @@ public class UI_BattleScene : UI_Scene
     {
         Text_MyName,
         Text_EnemyName,
-        Text
+        Announce
     }
 
     public override void Init()
@@ -52,6 +55,14 @@ public class UI_BattleScene : UI_Scene
         BindObject(typeof(GameObjects));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
+    }
+
+    void Update()
+    {
+        if(_curAnnounce == GetText((int)Texts.Announce).text && !_isExcute)
+        {
+            StartCoroutine(SetJobExcute());
+        }
     }
 
     public void SetPlayerInfo()
@@ -93,8 +104,8 @@ public class UI_BattleScene : UI_Scene
         Sprite enemyImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{_enemyMonsterId}")[0];
         GetImage((int)Images.Image_Enemy).sprite = enemyImage;
 
-        SetHPBar(0, isEnemy: true);
-        SetHPBar(0, isEnemy: false);
+        SetHPBar(isEnemy: true);
+        SetHPBar(isEnemy: false);
         MyTurn();
     }
 
@@ -103,17 +114,18 @@ public class UI_BattleScene : UI_Scene
         if (Managers.Object.MyTurn)
         {
             Managers.UI.ShowPopupUI<UI_SelectBehaviorPopup>();
-            SetText($"{Managers.Data.MonsterDict[_myMonsterId].name}는 무엇을 할까?");
+            SetAnnounce($"{Managers.Data.MonsterDict[_myMonsterId].name}는 무엇을 할까?");
         }
         else
         {
-            SetText("상대 차례를 기다리는 중");
+            SetAnnounce("상대 차례를 기다리는 중");
         }
     }
 
-    public void SetText(string text)
+    public void SetAnnounce(string announce)
     {
-        GetText((int)Texts.Text).text = text;
+        _curAnnounce = announce;
+        GetText((int)Texts.Announce).text = _curAnnounce;
     }
 
     #region HP
@@ -123,18 +135,22 @@ public class UI_BattleScene : UI_Scene
     int _enemyprevValue;
     int _enemytargetValue;
 
-    public void SetHPBar(int diff, bool isEnemy = false)
+    public void SetHPBar(int value = -1, bool isEnemy = false)
     {
-        PokemonData data = isEnemy ? Managers.Data.MonsterDict[_enemyMonsterId] : Managers.Data.MonsterDict[_myMonsterId];
-        int maxHp = data.info.Hp;
         if (isEnemy)
         {
-            _enemytargetValue = maxHp - diff;
+            if (value == -1)
+                _enemytargetValue = Managers.Data.MonsterDict[_enemyMonsterId].info.Hp;
+            else
+                _enemytargetValue = value;
             StartCoroutine(SetEnemyHPbar());
         }
         else
         {
-            _targetValue = maxHp - diff;
+            if (value == -1)
+                _targetValue = Managers.Data.MonsterDict[_myMonsterId].info.Hp;
+            else
+                _targetValue = value;
             StartCoroutine(SetMyHpbar());
         }
     }
@@ -169,6 +185,7 @@ public class UI_BattleScene : UI_Scene
         } while (diff > 1f);
 
         GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value = _enemytargetValue / maxHP;
+        Managers.Job.Excute = true;
     }
 
     IEnumerator SetMyHpbar()
@@ -200,8 +217,18 @@ public class UI_BattleScene : UI_Scene
             yield return null;
         } while (diff > 1f);
 
-        GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = _targetValue / maxHP;
+        GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = _targetValue / maxHP; 
+        Managers.Job.Excute = true;
     }
 
     #endregion
+
+    IEnumerator SetJobExcute()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Managers.Job.Excute = true;
+        _isExcute = true;
+        yield return new WaitForSeconds(0.5f);
+        _isExcute = false;
+    }
 }

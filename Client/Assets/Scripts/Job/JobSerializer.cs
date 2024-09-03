@@ -9,7 +9,6 @@ namespace Server.Game
 		JobTimer _timer = new JobTimer();
 		Queue<IJob> _jobQueue = new Queue<IJob>();
 		bool _flush = false;
-		public bool Excute { get; set; } = true;
 
 		public IJob PushAfter(int tickAfter, Action action) { return PushAfter(tickAfter, new Job(action)); }
 		public IJob PushAfter<T1>(int tickAfter, Action<T1> action, T1 t1) { return PushAfter(tickAfter, new Job<T1>(action, t1)); }
@@ -38,14 +37,10 @@ namespace Server.Game
 
 			while (true)
 			{
-				if (!Excute) 
-					return;
-
 				IJob job = Pop();
 				if (job == null)
 					return;
 
-				Excute = false;
 				job.Execute();
 			}
 		}

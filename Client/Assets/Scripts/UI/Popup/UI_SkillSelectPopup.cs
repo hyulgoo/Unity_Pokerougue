@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class UI_SkillSelectPopup : UI_Popup
 {
-    int _selectedId {  get; set; }
+    int _selectedSkillId {  get; set; }
 
     enum Buttons
     {
@@ -42,7 +42,7 @@ public class UI_SkillSelectPopup : UI_Popup
         BindImage(typeof(Images));
         BindText(typeof(Texts));
 
-        for(int i = (int)Buttons.Btn_Skill_00; i < (int)Buttons.Btn_Skill_03; ++i)
+        for(int i = (int)Buttons.Btn_Skill_00; i <= (int)Buttons.Btn_Skill_03; ++i)
         {
             GetButton(i).onClick.AddListener(OnClickSkillButton);
         }
@@ -78,7 +78,7 @@ public class UI_SkillSelectPopup : UI_Popup
 
     public void SetCurSkillInfo(int skillId)
     {
-        _selectedId = skillId;
+        _selectedSkillId = skillId;
 
         // 이미지 설정
         Sprite[] sprites; int type;
@@ -128,7 +128,7 @@ public class UI_SkillSelectPopup : UI_Popup
 
         TurnInfo turnInfo = new TurnInfo();
         turnInfo.Action = ActionType.Fight;
-        turnInfo.SkillNum = _selectedId;
+        turnInfo.SkillNum = _selectedSkillId;
 
         turnpacket.TurnInfo = turnInfo;
 
@@ -136,8 +136,7 @@ public class UI_SkillSelectPopup : UI_Popup
         Managers.UI.CloseAllPopupUI();
         UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
         string monsterName = Managers.Object.MyPlayer.GetCurMonsterName();
-        string skillName = Managers.Data.SkillDict[_selectedId].name;
-        scene.SetText($"{monsterName}의 {skillName}!");
-            
+        string skillName = Managers.Data.SkillDict[_selectedSkillId].name;
+        scene.SetAnnounce($"{monsterName}의 {skillName}!");            
     }
 }

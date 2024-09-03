@@ -7,7 +7,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Grass",
             "value": 130,
             "accuracy": 100,
@@ -32,7 +32,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Grass",
             "value": 75,
             "accuracy": 100,
@@ -57,7 +57,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Dark",
             "value": 80,
             "accuracy": 100,
@@ -65,7 +65,7 @@
           },
           {
             "skillType": "DebuffAtk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Grass",
             "value": 37,
             "accuracy": 100,
@@ -82,7 +82,7 @@
         "skillEffect": [
           {
             "skillType": "Dot",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Grass",
             "value": 35,
             "accuracy": 100,
@@ -107,7 +107,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Fire",
             "value": 120,
             "accuracy": 100,
@@ -157,7 +157,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Fire",
             "value": 35,
             "accuracy": 85,
@@ -174,7 +174,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Fighting",
             "value": 120,
             "accuracy": 100,
@@ -191,7 +191,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Water",
             "value": 110,
             "accuracy": 80,
@@ -208,7 +208,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Flying",
             "value": 80,
             "accuracy": 100,
@@ -225,7 +225,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Water",
             "value": 35,
             "accuracy": 80,
@@ -242,7 +242,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Water",
             "value": 65,
             "accuracy": 100,
@@ -259,7 +259,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Flying",
             "value": 120,
             "accuracy": 100,
@@ -301,7 +301,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 90,
             "accuracy": 85,
@@ -326,7 +326,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Flying",
             "value": 60,
             "accuracy": 100,
@@ -343,7 +343,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Fighting",
             "value": 120,
             "accuracy": 100,
@@ -394,7 +394,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Electric",
             "value": 90,
             "accuracy": 100,
@@ -419,7 +419,7 @@
         "skillEffect": [
           {
             "skillType": "DebuffSpe",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 2,
             "accuracy": 100,
@@ -436,7 +436,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Electric",
             "value": 40,
             "accuracy": 100,
@@ -453,7 +453,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Water",
             "value": 40,
             "accuracy": 100,
@@ -470,7 +470,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Water",
             "value": 90,
             "accuracy": 90,
@@ -487,7 +487,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 60,
             "accuracy": 100,
@@ -504,7 +504,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 250,
             "accuracy": 100,
@@ -546,7 +546,7 @@
         "skillEffect": [
           {
             "skillType": "Spa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Ghost",
             "value": 80,
             "accuracy": 100,
@@ -563,7 +563,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Ghost",
             "value": 30,
             "accuracy": 100,
@@ -571,7 +571,7 @@
           },
           {
             "skillType": "Sturn",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Ghost",
             "value": 1,
             "accuracy": 30,
@@ -613,7 +613,7 @@
         "skillEffect": [
           {
             "skillType": "BuffSpa",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Dark",
             "value": 1,
             "accuracy": 100,
@@ -621,7 +621,7 @@
           },
           {
             "skillType": "Confusion",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Dark",
             "value": 1,
             "accuracy": 100,
@@ -638,7 +638,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 70,
             "accuracy": 100,
@@ -646,7 +646,7 @@
           },
           {
             "skillType": "Sturn",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 1,
             "accuracy": 30,
@@ -663,7 +663,7 @@
         "skillEffect": [
           {
             "skillType": "DebuffAtk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 2,
             "accuracy": 100,
@@ -680,7 +680,7 @@
         "skillEffect": [
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 30,
             "accuracy": 100,
@@ -688,7 +688,7 @@
           },
           {
             "skillType": "Atk",
-            "target": "Opponent",
+            "target": "Enemy",
             "type": "Normal",
             "value": 30,
             "accuracy": 100,

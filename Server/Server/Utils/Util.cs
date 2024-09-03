@@ -176,7 +176,7 @@ namespace Server
             return damageRatio;
         }
 
-        public static BattleInfo CalcDamage(PokemonData myData, PokemonData enemyData, SkillEffect effect)
+        public static BattleInfo[] CalcDamage(PokemonData myData, PokemonData enemyData, SkillEffect effect)
         {
             System.Random r = new System.Random();
             bool isMiss = r.Next(0, 99) >= effect.Accuracy ? true : false;
@@ -186,12 +186,17 @@ namespace Server
             float damage = 0;
             SkillType skillType = effect.SkillType;
 
-            BattleInfo result = new BattleInfo();
-            result.StateInfo = new StateInfo();
-            result.SkillType = effect.SkillType;
-            result.MyInfo = myInfo;
-            result.EnemyInfo = enemyInfo;
-            result.StateInfo.IsMiss = isMiss;
+            BattleInfo[] result = new BattleInfo[2];
+            for(int i = 0; i < 2; ++i)
+            {
+                result[i] = new BattleInfo();
+                result[i].StateInfo = new StateInfo();
+                result[i].SkillType = effect.SkillType;
+                result[i].Effective = EffectiveType.Commoneffect;
+                result[i].MyInfo = i == 0 ? myInfo : enemyInfo;
+                result[i].EnemyInfo = i == 0 ? enemyInfo : myInfo;
+                result[i].StateInfo.IsMiss = isMiss;
+            }
 
             // 빗나갔다면 바로 return
             if (isMiss)
@@ -199,7 +204,7 @@ namespace Server
 
             PokemonInfo info = myInfo;
             PokemonInfo target = effect.Target == TargetType.Oneself ? myInfo : enemyInfo;
-;
+
             int targetId = effect.Target == TargetType.Oneself ? myData.id : enemyData.id;
             PokemonInfo standard = DataManager.MonsterDict[targetId].info;
 
@@ -216,12 +221,20 @@ namespace Server
             if (skillType == SkillType.Atk || skillType == SkillType.Spa)
             {
                 int atk = skillType == SkillType.Atk ? info.Atk : info.SpA;
-                int def = skillType == SkillType.Atk ? target.Def: target.SpD;
+                int def = skillType == SkillType.Atk ? target.Def : target.SpD;
                 damage = (((((((myInfo.Level * 2 / 5) + 2) * power * atk / 50) / def) * Mod1) + 2) * critical * Mod2 * random / 100) * myType;
+                float effectRatio = 1f;
                 for (int j = 0; j < target.Type.Count; ++j)
                 {
-                    damage *= CalcAttackType(effect.Type, target.Type[j]);
+                    float ratio = CalcAttackType(effect.Type, target.Type[j]);
+                    effectRatio *= ratio;
+                    damage *= ratio;
                 }
+                for (int i = 0; i < 2; ++i)
+                {
+                    if (effectRatio != 1f)
+                        result[i].Effective = effectRatio > 1f ? EffectiveType.Effective : EffectiveType.Ineffective;
+                } 
                 damage *= Mode3;
                 int idamage = (int)damage;
                 target.Hp = target.Hp - idamage < 0 ? 0 : target.Hp - idamage;
@@ -275,11 +288,24 @@ namespace Server
                         break;
                 }
             }
+            for(int i = 0; i < 2; ++i)
+            {
+                if(i == 0)
+                {
+                    if (effect.Target == TargetType.Oneself)
+                        result[i].MyInfo = info;
+                    else
+                        result[i].EnemyInfo = info;
+                }
+                else
+                {
+                    if (effect.Target != TargetType.Oneself)
+                        result[i].MyInfo = info;
+                    else
+                        result[i].EnemyInfo = info;
 
-            if (effect.Target == TargetType.Oneself)
-                result.MyInfo = info;
-            else
-                result.EnemyInfo = info;
+                }
+            }
 
             return result;
         }
