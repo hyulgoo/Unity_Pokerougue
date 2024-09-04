@@ -10,6 +10,8 @@ namespace Server.Game
 		Queue<IJob> _jobQueue = new Queue<IJob>();
 		bool _flush = false;
 
+		public bool _excute = true;
+
 		public IJob PushAfter(int tickAfter, Action action) { return PushAfter(tickAfter, new Job(action)); }
 		public IJob PushAfter<T1>(int tickAfter, Action<T1> action, T1 t1) { return PushAfter(tickAfter, new Job<T1>(action, t1)); }
 		public IJob PushAfter<T1, T2>(int tickAfter, Action<T1, T2> action, T1 t1, T2 t2) { return PushAfter(tickAfter, new Job<T1, T2>(action, t1, t2)); }
@@ -33,6 +35,8 @@ namespace Server.Game
 
 		public void Flush()
 		{
+			if (!_excute) return;
+
 			_timer.Flush();
 
 			while (true)
@@ -41,7 +45,8 @@ namespace Server.Game
 				if (job == null)
 					return;
 
-				job.Execute();
+				_excute = false;
+                job.Execute();
 			}
 		}
 

@@ -58,10 +58,12 @@ public class UI_BattleScene : UI_Scene
     }
 
     void Update()
-    {
-        if(_curAnnounce == GetText((int)Texts.Announce).text && !_isExcute)
+    {        
+        if (!_isExcute)
         {
-            StartCoroutine(SetJobExcute());
+            string text = GetText((int)Texts.Announce).text;
+            if (_curAnnounce == text)
+                StartCoroutine(SetJobExcute());
         }
     }
 
@@ -225,10 +227,10 @@ public class UI_BattleScene : UI_Scene
 
     IEnumerator SetJobExcute()
     {
-        yield return new WaitForSeconds(0.5f);
-        Managers.Job.Excute = true;
         _isExcute = true;
-        yield return new WaitForSeconds(0.5f);
+        Managers.Job.Excute = true;
+        yield return new WaitForSeconds(2f);
+        _curAnnounce = "";
         _isExcute = false;
     }
 }

@@ -176,25 +176,25 @@ namespace Server
             return damageRatio;
         }
 
-        public static BattleInfo[] CalcDamage(PokemonData myData, PokemonData enemyData, SkillEffect effect)
+        public static BattleInfo[] CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect)
         {
             System.Random r = new System.Random();
             bool isMiss = r.Next(0, 99) >= effect.Accuracy ? true : false;
 
-            PokemonInfo myInfo = myData.info;
-            PokemonInfo enemyInfo = enemyData.info;
-            float damage = 0;
+            PokemonInfo myInfo = myData.info.Clone();
+            PokemonInfo enemyInfo = enemyData.info.Clone();
             SkillType skillType = effect.SkillType;
 
-            BattleInfo[] result = new BattleInfo[2];
-            for(int i = 0; i < 2; ++i)
+            BattleInfo[] result = new BattleInfo[(int)TargetType.End];
+            for(int i = 0; i < (int)TargetType.End; ++i)
             {
                 result[i] = new BattleInfo();
                 result[i].StateInfo = new StateInfo();
-                result[i].SkillType = effect.SkillType;
+                result[i].SkillType = skillType;
+                result[i].TargetType = effect.Target;
                 result[i].Effective = EffectiveType.Commoneffect;
-                result[i].MyInfo = i == 0 ? myInfo : enemyInfo;
-                result[i].EnemyInfo = i == 0 ? enemyInfo : myInfo;
+                result[i].MyInfo = i == (int)TargetType.Oneself ? myInfo : enemyInfo;
+                result[i].EnemyInfo = i == (int)TargetType.Oneself ? enemyInfo : myInfo;
                 result[i].StateInfo.IsMiss = isMiss;
             }
 
@@ -202,112 +202,145 @@ namespace Server
             if (isMiss)
                 return result;
 
-            PokemonInfo info = myInfo;
-            PokemonInfo target = effect.Target == TargetType.Oneself ? myInfo : enemyInfo;
+            PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
+            PokemonInfo target = targetData.info;
+            PokemonInfo standard = DataManager.MonsterDict[targetData.id].info;
 
-            int targetId = effect.Target == TargetType.Oneself ? myData.id : enemyData.id;
-            PokemonInfo standard = DataManager.MonsterDict[targetId].info;
-
-            int power = effect.Value;            
-            int critical = r.Next(0, 1000) < 65 ? 2 : 1;
-            int random = (r.Next(217, 256) * 100) / 255;
-            float myType = 1f;
-            for(int t = 0; t < myInfo.Type.Count; ++t)
-            {
-                if (myInfo.Type[0] == effect.Type)
-                    myType = 1.5f;
-            }
             // 스킬타입이 공격 또는 특수공격인 경우 데미지 계산
             if (skillType == SkillType.Atk || skillType == SkillType.Spa)
             {
-                int atk = skillType == SkillType.Atk ? info.Atk : info.SpA;
-                int def = skillType == SkillType.Atk ? target.Def : target.SpD;
-                damage = (((((((myInfo.Level * 2 / 5) + 2) * power * atk / 50) / def) * Mod1) + 2) * critical * Mod2 * random / 100) * myType;
-                float effectRatio = 1f;
-                for (int j = 0; j < target.Type.Count; ++j)
-                {
-                    float ratio = CalcAttackType(effect.Type, target.Type[j]);
-                    effectRatio *= ratio;
-                    damage *= ratio;
-                }
-                for (int i = 0; i < 2; ++i)
-                {
-                    if (effectRatio != 1f)
-                        result[i].Effective = effectRatio > 1f ? EffectiveType.Effective : EffectiveType.Ineffective;
-                } 
-                damage *= Mode3;
-                int idamage = (int)damage;
-                target.Hp = target.Hp - idamage < 0 ? 0 : target.Hp - idamage;
+                string attackerName = myData.name;
+                string targetName = targetData.name;
+                int Damege = CalcDamage(effect, myInfo, target, out EffectiveType effective);
+                target.Hp -= Damege;
+
+                for (int i = 0; i < (int)TargetType.End; ++i)
+                    result[i].Effective = effective;
             }
             // 스킬타입이 공격타입이 아닌 경우
             else
             {
-                switch (skillType)
-                {
-                    case SkillType.Recovery:
-                        info.Hp += standard.Hp / 3;
-                        break;
-                    case SkillType.BuffAtk:
-                        info.Atk = info.Atk + (standard.Atk / 5 * effect.Value);
-                        break;
-                    case SkillType.BuffSpa:
-                        info.SpA = info.SpA + (standard.SpA / 5 * effect.Value);
-                        break;
-                    case SkillType.BuffDef:
-                        info.Def = info.Def + (standard.Def / 5 * effect.Value);
-                        break;
-                    case SkillType.BuffSpd:
-                        info.SpD = info.SpD + (standard.SpD / 5 * effect.Value);
-                        break;
-                    case SkillType.BuffSpe:
-                        info.Spe = info.Spe + (standard.Spe / 5 * effect.Value);
-                        break;
-                    case SkillType.Dot:
-                        info.State.Dot = 3;
-                        break;
-                    case SkillType.DebuffAtk:
-                        info.Atk = info.Atk - (standard.Atk / 5 * effect.Value);
-                        break;
-                    case SkillType.DebuffSpa:
-                        info.SpA = info.SpA - (standard.SpA / 5 * effect.Value);
-                        break;
-                    case SkillType.DebuffDef:
-                        info.Def = info.Def - (standard.Def / 5 * effect.Value);
-                        break;
-                    case SkillType.DebuffSpd:
-                        info.SpD = info.SpD - (standard.SpD / 5 * effect.Value);
-                        break;
-                    case SkillType.DebuffSpe:
-                        info.Spe = info.Spe - (standard.Spe / 5 * effect.Value);
-                        break;
-                    case SkillType.Sturn:
-                        info.State.Sturn = 3;
-                        break;
-                    case SkillType.Confusion:
-                        info.State.Confusion = 3;
-                        break;
-                }
+                CalcBuffType(target, standard, skillType, effect.Value);
             }
-            for(int i = 0; i < 2; ++i)
+
+            // 데미지를 계산한 이후 결과를 반영해줌.
+            for(int i = 0; i < (int)TargetType.End; ++i)
             {
-                if(i == 0)
+                if(i == (int)TargetType.Oneself)
                 {
                     if (effect.Target == TargetType.Oneself)
-                        result[i].MyInfo = info;
+                        result[i].MyInfo = target.Clone();
                     else
-                        result[i].EnemyInfo = info;
+                        result[i].EnemyInfo = target.Clone(); 
                 }
-                else
+                else if (i == (int)TargetType.Enemy)
                 {
-                    if (effect.Target != TargetType.Oneself)
-                        result[i].MyInfo = info;
+                    if (effect.Target == TargetType.Oneself)
+                        result[i].EnemyInfo = target.Clone();
                     else
-                        result[i].EnemyInfo = info;
-
+                        result[i].MyInfo = target.Clone();
                 }
             }
 
             return result;
+        }
+
+        static int CalcDamage(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo, out EffectiveType effective)
+        {
+            System.Random r = new System.Random();
+
+            int atk = skillInfo.SkillType == SkillType.Atk ? attackerInfo.Atk : attackerInfo.SpA;
+            int def = skillInfo.SkillType == SkillType.Atk ? targetInfo.Def : targetInfo.SpD;
+
+            // 스킬 위력계수
+            int power = skillInfo.Value;
+
+            // 6.5% 확률로 크리티컬 판정
+            int critical = r.Next(0, 1000) < 65 ? 2 : 1;
+
+            // 랜덤 데미지계수
+            int random = (r.Next(217, 256) * 100) / 255;
+
+            // 자속성 기술계수
+            float myType = 1f;
+            for (int t = 0; t < attackerInfo.Type.Count; ++t)
+            {
+                if (attackerInfo.Type[t] == skillInfo.Type)
+                    myType = 1.5f;
+            }
+
+            float damage = 0;
+
+            damage = (((((((attackerInfo.Level * 2 / 5) + 2) * power * atk / 50) / def) * Mod1) + 2) * critical * Mod2 * ((float)random / 100f)) * myType;
+
+            float effectRatio = 1f;
+            for (int j = 0; j < targetInfo.Type.Count; ++j)
+            {
+                float ratio = CalcAttackType(skillInfo.Type, targetInfo.Type[j]);
+                effectRatio *= ratio;
+            }
+
+            damage *= effectRatio;
+
+            effective = EffectiveType.Commoneffect;
+            if (effectRatio != 1f)
+                effective = effectRatio > 1f ? EffectiveType.Effective : EffectiveType.Ineffective;
+            
+            damage *= Mode3;
+
+            if(damage > targetInfo.Hp)
+                damage = targetInfo.Hp;
+
+            return (int)damage;
+        }
+
+        static void CalcBuffType(PokemonInfo targetInfo, PokemonInfo stadardInfo, SkillType skillType, int value)
+        {
+            switch (skillType)
+            {
+                case SkillType.Recovery:
+                    targetInfo.Hp += stadardInfo.Hp / 3;
+                    break;
+                case SkillType.BuffAtk:
+                    targetInfo.Atk = targetInfo.Atk + (stadardInfo.Atk / 5 * value);
+                    break;
+                case SkillType.BuffSpa:
+                    targetInfo.SpA = targetInfo.SpA + (stadardInfo.SpA / 5 * value);
+                    break;
+                case SkillType.BuffDef:
+                    targetInfo.Def = targetInfo.Def + (stadardInfo.Def / 5 * value);
+                    break;
+                case SkillType.BuffSpd:
+                    targetInfo.SpD = targetInfo.SpD + (stadardInfo.SpD / 5 * value);
+                    break;
+                case SkillType.BuffSpe:
+                    targetInfo.Spe = targetInfo.Spe + (stadardInfo.Spe / 5 * value);
+                    break;
+                case SkillType.Dot:
+                    targetInfo.State.Dot = 3;
+                    break;
+                case SkillType.DebuffAtk:
+                    targetInfo.Atk = targetInfo.Atk - (stadardInfo.Atk / 5 * value);
+                    break;
+                case SkillType.DebuffSpa:
+                    targetInfo.SpA = targetInfo.SpA - (stadardInfo.SpA / 5 * value);
+                    break;
+                case SkillType.DebuffDef:
+                    targetInfo.Def = targetInfo.Def - (stadardInfo.Def / 5 * value);
+                    break;
+                case SkillType.DebuffSpd:
+                    targetInfo.SpD = targetInfo.SpD - (stadardInfo.SpD / 5 * value);
+                    break;
+                case SkillType.DebuffSpe:
+                    targetInfo.Spe = targetInfo.Spe - (stadardInfo.Spe / 5 * value);
+                    break;
+                case SkillType.Sturn:
+                    targetInfo.State.Sturn = 3;
+                    break;
+                case SkillType.Confusion:
+                    targetInfo.State.Confusion = 3;
+                    break;
+            }
         }
 
         public static void AddtoTargetList(RepeatedField<int> targetList, List<int> list)
@@ -318,7 +351,7 @@ namespace Server
             }
         }
 
-        public static void AddtoTargetList(RepeatedField<BattleInfo> targetList, List< BattleInfo> list)
+        public static void AddtoTargetList(RepeatedField<BattleInfo> targetList, List<BattleInfo> list)
         {
             for (int i = 0; i < list.Count; i++)
             {

@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class JobManager : JobSerializer
 {
-    public bool Excute { get; set; } = true;
+    public bool Excute { get { return _excute; } set { _excute = value; } }
 
     public void Update()
     {
-        if (!Excute) return;
-
         Flush();
-        Excute = false;
     }
 }

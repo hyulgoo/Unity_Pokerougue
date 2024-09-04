@@ -129,7 +129,7 @@ public class UI_SkillSelectPopup : UI_Popup
         TurnInfo turnInfo = new TurnInfo();
         turnInfo.Action = ActionType.Fight;
         turnInfo.SkillNum = _selectedSkillId;
-
+        
         turnpacket.TurnInfo = turnInfo;
 
         Managers.Network.Send(turnpacket);

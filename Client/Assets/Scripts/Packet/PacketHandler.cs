@@ -236,7 +236,7 @@ class PacketHandler
     public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
     {
         S_TurnBattle battle = (S_TurnBattle)packet;
-		bool reverse = Managers.Object.MyPlayer.Id == battle.PlayerId ? true : false;
+		bool reverse = Managers.Object.MyPlayer.Id == battle.PlayerId ? false : true;
 		Battle(battle, reverse);
     }
 
@@ -287,17 +287,17 @@ class PacketHandler
 
                 announce = $"{targetName}은(는) 반동으로 인해 데미지를 입었다.";
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: !reverse); });
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
             }
             else
             {
-                PokemonInfo pokeinfo = reverse ? info.MyInfo : info.EnemyInfo;
+                PokemonInfo targetInfo = reverse ? info.MyInfo : info.EnemyInfo;
                 if (info.Effective != EffectiveType.Commoneffect)
                 {
                     announce = info.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
                     Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
                 }
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetInfo.Hp, isEnemy: !reverse); });
             }
         }
 	}
