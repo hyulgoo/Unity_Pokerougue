@@ -11,7 +11,7 @@ public class ObjectManager
 
 	public int ArenaType { get; set; }
 
-	public bool MyTurn { get; set; }
+	public bool MyTurn { get; set {; } }
 
 	Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
 	

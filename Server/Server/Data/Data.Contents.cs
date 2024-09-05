@@ -79,6 +79,10 @@ namespace Server.Data
 		public int id;
 		public string name;
 		public PokemonInfo info;
+		public PokemonData Clone()
+		{
+			return new PokemonData { id = this.id, name = this.name, info = this.info };
+		}
 	}
 
 	[Serializable]

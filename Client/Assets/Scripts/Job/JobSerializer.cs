@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Google.Protobuf.Protocol;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
+using UnityEngine;
 
 namespace Server.Game
 {
@@ -10,6 +14,7 @@ namespace Server.Game
 		Queue<IJob> _jobQueue = new Queue<IJob>();
 		bool _flush = false;
 
+		public bool _jobEnd = false;
 		public bool _excute = true;
 
 		public IJob PushAfter(int tickAfter, Action action) { return PushAfter(tickAfter, new Job(action)); }
@@ -39,15 +44,12 @@ namespace Server.Game
 
 			_timer.Flush();
 
-			while (true)
-			{
-				IJob job = Pop();
-				if (job == null)
-					return;
+			IJob job = Pop();
+			if (job == null)
+				return;
 
-				_excute = false;
-                job.Execute();
-			}
+			_excute = false;
+            job.Execute();
 		}
 
 		IJob Pop()
@@ -57,7 +59,13 @@ namespace Server.Game
 				_flush = false;
 				return null;
 			}
-			return _jobQueue.Dequeue();
+
+            if(_jobQueue.Count == 1)
+			{
+				_jobEnd = true;
+            }
+
+            return _jobQueue.Dequeue();
 		}
 	}
 }

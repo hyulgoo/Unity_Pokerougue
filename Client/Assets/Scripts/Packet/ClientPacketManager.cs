@@ -64,7 +64,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.STurnRunaway, MakePacket<S_TurnRunaway>);
 		_handler.Add((ushort)MsgId.STurnRunaway, PacketHandler.S_TurnRunawayHandler);		
 		_onRecv.Add((ushort)MsgId.STurnPass, MakePacket<S_TurnPass>);
-		_handler.Add((ushort)MsgId.STurnPass, PacketHandler.S_TurnPassHandler);
+		_handler.Add((ushort)MsgId.STurnPass, PacketHandler.S_TurnPassHandler);		
+		_onRecv.Add((ushort)MsgId.STurn, MakePacket<S_Turn>);
+		_handler.Add((ushort)MsgId.STurn, PacketHandler.S_TurnHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

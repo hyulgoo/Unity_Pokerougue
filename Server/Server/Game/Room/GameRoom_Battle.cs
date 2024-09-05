@@ -1,8 +1,10 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using Server.Data;
+using Server.DB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Server.Game
@@ -121,18 +123,12 @@ namespace Server.Game
         {
             // 전투 정보를 담는
             S_TurnBattle[] BattlePacket = new S_TurnBattle[(int)TargetType.End];
-            for (int i = 0; i < (int)TargetType.End; ++i)
-            {
-                BattlePacket[i] = new S_TurnBattle();
-            }
-            int enemyId = 0;
 
-            foreach (int id in _players.Keys)
-            {
-                if (id != packet.PlayerId)
-                    enemyId = id;
-            }
+            BattlePacket[(int)TargetType.Oneself] = new S_TurnBattle();
+            BattlePacket[(int)TargetType.Enemy] = new S_TurnBattle();
 
+            int enemyId = FindEnemyIdById(packet.PlayerId);
+           
             Player player = ObjectManager.Instance.Find(RoomId, packet.PlayerId);
             Player Enemy = ObjectManager.Instance.Find(RoomId, enemyId);
             PokemonData data = player.Pokemon[0];
@@ -190,5 +186,32 @@ namespace Server.Game
             Broadcast(runawayPacket);
         }
 
+        public void TurnEnd(int playerId)
+        {
+            _playerReady[playerId] = true;
+
+            int cnt = 0;
+            foreach (bool ready in _playerReady.Values)
+            {
+                cnt = ready ? cnt + 1 : cnt;
+            }
+
+            if (cnt == _playerReady.Count)
+            {
+                int[] list = _players.Keys.ToArray();
+
+                S_Turn packet = new S_Turn();
+                int turnorder = ObjectManager.Instance.GetTurn(RoomId);
+                for (int i = 0; i < (int)TargetType.End; ++i)
+                {
+                    int myid = list[i];
+                    int enemyid = list[(int)TargetType.Enemy - i];
+
+                    packet.MyTurn = myid == turnorder;
+
+                    _players[myid].Session.Send(packet);
+                }
+            }
+        }
     }
 }

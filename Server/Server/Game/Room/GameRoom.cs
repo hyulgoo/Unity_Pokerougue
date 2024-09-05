@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Google.Protobuf.Protocol;
+using Google.Protobuf.WellKnownTypes;
 using Server.Data;
 using System;
 using System.Collections.Generic;
@@ -156,7 +157,7 @@ namespace Server.Game
                 for (int i = 0; i < (int)TargetType.End; ++i)
                 {
                     int myid = list[i];
-                    int enemyid = i == (int)TargetType.Oneself ? list[1] : list[0];
+					int enemyid = list[(int)TargetType.Enemy - i];
 
                     packet.MyMst.Clear();
                     packet.EnemyMst.Clear();
@@ -172,7 +173,7 @@ namespace Server.Game
                         _players[enemyid].Pokemon[j].info.State = new ConditionAbnormality();
                     }
                     
-                    packet.MyTurn = myid == turnorder ? 1 : 0;
+                    packet.MyTurn = myid == turnorder;
 
                     _players[myid].Session.Send(packet);
                 }
@@ -201,6 +202,16 @@ namespace Server.Game
 
 			return null;
 		}
+
+		int FindEnemyIdById(int playerId)
+		{
+            foreach (int id in _players.Keys)
+            {
+                if (id != playerId)
+                    return id;
+            }
+			return -1;
+        }
 				
 		public void Broadcast(IMessage packet)
 		{

@@ -12,10 +12,10 @@ public class UI_BattleScene : UI_Scene
     int _myMonsterId;
     int _enemyMonsterId;
     bool _isExcute = false;
+    string _announceText = "";
 
     Sprite[] _hpbarSprites;
-
-    string _curAnnounce;
+    int[] _HpbarSpriteNum = new int[(int)TargetType.End] { -1, -1 };
 
     enum GameObjects
     {
@@ -57,16 +57,6 @@ public class UI_BattleScene : UI_Scene
         BindText(typeof(Texts));
     }
 
-    void Update()
-    {        
-        if (!_isExcute)
-        {
-            string text = GetText((int)Texts.Announce).text;
-            if (_curAnnounce == text)
-                StartCoroutine(SetJobExcute());
-        }
-    }
-
     public void SetPlayerInfo()
     {
         _hpbarSprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
@@ -106,8 +96,8 @@ public class UI_BattleScene : UI_Scene
         Sprite enemyImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{_enemyMonsterId}")[0];
         GetImage((int)Images.Image_Enemy).sprite = enemyImage;
 
-        SetHPBar(isEnemy: true);
-        SetHPBar(isEnemy: false);
+        SetHPBar(isEnemy: true, setByHandler : false);
+        SetHPBar(isEnemy: false, setByHandler : false);
         MyTurn();
     }
 
@@ -124,10 +114,10 @@ public class UI_BattleScene : UI_Scene
         }
     }
 
-    public void SetAnnounce(string announce)
+    public void SetAnnounce(string announce, bool setByHandler = true)
     {
-        _curAnnounce = announce;
-        GetText((int)Texts.Announce).text = _curAnnounce;
+        _announceText = announce;
+        StartCoroutine("SetText", setByHandler);
     }
 
     #region HP
@@ -137,7 +127,7 @@ public class UI_BattleScene : UI_Scene
     int _enemyprevValue;
     int _enemytargetValue;
 
-    public void SetHPBar(int value = -1, bool isEnemy = false)
+    public void SetHPBar(int value = -1, bool isEnemy = false, bool setByHandler = true)
     {
         if (isEnemy)
         {
@@ -145,7 +135,7 @@ public class UI_BattleScene : UI_Scene
                 _enemytargetValue = Managers.Data.MonsterDict[_enemyMonsterId].info.Hp;
             else
                 _enemytargetValue = value;
-            StartCoroutine(SetEnemyHPbar());
+            StartCoroutine("SetEnemyHPbar", setByHandler);
         }
         else
         {
@@ -153,14 +143,14 @@ public class UI_BattleScene : UI_Scene
                 _targetValue = Managers.Data.MonsterDict[_myMonsterId].info.Hp;
             else
                 _targetValue = value;
-            StartCoroutine(SetMyHpbar());
+            StartCoroutine("SetMyHpbar", setByHandler);
         }
     }
 
-    IEnumerator SetEnemyHPbar()
+    IEnumerator SetEnemyHPbar(bool setbyHandler = true)
     {
-        float curvalue = _enemyprevValue;
         float maxHP = (float)Managers.Data.MonsterDict[_enemyMonsterId].info.Hp;
+        float curvalue = maxHP * _enemyprevValue;
         float nextValue = 0;
         float diff = 0;
         float fillSpeed = 75 * Time.deltaTime;
@@ -178,19 +168,25 @@ public class UI_BattleScene : UI_Scene
             GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value = newvalue;
 
             int hpstate = 2 - (int)(newvalue / 0.34f);
-            GameObject fillObj = Util.FindChild(GetObject((int)GameObjects.EnemyHpbar), "Fill", true);
-            fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];// 다음 프레임까지 대기
+            if(_HpbarSpriteNum[(int)TargetType.Enemy] !=  hpstate)
+            {
+                _HpbarSpriteNum[(int)TargetType.Enemy] = hpstate;
+                GameObject fillObj = Util.FindChild(GetObject((int)GameObjects.EnemyHpbar), "Fill", true);
+                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];// 다음 프레임까지 대기
+            }
 
             diff = _enemytargetValue - curvalue;
-
             yield return null;
+
         } while (diff > 1f);
 
         GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value = _enemytargetValue / maxHP;
-        Managers.Job.Excute = true;
+
+        if (setbyHandler)
+            Managers.Job.Excute();
     }
 
-    IEnumerator SetMyHpbar()
+    IEnumerator SetMyHpbar(bool setbyHandler = true)
     {
         float curvalue = _prevValue;
         float maxHP = (float)Managers.Data.MonsterDict[_myMonsterId].info.Hp;
@@ -211,26 +207,33 @@ public class UI_BattleScene : UI_Scene
             GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = newvalue;
 
             int hpstate = 2 - (int)(newvalue / 0.34f);
-            GameObject fillObj = Util.FindChild(GetObject((int)GameObjects.MyHpbar), "Fill", true);
-            fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];// 다음 프레임까지 대기
-
+            if(_HpbarSpriteNum[(int)TargetType.Oneself] != hpstate)
+            {
+                _HpbarSpriteNum[(int)TargetType.Oneself] = hpstate;
+                GameObject fillObj = Util.FindChild(GetObject((int)GameObjects.MyHpbar), "Fill", true);
+                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];
+            }
             diff = _targetValue - curvalue;
 
             yield return null;
         } while (diff > 1f);
 
-        GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = _targetValue / maxHP; 
-        Managers.Job.Excute = true;
-    }
+        GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = _targetValue / maxHP;
 
+        if (setbyHandler)
+            Managers.Job.Excute();
+    }
     #endregion
 
-    IEnumerator SetJobExcute()
+    IEnumerator SetText(bool setbyHandler = true)
     {
-        _isExcute = true;
-        Managers.Job.Excute = true;
-        yield return new WaitForSeconds(2f);
-        _curAnnounce = "";
-        _isExcute = false;
+        GetText((int)Texts.Announce).text = "";
+        for(int i = 0; i < _announceText.Length; ++i)
+        {
+            GetText((int)Texts.Announce).text += _announceText[i];
+            yield return new WaitForSeconds(Managers.UI.ChatSpeed);
+        }
+        if (setbyHandler)
+            Managers.Job.Excute();
     }
 }

@@ -40,7 +40,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.CSelectMst, MakePacket<C_SelectMst>);
 		_handler.Add((ushort)MsgId.CSelectMst, PacketHandler.C_SelectMstHandler);		
 		_onRecv.Add((ushort)MsgId.CTurn, MakePacket<C_Turn>);
-		_handler.Add((ushort)MsgId.CTurn, PacketHandler.C_TurnHandler);
+		_handler.Add((ushort)MsgId.CTurn, PacketHandler.C_TurnHandler);		
+		_onRecv.Add((ushort)MsgId.CTurnEnd, MakePacket<C_TurnEnd>);
+		_handler.Add((ushort)MsgId.CTurnEnd, PacketHandler.C_TurnEndHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)

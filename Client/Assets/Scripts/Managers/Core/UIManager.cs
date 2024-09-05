@@ -10,7 +10,7 @@ public class UIManager
     Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
     public UI_Scene SceneUI { get; set; }
     public UI_BattleScene BattleScene { get { return SceneUI.gameObject.GetComponent<UI_BattleScene>(); } }
-
+    public float ChatSpeed { get; set; } = 0.1f;
     public GameObject Root
     {
         get

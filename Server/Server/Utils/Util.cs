@@ -181,41 +181,39 @@ namespace Server
             System.Random r = new System.Random();
             bool isMiss = r.Next(0, 99) >= effect.Accuracy ? true : false;
 
-            PokemonInfo myInfo = myData.info.Clone();
-            PokemonInfo enemyInfo = enemyData.info.Clone();
+            PokemonInfo myInfo = myData.info;
+            PokemonInfo enemyInfo = enemyData.info;
             SkillType skillType = effect.SkillType;
 
             BattleInfo[] result = new BattleInfo[(int)TargetType.End];
-            for(int i = 0; i < (int)TargetType.End; ++i)
-            {
-                result[i] = new BattleInfo();
-                result[i].StateInfo = new StateInfo();
-                result[i].SkillType = skillType;
-                result[i].TargetType = effect.Target;
-                result[i].Effective = EffectiveType.Commoneffect;
-                result[i].MyInfo = i == (int)TargetType.Oneself ? myInfo : enemyInfo;
-                result[i].EnemyInfo = i == (int)TargetType.Oneself ? enemyInfo : myInfo;
-                result[i].StateInfo.IsMiss = isMiss;
-            }
-
             // 빗나갔다면 바로 return
             if (isMiss)
+            {
+                for (int i = 0; i < (int)TargetType.End; ++i)
+                {
+                    result[i] = new BattleInfo();
+                    result[i].StateInfo = new StateInfo();
+                    result[i].SkillType = skillType;
+                    result[i].TargetType = effect.Target;
+                    result[i].Effective = EffectiveType.Commoneffect;
+                    result[i].MyInfo = i == (int)TargetType.Oneself ? myInfo.Clone() : enemyInfo.Clone();
+                    result[i].EnemyInfo = i == (int)TargetType.Oneself ? enemyInfo.Clone() : myInfo.Clone();
+                    result[i].StateInfo.IsMiss = isMiss;
+                }
                 return result;
+            }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
             PokemonInfo target = targetData.info;
             PokemonInfo standard = DataManager.MonsterDict[targetData.id].info;
-
+            EffectiveType effective = EffectiveType.Commoneffect;
             // 스킬타입이 공격 또는 특수공격인 경우 데미지 계산
             if (skillType == SkillType.Atk || skillType == SkillType.Spa)
             {
                 string attackerName = myData.name;
                 string targetName = targetData.name;
-                int Damege = CalcDamage(effect, myInfo, target, out EffectiveType effective);
+                int Damege = CalcDamage(effect, myInfo, target, out effective);
                 target.Hp -= Damege;
-
-                for (int i = 0; i < (int)TargetType.End; ++i)
-                    result[i].Effective = effective;
             }
             // 스킬타입이 공격타입이 아닌 경우
             else
@@ -224,22 +222,16 @@ namespace Server
             }
 
             // 데미지를 계산한 이후 결과를 반영해줌.
-            for(int i = 0; i < (int)TargetType.End; ++i)
-            {
-                if(i == (int)TargetType.Oneself)
-                {
-                    if (effect.Target == TargetType.Oneself)
-                        result[i].MyInfo = target.Clone();
-                    else
-                        result[i].EnemyInfo = target.Clone(); 
-                }
-                else if (i == (int)TargetType.Enemy)
-                {
-                    if (effect.Target == TargetType.Oneself)
-                        result[i].EnemyInfo = target.Clone();
-                    else
-                        result[i].MyInfo = target.Clone();
-                }
+            for (int i = 0; i < (int)TargetType.End; ++i)
+            {                
+                result[i] = new BattleInfo();
+                result[i].StateInfo = new StateInfo();
+                result[i].SkillType = skillType;
+                result[i].TargetType = effect.Target;
+                result[i].Effective = effective;
+                result[i].StateInfo.IsMiss = isMiss;
+                result[i].MyInfo = i == (int)TargetType.Oneself ? myInfo.Clone() : enemyInfo.Clone();
+                result[i].EnemyInfo = i == (int)TargetType.Oneself ? enemyInfo.Clone() : myInfo.Clone();
             }
 
             return result;

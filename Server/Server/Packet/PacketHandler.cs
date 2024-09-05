@@ -124,4 +124,19 @@ class PacketHandler
 
         room.Push(room.Turn, turnpacket);
     }
+    public static void C_TurnEndHandler(PacketSession session, IMessage packet)
+    {
+        C_TurnEnd turnpacket = (C_TurnEnd)packet;
+        ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+            return;
+
+        GameRoom room = player.Room;
+        if (room == null)
+            return;
+
+        room.Push(room.TurnEnd, turnpacket.PlayerId);
+    }
 }
