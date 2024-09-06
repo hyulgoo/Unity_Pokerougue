@@ -174,7 +174,7 @@ namespace Server.Game
                     }
                     
                     packet.MyTurn = myid == turnorder;
-
+					_players[myid].Session.Handle
                     _players[myid].Session.Send(packet);
                 }
             }

@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class JobManager : JobSerializer
 {
-
     public void Update()
     {
         Flush();
@@ -16,7 +15,7 @@ public class JobManager : JobSerializer
     {
         _excute = true;
         if (_jobEnd)
-            Managers.Object.MyPlayer.StartCoroutine(TurnEnd());
+            Managers.Instance.StartCoroutine(TurnEnd());
     }
 
     IEnumerator TurnEnd()

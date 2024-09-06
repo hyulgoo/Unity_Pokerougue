@@ -276,8 +276,9 @@ message C_Turn {
 
 message S_TurnBattle {
   int32 playerId = 1;
-  repeated BattleInfo turnInfo = 2;
-  repeated BattleInfo info = 3;
+  int32 skillId = 2;
+  repeated BattleInfo turnInfo = 3;
+  repeated BattleInfo info = 4;
 }
 
 message S_TurnPokeball {

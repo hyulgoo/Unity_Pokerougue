@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class ObjectManager
 {
-	public MyPlayerController MyPlayer { get; set; }
-	public PlayerController Enemy { get; set; }
+	public MyPlayerController MyPlayer { get; set; } = null;
+	public PlayerController Enemy { get; set; } = null;
 
 	public int ArenaType { get; set; }
 
-	public bool MyTurn { get; set {; } }
+	public bool MyTurn { get; set; }
 
 	Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
 	

@@ -255,20 +255,19 @@ namespace Server
 
             // 자속성 기술계수
             float myType = 1f;
-            for (int t = 0; t < attackerInfo.Type.Count; ++t)
+            foreach(Type type in attackerInfo.Type)
             {
-                if (attackerInfo.Type[t] == skillInfo.Type)
+                if (type == skillInfo.Type)
                     myType = 1.5f;
             }
 
-            float damage = 0;
-
-            damage = (((((((attackerInfo.Level * 2 / 5) + 2) * power * atk / 50) / def) * Mod1) + 2) * critical * Mod2 * ((float)random / 100f)) * myType;
+            float damage = (((((((attackerInfo.Level * 2 / 5) + 2) * power * atk / 50) / def) * Mod1) + 2) * critical * Mod2 * ((float)random / 100f)) * myType;
 
             float effectRatio = 1f;
-            for (int j = 0; j < targetInfo.Type.Count; ++j)
+
+            foreach (Type type in targetInfo.Type)
             {
-                float ratio = CalcAttackType(skillInfo.Type, targetInfo.Type[j]);
+                float ratio = CalcAttackType(skillInfo.Type, type);
                 effectRatio *= ratio;
             }
 

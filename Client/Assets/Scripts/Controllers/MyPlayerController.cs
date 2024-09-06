@@ -6,6 +6,5 @@ public class MyPlayerController : PlayerController
 {
     private void Start()
     {
-        Managers.Object.MyPlayer = this;
     }
 }

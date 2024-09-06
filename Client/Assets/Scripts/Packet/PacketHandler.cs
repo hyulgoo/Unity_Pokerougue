@@ -279,28 +279,36 @@ class PacketHandler
             if (info.StateInfo.IsMiss)
             {
                 string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
-
                 announce = $"{targetName}의 공격은 빗나갔다!";
 
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
                 return;
             }
 
+			// 자신을 때리는 종류의 스킬인 경우 
             if (info.TargetType == TargetType.Oneself)
             {
 				PokemonData targetData = reverse ? Managers.Object.Enemy.GetCurMonsterData() : Managers.Object.MyPlayer.GetCurMonsterData();
 				PokemonInfo pokeinfo = targetData.info;
-
+				
                 announce = $"{targetData.name}은(는) 반동으로 인해 데미지를 입었다.";
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
             }
             else
             {
+				if(reverse)
+				{
+					string attackName = Managers.Object.Enemy.GetCurMonsterName();
+					string skillName = Managers.Data.SkillDict[battle.SkillId].name;
+					Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce($"{attackName}의 {skillName}!"); });
+                }
+
                 PokemonData targetData = reverse ? Managers.Object.MyPlayer.GetCurMonsterData() : Managers.Object.Enemy.GetCurMonsterData();
 				PokemonInfo targetInfo = targetData.info;
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetInfo.Hp, isEnemy: !reverse); });
-                if (info.Effective != EffectiveType.Commoneffect)
+
+                if (!reverse && info.Effective != EffectiveType.Commoneffect)
                 {
                     announce = info.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
                     Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
@@ -328,6 +336,7 @@ class PacketHandler
     {
         S_TurnPass turn = (S_TurnPass)packet;
     }
+
     public static void S_TurnHandler(PacketSession session, IMessage packet)
     {
         S_Turn turn = (S_Turn)packet;

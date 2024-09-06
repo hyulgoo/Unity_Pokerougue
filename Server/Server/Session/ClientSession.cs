@@ -69,7 +69,6 @@ namespace Server
                 LobbyPlayerInfo info = session.LobbyPlayers.Find(p => p.Name == player.Info.Name);
 
 				room.Push(room.SetPlayerBySession, session, info);
-				//room.Push(room.EnterGame, player);
             }
 
 			Send(packet);

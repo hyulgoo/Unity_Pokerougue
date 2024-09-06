@@ -153,6 +153,7 @@ namespace Server.Game
             for (int i = 0; i < (int)TargetType.End; ++i)
             {
                 BattlePacket[i].PlayerId = packet.PlayerId;
+                BattlePacket[i].SkillId = packet.TurnInfo.SkillNum;
                 Util.AddtoTargetList(BattlePacket[i].Info, result[i]);
                 Util.AddtoTargetList(BattlePacket[i].TurnInfo, DefaultTurn(packet));
             }
