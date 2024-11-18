@@ -49,7 +49,7 @@ public class ObjectManager
 				PlayerController pc = go.GetComponent<PlayerController>();
 				pc.Id = info.ObjectId;
 
-				if(Managers.Scene.CurrentScene.SceneType == Define.Scene.Select)
+				if(Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby)
 				{
 					Enemy = pc;
 				}

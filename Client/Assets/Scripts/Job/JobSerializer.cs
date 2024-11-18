@@ -12,9 +12,9 @@ namespace Server.Game
 	{
 		JobTimer _timer = new JobTimer();
 		Queue<IJob> _jobQueue = new Queue<IJob>();
-		bool _flush = false;
+        bool _flush = false;
 
-		public bool _jobEnd = false;
+        public bool _jobEnd = false;
 		public bool _excute = true;
 
 		public IJob PushAfter(int tickAfter, Action action) { return PushAfter(tickAfter, new Job(action)); }

@@ -147,11 +147,11 @@ public class UI_SelectMstScene : UI_Scene
     void OnClickReadyButton()
     {
         // 서버로 내가 고른 list를 보내줌.
-        C_SelectMst packet = new C_SelectMst();
+        C_SelectPokemon packet = new C_SelectPokemon();
         packet.PlayerId = Managers.Object.MyPlayer.Id;
 
         for (int i = 0; i < _pokemonList.Count(); ++i)
-            packet.MstList.Add(_pokemonList[i]);       
+            packet.PokemonList.Add(_pokemonList[i]);       
 
         Managers.Network.Send(packet);
 

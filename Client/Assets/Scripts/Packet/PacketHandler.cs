@@ -193,7 +193,7 @@ class PacketHandler
     {
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
         UI_DualRespondPopup popup = Managers.UI.ShowPopupUI<UI_DualRespondPopup>("UI_AcceptDenyPopup");
-		popup.SetApplyDuelAnnounce(requestDuel.RequestId);
+		popup.SetApplyDuelAnnounce(requestDuel.FromId);
     }
 
     public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
@@ -228,10 +228,10 @@ class PacketHandler
         Managers.Object.Add(startbattle.MyInfo, myPlayer: true);
 		Managers.Object.Add(startbattle.EnemyInfo, myPlayer: false);
 
-		Managers.Object.MyPlayer.SetMonsterData(startbattle.MyMst);
-        Managers.Object.Enemy.SetMonsterData(startbattle.EnemyMst);
+		Managers.Object.MyPlayer.SetMonsterData(startbattle.FromPokemon);
+        Managers.Object.Enemy.SetMonsterData(startbattle.ToPokemon);
 		Managers.Object.ArenaType = startbattle.ArenaType;
-		Managers.Object.MyTurn = startbattle.MyTurn;
+		Managers.Object.MyTurn = startbattle.IsMyTurn;
     }
 
     public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
@@ -249,18 +249,18 @@ class PacketHandler
         for (int i = 0; i < battle.TurnInfo.Count; ++i)
         {
             BattleInfo info = battle.TurnInfo[i];
-            PokemonInfo pokeinfo = reverse ? info.EnemyInfo : info.MyInfo;
+            PokemonInfo pokeinfo = reverse ? info.ToInfo : info.FromInfo;
             string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
             string announce = "";
 
-            if (info.SkillType == SkillType.Dot)
+            if (info.ApplyType == ApplyType.Dot)
             {
                 string skillName = Managers.Data.SkillDict[info.StateInfo.SkillId].name;
                 announce = $"{targetName}은(는) {skillName}에 의해 지속데미지를 받고있다.";
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
             }
-            else if (info.SkillType == SkillType.StatusEffect)
+            else if (info.ApplyType== ApplyType.StatusEffect)
             {
                 announce = $"{targetName}은(는) 지속데미지를 받고있다.";
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
@@ -289,7 +289,7 @@ class PacketHandler
             if (info.TargetType == TargetType.Oneself)
             {
 				PokemonData targetData = reverse ? Managers.Object.Enemy.GetCurMonsterData() : Managers.Object.MyPlayer.GetCurMonsterData();
-				PokemonInfo pokeinfo = targetData.info;
+				PokemonInfo pokeinfo = reverse ? info.FromInfo : info.ToInfo;
 				
                 announce = $"{targetData.name}은(는) 반동으로 인해 데미지를 입었다.";
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: reverse); });
@@ -305,8 +305,9 @@ class PacketHandler
                 }
 
                 PokemonData targetData = reverse ? Managers.Object.MyPlayer.GetCurMonsterData() : Managers.Object.Enemy.GetCurMonsterData();
-				PokemonInfo targetInfo = targetData.info;
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetInfo.Hp, isEnemy: !reverse); });
+                PokemonInfo pokeinfo = reverse ? info.FromInfo : info.ToInfo;
+
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: !reverse); });
 
                 if (!reverse && info.Effective != EffectiveType.Commoneffect)
                 {

@@ -88,14 +88,14 @@ public class UI_SkillSelectPopup : UI_Popup
         GetText((int)Texts.Text_SkillAttribute).text = Util.GetTypeName((Type)type);
 
         sprites = Managers.Resource.LoadAll<Sprite>("Sprite/categories_legacy");
-        SkillType category = Managers.Data.SkillDict[skillId].info.SkillEffect[0].SkillType;
+        ApplyType category = Managers.Data.SkillDict[skillId].info.SkillEffect[0].ApplyType;
 
         switch (category)
         {
-            case SkillType.Atk:
+            case ApplyType.Atk:
                 type = 0;
                 break;
-            case SkillType.Spa:
+            case ApplyType.Spa:
                 type = 1;
                 break;
             default:
@@ -113,7 +113,7 @@ public class UI_SkillSelectPopup : UI_Popup
         GetText((int)Texts.Text_SkillPP).text = $"{curpp}/{info.Pp}";
 
         // 공격 스킬이 아닐 경우에는 위력을 0으로 설정함
-        if(category == SkillType.Atk || category == SkillType.Spa )
+        if(category == ApplyType.Atk || category == ApplyType.Spa )
             GetText((int)Texts.Text_SkillPower).text = $"{info.SkillEffect[0].Value}";
         else
             GetText((int)Texts.Text_SkillPower).text = "0";

@@ -32,8 +32,8 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         // 대결 신청에 응답 패킷 전송
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 1;
-        respondDuelPacket.RespondId = Managers.Object.MyPlayer.Id;
-        respondDuelPacket.EnemyId = _EnemyId;
+        respondDuelPacket.FromId = Managers.Object.MyPlayer.Id;
+        respondDuelPacket.ToId = _EnemyId;
         Managers.Network.Send(respondDuelPacket);
 
         //대결 신청 창을 닫음
@@ -49,8 +49,8 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         // 대결 신청에 응답 패킷 전송
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 0;
-        respondDuelPacket.RespondId = Managers.Object.MyPlayer.Id;
-        respondDuelPacket.EnemyId = _EnemyId;
+        respondDuelPacket.FromId = Managers.Object.MyPlayer.Id;
+        respondDuelPacket.ToId = _EnemyId;
         Managers.Network.Send(respondDuelPacket);
 
         //대결 신청 창을 닫음

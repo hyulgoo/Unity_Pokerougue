@@ -27,8 +27,8 @@ public class UI_SelectPlayerPopup : UI_AcceptDenyPopup
     protected override void OnClickApplyButton()
     {
         C_RequestDuel requestduelpacket = new C_RequestDuel();
-        requestduelpacket.ApplyId = Managers.Object.MyPlayer.Id;
-        requestduelpacket.EnemyId = _enemyId;
+        requestduelpacket.FromId = Managers.Object.MyPlayer.Id;
+        requestduelpacket.ToId = _enemyId;
         Managers.Network.Send(requestduelpacket);
 
         ClosePopupUI();

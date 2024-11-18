@@ -101,7 +101,7 @@ namespace Server.Game
 
 			if(isOK == 1)
 			{	
-				S_RequestDuel requestDuelpacket = new S_RequestDuel() { RequestId = playerId };
+				S_RequestDuel requestDuelpacket = new S_RequestDuel() { FromId = playerId };
 				_players[opponentId].Session.Send(requestDuelpacket);
 			}
         }
@@ -111,8 +111,8 @@ namespace Server.Game
 			S_RespondDuel respondDuelpacket = new S_RespondDuel();
 			respondDuelpacket.DuelOK = packet.DuelOK;
 
-            Player Respond = _players[packet.RespondId];
-            Player opponent = _players[packet.EnemyId];
+            Player Respond = _players[packet.FromId];
+            Player opponent = _players[packet.ToId];
 
             // 대결을 신청한 상대에게 응답패킷을 보냄
 			// 대결을 승낙하면 씬 전환을 해야하므로 본인에게도 다시 보냄
@@ -122,16 +122,16 @@ namespace Server.Game
 				{
                     GameRoom room = GameLogic.Instance.Add();
 
-                    respondDuelpacket.EnemyId = packet.RespondId;
+                    respondDuelpacket.EnemyId = packet.FromId;
                     opponent.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
 
-                    respondDuelpacket.EnemyId = packet.EnemyId;
+                    respondDuelpacket.EnemyId = packet.ToId;
                     Respond.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
                 });				
             }
 			else
 			{
-                respondDuelpacket.EnemyId = packet.RespondId;
+                respondDuelpacket.EnemyId = packet.FromId;
                 opponent.Session.HandleRespondDuel(respondDuelpacket, 0);
             }
         }
@@ -159,22 +159,22 @@ namespace Server.Game
                     int myid = list[i];
 					int enemyid = list[(int)TargetType.Enemy - i];
 
-                    packet.MyMst.Clear();
-                    packet.EnemyMst.Clear();
+                    packet.FromPokemon.Clear();
+                    packet.ToPokemon.Clear();
 
                     packet.MyInfo = _players[myid].Info;
                     packet.EnemyInfo = _players[enemyid].Info;
 
                     for (int j = 0; j < 3; ++j)
 					{
-						packet.MyMst.Add(_players[myid].Pokemon[j].id);
-                        packet.EnemyMst.Add(_players[enemyid].Pokemon[j].id);
+						packet.FromPokemon.Add(_players[myid].Pokemon[j].id);
+                        packet.ToPokemon.Add(_players[enemyid].Pokemon[j].id);
 						_players[myid].Pokemon[j].info.State = new ConditionAbnormality();
                         _players[enemyid].Pokemon[j].info.State = new ConditionAbnormality();
                     }
                     
-                    packet.MyTurn = myid == turnorder;
-					_players[myid].Session.Handle
+                    packet.IsMyTurn = myid == turnorder;
+					//_players[myid].Session.HandleCreatePlayer();
                     _players[myid].Session.Send(packet);
                 }
             }

@@ -11,7 +11,6 @@ public class UI_BattleScene : UI_Scene
 {
     int _myMonsterId;
     int _enemyMonsterId;
-    bool _isExcute = false;
     string _announceText = "";
 
     Sprite[] _hpbarSprites;
@@ -183,8 +182,8 @@ public class UI_BattleScene : UI_Scene
         GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value = _enemytargetValue / maxHP;
         _enemyprevValue = _enemytargetValue;
 
-        if (setbyHandler)
-            Managers.Job.Excute();
+        //if (setbyHandler)
+        //    Managers.Job.Excute();
     }
 
     IEnumerator SetMyHpbar(bool setbyHandler = true)
@@ -221,8 +220,8 @@ public class UI_BattleScene : UI_Scene
         GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = _targetValue / maxHP;
         _prevValue = _targetValue;
 
-        if (setbyHandler)
-            Managers.Job.Excute();
+        //if (setbyHandler)
+        //    Managers.Job.Excute();
     }
     #endregion
 

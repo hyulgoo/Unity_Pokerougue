@@ -68,7 +68,7 @@ class PacketHandler
         if (room == null)
             return;
 
-        room.Push(room.RequestDuel, requestDuelPaceket.ApplyId, requestDuelPaceket.EnemyId);
+        room.Push(room.RequestDuel, requestDuelPaceket.FromId, requestDuelPaceket.ToId);
     }
 
     public static void C_RespondDuelHandler(PacketSession session, IMessage packet)
@@ -87,9 +87,9 @@ class PacketHandler
         room.Push(room.RespondDuel, respondDuelPacket);
     }
 
-    public static void C_SelectMstHandler(PacketSession session, IMessage packet)
+    public static void C_SelectPokemonHandler(PacketSession session, IMessage packet)
     {
-        C_SelectMst selectMstPacket = (C_SelectMst)packet;
+        C_SelectPokemon selectMstPacket = (C_SelectPokemon)packet;
         ClientSession clientSession = (ClientSession)session;
 
         Player player = clientSession.MyPlayer;
@@ -100,9 +100,9 @@ class PacketHandler
         if (room == null)
             return;
 
-        for(int i = 0; i < selectMstPacket.MstList.Count; ++i)
+        for(int i = 0; i < selectMstPacket.PokemonList.Count; ++i)
         {
-            player.Pokemon.Add(DataManager.MonsterDict[selectMstPacket.MstList[i]]);
+            player.Pokemon.Add(DataManager.MonsterDict[selectMstPacket.PokemonList[i]]);
         }
         room.Push(room.SelectMst, selectMstPacket.PlayerId);
 

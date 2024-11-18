@@ -137,7 +137,7 @@ enum TargetType {
   END = 2;
 }
 
-enum SkillType {	
+enum ApplyType {	
   NONE = 0;
   ATK = 1;
   SPA = 2;
@@ -204,8 +204,8 @@ message C_EnterGame {
 }
 
 message C_RequestDuel {		
-  int32 applyId = 1;
-  int32 enemyId = 2;
+  int32 fromId = 1;
+  int32 toId = 2;
 }
 
 message S_RequestSendOk {
@@ -213,12 +213,12 @@ message S_RequestSendOk {
 }
 
 message S_RequestDuel {
-  int32 requestId = 1;
+  int32 fromId = 1;
 }
 
 message C_RespondDuel {
-  int32 respondId = 1;
-  int32 enemyId = 2;
+  int32 fromId = 1;
+  int32 toId = 2;
   int32 duelOK = 3;
 }
 
@@ -246,7 +246,7 @@ message S_EquipItem {
 }
 
 message S_ChangeStat {
-  PokemonInfo statInfo = 1;
+  PokemonInfo statusInfo = 1;
 }
 
 message S_Ping {
@@ -255,18 +255,18 @@ message S_Ping {
 message C_Pong {
 }
 
-message C_SelectMst {
+message C_SelectPokemon {
   int32 playerId = 1;
-  repeated int32 mstList = 2;
+  repeated int32 pokemonList = 2;
 }
 
 message S_StartBattle {
   int32 arenaType = 1;
   ObjectInfo myInfo = 2;
   ObjectInfo enemyInfo = 3;
-  repeated int32 myMst = 4;
-  repeated int32 enemyMst = 5;
-  bool myTurn = 6;
+  repeated int32 fromPokemon = 4;
+  repeated int32 toPokemon = 5;
+  bool isMyTurn = 6;
 }
 
 message C_Turn {
@@ -327,28 +327,28 @@ message TurnInfo {
 }
 
 message BattleInfo {
-  SkillType skillType = 1;
+  ApplyType applyType = 1;
   TargetType targetType = 2;
   EffectiveType effective = 3;
-  PokemonInfo myInfo = 4;
-  PokemonInfo enemyInfo = 5;
+  PokemonInfo fromInfo = 4;
+  PokemonInfo toInfo = 5;
   StateInfo stateInfo = 6;
 }
 
 message PokeballInfo {
-  int32 info = 1;
+  int32 ballType = 1;
 }
 
 message ChangeInfo {
-  int32 info = 1;
+  int32 changePokemon = 1;
 }
 
 message StateInfo {
   bool isMiss = 1;
   bool isSturn = 2;
   bool isConfusion = 3;
-  bool recoverFromSturn = 4;
-  bool recoverFromConfusion = 5;
+  bool recoverSturn = 4;
+  bool recoverConfusion = 5;
   int32 skillId = 6;
 }
 
@@ -375,7 +375,7 @@ message ConditionAbnormality {
 }
 
 message SkillEffect {
-  SkillType skillType = 1;
+  ApplyType applyType = 1;
   TargetType target = 2;
   Type type = 3;
   int32 value = 4;

@@ -43,11 +43,11 @@ namespace Server.Game
             if (pokemonInfo.State.Fire != 0)
             {
                 BattleInfo result = new BattleInfo();
-                result.SkillType = SkillType.StatusEffect;
+                result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Fire--;
-                result.MyInfo = pokemonInfo;
+                result.FromInfo = pokemonInfo;
                 resultlist.Add(result);
             }
 
@@ -55,30 +55,30 @@ namespace Server.Game
             {
                 BattleInfo result = new BattleInfo();
                 result.StateInfo = new StateInfo();
-                result.SkillType = SkillType.Dot;
+                result.ApplyType = ApplyType.Dot;
                 result.TargetType = TargetType.Oneself;
                 result.StateInfo.SkillId = packet.TurnInfo.SkillNum;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 7;
                 pokemonInfo.State.Dot--;
-                result.MyInfo = pokemonInfo;
+                result.FromInfo = pokemonInfo;
                 resultlist.Add(result);
             }
 
             if (pokemonInfo.State.Poison != 0)
             {
                 BattleInfo result = new BattleInfo();
-                result.SkillType = SkillType.StatusEffect;
+                result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
                 pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
                 pokemonInfo.State.Poison--;
-                result.MyInfo = pokemonInfo;
+                result.FromInfo = pokemonInfo;
                 resultlist.Add(result);
             }
 
             if (pokemonInfo.State.Confusion != 0)
             {
                 BattleInfo result = new BattleInfo();
-                result.SkillType = SkillType.Confusion;
+                result.ApplyType = ApplyType.Confusion;
                 result.TargetType = TargetType.Oneself;
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
@@ -92,11 +92,11 @@ namespace Server.Game
             if (pokemonInfo.State.Sturn != 0)
             {
                 BattleInfo result = new BattleInfo();
-                result.SkillType = SkillType.Sturn;
+                result.ApplyType = ApplyType.Sturn;
                 result.TargetType = TargetType.Oneself;
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
-                result.StateInfo.RecoverFromSturn = recovery;
+                result.StateInfo.RecoverSturn = recovery;
                 pokemonInfo.State.Sturn--;
                 if (recovery)
                     pokemonInfo.State.Sturn = 0;
@@ -114,7 +114,7 @@ namespace Server.Game
             passPacket.PlayerId = packet.PlayerId;
 
             List<BattleInfo> turnInfo = DefaultTurn(packet);
-            Util.AddtoTargetList(passPacket.TurnInfo, turnInfo);
+            Util.AddRepeatedFieldToList(passPacket.TurnInfo, turnInfo);
 
             Broadcast(passPacket);
         }
@@ -136,26 +136,22 @@ namespace Server.Game
             SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillNum];
 
             List<BattleInfo>[] result = new List<BattleInfo>[(int)TargetType.End];
-            for (int i = 0; i < (int)TargetType.End; ++i)
-            {
-                result[i] = new List<BattleInfo>();
-            }
+            for (int index = 0; index < (int)TargetType.End; ++index)
+                result[index] = new List<BattleInfo>();
 
-            for (int i = 0; i < skillData.info.SkillEffect.Count; i++)
+            for (int index = 0; index < skillData.info.SkillEffect.Count; index++)
             {
-                BattleInfo[] infos = Util.CalcBattle(data, enemyData, skillData.info.SkillEffect[i]);
+                BattleInfo[] infos = Util.CalcBattle(data, enemyData, skillData.info.SkillEffect[index]);
                 for (int j = 0; j < (int)TargetType.End; ++j)
-                {
                     result[j].Add(infos[j]);
-                }
             }
 
-            for (int i = 0; i < (int)TargetType.End; ++i)
+            for (int  index = 0; index < (int)TargetType.End; ++index)
             {
-                BattlePacket[i].PlayerId = packet.PlayerId;
-                BattlePacket[i].SkillId = packet.TurnInfo.SkillNum;
-                Util.AddtoTargetList(BattlePacket[i].Info, result[i]);
-                Util.AddtoTargetList(BattlePacket[i].TurnInfo, DefaultTurn(packet));
+                BattlePacket[index].PlayerId = packet.PlayerId;
+                BattlePacket[index].SkillId = packet.TurnInfo.SkillNum;
+                Util.AddRepeatedFieldToList(BattlePacket[index].Info, result[index]);
+                Util.AddRepeatedFieldToList(BattlePacket[index].TurnInfo, DefaultTurn(packet));
             }
 
             _players[packet.PlayerId].Session.Send(BattlePacket[(int)TargetType.Oneself]);
@@ -193,9 +189,7 @@ namespace Server.Game
 
             int cnt = 0;
             foreach (bool ready in _playerReady.Values)
-            {
                 cnt = ready ? cnt + 1 : cnt;
-            }
 
             if (cnt == _playerReady.Count)
             {
