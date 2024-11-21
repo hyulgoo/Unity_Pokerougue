@@ -40,7 +40,7 @@ namespace Server.Game
             PokemonInfo pokemonInfo = player.Pokemon[0].info;
             PokemonInfo standardInfo = DataManager.MonsterDict[player.Pokemon[0].id].info;
 
-            if (pokemonInfo.State.Fire != 0)
+            if (pokemonInfo.State.Fire > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.StatusEffect;
@@ -51,7 +51,7 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Dot != 0)
+            if (pokemonInfo.State.Dot > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.StateInfo = new StateInfo();
@@ -64,7 +64,7 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Poison != 0)
+            if (pokemonInfo.State.Poison > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.StatusEffect;
@@ -75,7 +75,7 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Confusion != 0)
+            if (pokemonInfo.State.Confusion > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Confusion;
@@ -89,7 +89,7 @@ namespace Server.Game
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Sturn != 0)
+            if (pokemonInfo.State.Sturn > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Sturn;

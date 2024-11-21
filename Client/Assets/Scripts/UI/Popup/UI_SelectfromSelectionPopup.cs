@@ -32,7 +32,7 @@ public class UI_SelectfromSelectionPopup : UI_Popup
 
     void OnClickAddPartyButton()
     {
-        if(!MstScene.SetMonster(Id))
+        if(!MstScene.PickPokemon(Id))
         {
             UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
             popup.SetAnnounceText("더이상 고를 수 없습니다");

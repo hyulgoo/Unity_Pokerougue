@@ -62,6 +62,6 @@ public class UI_SelectPokemonButton : UI_Base, ISelectHandler
     public void SetParentCurMstInfo()
     {
         // 버튼 선택 시 CurPokemon Info를 띄워줌.
-        SelectMstScene.SetCurMstInfo(Id);
+        SelectMstScene.SetSelectPokemonInfo(Id);
     }
 }

@@ -31,10 +31,10 @@ public class PlayerController : MonoBehaviour
     public PokemonInfo GetCurMonsterInfo() { return GetMonsterInfo(0); }
     public PokemonInfo GetMonsterInfo(int order) { return GetMonsterData(order).info; }
 
-    public string GetCurMonsterName() { return GetMonsterName(0); }
+    public string GetCurPokemonName() { return GetMonsterName(0); }
     public string GetMonsterName(int order) { return _pokemonDatas[order].name; }    
 
-    public PokemonData GetCurMonsterData() { return _pokemonDatas[0]; }
+    public PokemonData GetCurPokemonData() { return _pokemonDatas[0]; }
     public PokemonData GetMonsterData(int order) { return _pokemonDatas[order]; }
 
     public PokemonInfo[] GetAllMonsterinfo()

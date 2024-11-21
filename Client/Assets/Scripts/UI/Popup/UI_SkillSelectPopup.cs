@@ -61,11 +61,11 @@ public class UI_SkillSelectPopup : UI_Popup
 
     void SetSkillInfo()
     {
-        int curpkmId = Managers.Object.MyPlayer.GetCurMonsterData().id;
+        int curpkmId = Managers.Object.MyPlayer.GetCurPokemonData().id;
 
         for (int i = (int)Texts.Text_Skill_00; i <= (int)Texts.Text_Skill_03; ++i)
         {
-            int skillId = Managers.Object.MyPlayer.GetCurMonsterData().info.SkillId[i];
+            int skillId = Managers.Object.MyPlayer.GetCurPokemonData().info.SkillId[i];
             string name = Managers.Data.SkillDict[skillId].name;
             // 스킬 이름 설정
             GetText(i).text = name;
@@ -106,7 +106,7 @@ public class UI_SkillSelectPopup : UI_Popup
         GetImage((int)Images.Image_SkillType).sprite = sprites[type];
 
         // 세부 정보
-        int pokemonid = Managers.Object.MyPlayer.GetCurMonsterData().id;
+        int pokemonid = Managers.Object.MyPlayer.GetCurPokemonData().id;
         SkillInfo info = Managers.Data.SkillDict[skillId].info;
         int curpp = Managers.Object.MyPlayer.SkillPP[pokemonid][skillId];
 
@@ -135,7 +135,7 @@ public class UI_SkillSelectPopup : UI_Popup
         Managers.Network.Send(turnpacket);
         Managers.UI.CloseAllPopupUI();
         UI_BattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UI_BattleScene>();
-        string monsterName = Managers.Object.MyPlayer.GetCurMonsterName();
+        string monsterName = Managers.Object.MyPlayer.GetCurPokemonName();
         string skillName = Managers.Data.SkillDict[_selectedSkillId].name;
         scene.SetAnnounce($"{monsterName}의 {skillName}!");            
     }

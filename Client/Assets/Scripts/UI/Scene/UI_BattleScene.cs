@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
@@ -19,7 +20,8 @@ public class UI_BattleScene : UI_Scene
     enum GameObjects
     {
         MyHpbar,
-        EnemyHpbar
+        EnemyHpbar,
+        End
     }
 
     enum Images
@@ -59,17 +61,17 @@ public class UI_BattleScene : UI_Scene
     public void SetPlayerInfo()
     {
         _hpbarSprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
-        _myMonsterId = Managers.Object.MyPlayer.GetCurMonsterData().id;
-        _enemyMonsterId = Managers.Object.Enemy.GetCurMonsterData().id;
+        _myMonsterId = Managers.Object.MyPlayer.GetCurPokemonData().id;
+        _enemyMonsterId = Managers.Object.Enemy.GetCurPokemonData().id;
 
-        SetBattleMonsterInfo();
+        SetBattlePokemonInfo();
     }
 
     public void SetField(int type)
     {
         Arenas arenatype = (Arenas)type;
         // 필드를 불러옴
-        string path = "Sprite/arenas/";
+        const string path = "Sprite/arenas/";
         string arenaName = path + arenatype.ToString();
 
         string fieldName = arenaName + "_bg";
@@ -83,7 +85,7 @@ public class UI_BattleScene : UI_Scene
             Debug.Log($"{fieldName}");
     }
 
-    public void SetBattleMonsterInfo()
+    public void SetBattlePokemonInfo()
     {
         // 내 포켓몬 이름 설정
         GetText((int)Texts.Text_MyName).text = Managers.Data.MonsterDict[_myMonsterId].name;
@@ -95,8 +97,9 @@ public class UI_BattleScene : UI_Scene
         Sprite enemyImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{_enemyMonsterId}")[0];
         GetImage((int)Images.Image_Enemy).sprite = enemyImage;
 
-        SetHPBar(isEnemy: true, setByHandler : false);
-        SetHPBar(isEnemy: false, setByHandler : false);
+        SetHPBar(targetRatio: 1f, isEnemy: true, setByHandler : false);
+        SetHPBar(targetRatio: 1f, isEnemy: false, setByHandler : false);
+
         MyTurn();
     }
 
@@ -121,108 +124,45 @@ public class UI_BattleScene : UI_Scene
 
     #region HP
 
-    float _prevValue = 0f;
-    float _targetValue = 0f;
-    float _enemyprevValue = 0f;
-    float _enemytargetValue = 0f;
-    float _fillSpeed = 100f;
+    const float _fillSpeed = 0.5f;
+    const float targetDiff = 0.01f;
 
-    public void SetHPBar(int value = -1, bool isEnemy = false, bool setByHandler = true)
+    public void SetHPBar(float targetRatio, bool isEnemy = false, bool setByHandler = true)
     {
-        if (isEnemy)
-        {
-            if (value == -1)
-                _enemytargetValue = Managers.Data.MonsterDict[_enemyMonsterId].info.Hp;
-            else
-                _enemytargetValue = value;
-            StartCoroutine("SetEnemyHPbar", setByHandler);
-        }
-        else
-        {
-            if (value == -1)
-                _targetValue = Managers.Data.MonsterDict[_myMonsterId].info.Hp;
-            else
-                _targetValue = value;
-            StartCoroutine("SetMyHpbar", setByHandler);
-        }
+        string coroutineName = isEnemy ? "SetEnemyHPbar" : "SetMyHpbar";
+        int target = isEnemy ? (int)GameObjects.EnemyHpbar : (int)GameObjects.MyHpbar;
+
+        StartCoroutine(coroutineName, (targetRatio, target, setByHandler));
     }
 
-    IEnumerator SetEnemyHPbar(bool setbyHandler = true)
+    IEnumerator SetHPbar((float, int, bool) data)
     {
-        _enemyprevValue = GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value;
-        float maxHP = (float)Managers.Data.MonsterDict[_enemyMonsterId].info.Hp;
-        float nextValue = 0;
-        float diff = 0;
-
+        float targetRatio = data.Item1;
+        int target = data.Item2;
+        bool setByHandle = data.Item3;
+        float curRatio;
+        
         // 수치가 목표 값에 도달할 때까지 반복
-        do
+        while(targetRatio - GetObject(target).GetComponent<Slider>().value < targetDiff)
         {
-            _enemyprevValue += (_fillSpeed * Time.deltaTime);
+            curRatio = GetObject(target).GetComponent<Slider>().value + (_fillSpeed * Time.deltaTime);
+            GetObject(target).GetComponent<Slider>().value = curRatio;
 
-            // 현재 수치와 50 감소한 값을 계산
-            nextValue = Mathf.Max(_enemyprevValue - 50f, _enemytargetValue);
-
-            // 여기서 원하는 작업 수행 (예: UI 업데이트)
-            float newvalue = _enemyprevValue / maxHP;
-            GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value = newvalue;
-
-            int hpstate = 2 - (int)(newvalue / 0.34f);
-            if(_HpbarSpriteNum[(int)TargetType.Enemy] !=  hpstate)
+            int hpstate = 2 - (int)(curRatio / 0.34f);
+            if (_HpbarSpriteNum[target] != hpstate)
             {
-                _HpbarSpriteNum[(int)TargetType.Enemy] = hpstate;
-                GameObject fillObj = Util.FindChild(GetObject((int)GameObjects.EnemyHpbar), "Fill", true);
+                _HpbarSpriteNum[target] = hpstate;
+                GameObject fillObj = Util.FindChild(GetObject(target), "Fill", true);
                 fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];// 다음 프레임까지 대기
             }
 
-            diff = _enemytargetValue - _enemyprevValue;
             yield return null;
+        }
 
-        } while (diff > 1f);
-
-        GetObject((int)GameObjects.EnemyHpbar).GetComponent<Slider>().value = _enemytargetValue / maxHP;
-        _enemyprevValue = _enemytargetValue;
-
-        //if (setbyHandler)
+        //if (setByHandle)
         //    Managers.Job.Excute();
     }
 
-    IEnumerator SetMyHpbar(bool setbyHandler = true)
-    {
-        _prevValue = GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value;
-        float maxHP = (float)Managers.Data.MonsterDict[_myMonsterId].info.Hp;
-        float nextValue = 0;
-        float diff = 0;
-
-        // 수치가 목표 값에 도달할 때까지 반복
-        do
-        {
-            _prevValue += (_fillSpeed * Time.deltaTime);
-
-            // 현재 수치와 50 감소한 값을 계산
-            nextValue = Mathf.Max(_prevValue - 50f, _targetValue);
-
-            // 여기서 원하는 작업 수행 (예: UI 업데이트)
-            float newvalue = _prevValue / maxHP;
-            GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = newvalue;
-
-            int hpstate = 2 - (int)(newvalue / 0.34f);
-            if(_HpbarSpriteNum[(int)TargetType.Oneself] != hpstate)
-            {
-                _HpbarSpriteNum[(int)TargetType.Oneself] = hpstate;
-                GameObject fillObj = Util.FindChild(GetObject((int)GameObjects.MyHpbar), "Fill", true);
-                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];
-            }
-            diff = _targetValue - _prevValue;
-
-            yield return null;
-        } while (diff > 1f);
-
-        GetObject((int)GameObjects.MyHpbar).GetComponent<Slider>().value = _targetValue / maxHP;
-        _prevValue = _targetValue;
-
-        //if (setbyHandler)
-        //    Managers.Job.Excute();
-    }
     #endregion
 
     IEnumerator SetText(bool setbyHandler = true)
@@ -233,6 +173,7 @@ public class UI_BattleScene : UI_Scene
             GetText((int)Texts.Announce).text += _announceText[i];
             yield return new WaitForSeconds(Managers.UI.ChatSpeed);
         }
+
         if (setbyHandler)
             Managers.Job.Excute();
     }

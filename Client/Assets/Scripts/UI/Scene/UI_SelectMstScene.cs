@@ -65,10 +65,10 @@ public class UI_SelectMstScene : UI_Scene
         width *= 0.95f;
         GetObject((int)GameObjects.Content).GetComponent<GridLayoutGroup>().cellSize = new Vector2(width / 5, width / 5);
 
-        SetMonsterList();
+        SetPokemonList();
     }
 
-    void SetMonsterList()
+    void SetPokemonList()
     {
         bool first = false;
 
@@ -96,7 +96,7 @@ public class UI_SelectMstScene : UI_Scene
         }
     }
 
-    public bool SetMonster(int pokemonNum)
+    public bool PickPokemon(int pokemonNum)
     {
         if (CurOrder >= MaxCount)
             return false;
@@ -110,10 +110,10 @@ public class UI_SelectMstScene : UI_Scene
         return true;
     }
 
-    public void SetCurMstInfo(int pokemonNumber)
+    public void SetSelectPokemonInfo(int pokemonNumber)
     {
         Image curMstAnimator= GetObject((int)GameObjects.Image_Mst).GetOrAddComponent<Image>();
-        // 현재 포켓몬의 애니메이션을 틀어줌
+        // TODO : 현재 포켓몬의 애니메이션을 틀어줌
         Sprite[] sprites = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
         curMstAnimator.sprite = sprites[0];
 

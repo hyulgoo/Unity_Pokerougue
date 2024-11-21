@@ -117,4 +117,10 @@ public class Util
         }
         return typeName;
     }
+
+    public float GetPokemonHPRatio(PokemonInfo info)
+    {
+        info.
+        Managers.Data.MonsterDict
+    }
 }

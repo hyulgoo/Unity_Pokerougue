@@ -250,7 +250,7 @@ class PacketHandler
         {
             BattleInfo info = battle.TurnInfo[i];
             PokemonInfo pokeinfo = reverse ? info.ToInfo : info.FromInfo;
-            string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
+            string targetName = reverse ? Managers.Object.Enemy.GetCurPokemonName() : Managers.Object.MyPlayer.GetCurPokemonName();
             string announce = "";
 
             if (info.ApplyType == ApplyType.Dot)
@@ -278,7 +278,7 @@ class PacketHandler
             string announce = "";
             if (info.StateInfo.IsMiss)
             {
-                string targetName = reverse ? Managers.Object.Enemy.GetCurMonsterName() : Managers.Object.MyPlayer.GetCurMonsterName();
+                string targetName = reverse ? Managers.Object.Enemy.GetCurPokemonName() : Managers.Object.MyPlayer.GetCurPokemonName();
                 announce = $"{targetName}의 공격은 빗나갔다!";
 
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
@@ -288,7 +288,7 @@ class PacketHandler
 			// 자신을 때리는 종류의 스킬인 경우 
             if (info.TargetType == TargetType.Oneself)
             {
-				PokemonData targetData = reverse ? Managers.Object.Enemy.GetCurMonsterData() : Managers.Object.MyPlayer.GetCurMonsterData();
+				PokemonData targetData = reverse ? Managers.Object.Enemy.GetCurPokemonData() : Managers.Object.MyPlayer.GetCurPokemonData();
 				PokemonInfo pokeinfo = reverse ? info.FromInfo : info.ToInfo;
 				
                 announce = $"{targetData.name}은(는) 반동으로 인해 데미지를 입었다.";
@@ -299,12 +299,12 @@ class PacketHandler
             {
 				if(reverse)
 				{
-					string attackName = Managers.Object.Enemy.GetCurMonsterName();
+					string attackName = Managers.Object.Enemy.GetCurPokemonName();
 					string skillName = Managers.Data.SkillDict[battle.SkillId].name;
 					Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce($"{attackName}의 {skillName}!"); });
                 }
 
-                PokemonData targetData = reverse ? Managers.Object.MyPlayer.GetCurMonsterData() : Managers.Object.Enemy.GetCurMonsterData();
+                PokemonData targetData = reverse ? Managers.Object.MyPlayer.GetCurPokemonData() : Managers.Object.Enemy.GetCurPokemonData();
                 PokemonInfo pokeinfo = reverse ? info.FromInfo : info.ToInfo;
 
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(pokeinfo.Hp, isEnemy: !reverse); });

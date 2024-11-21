@@ -39,6 +39,7 @@ public class UI_LobbyScene : UI_Scene
                 text.alignment = TextAlignmentOptions.Center;
                 _buttons[i].interactable = false;
             }
+
             text.text = newtext;
                 _buttons[i].Select();
         }
