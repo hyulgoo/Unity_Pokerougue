@@ -12,10 +12,12 @@ public class UI_Button : MonoBehaviour, ISelectHandler
     {
         GameObject go = Managers.Select.CurPanel;
 
-        if (go == null) return;
+        if (go == null) 
+            return;
         UI_Base uibase = go.GetComponent<UI_Base>();
 
-        if (uibase == null) return;
+        if (uibase == null) 
+            return;
         uibase._lastSelected = eventData.selectedObject.GetComponent<Button>();
         uibase.SetPointerPos(eventData.selectedObject.transform);
     }

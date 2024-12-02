@@ -13,9 +13,7 @@ public class UI_Popup : UI_Base
     protected virtual void Update()
     {
         if(Input.GetKeyDown(KeyCode.Backspace) && !InputMode)
-        {
             ClosePopupUI();
-        }
     }
 
     public virtual void ClosePopupUI()

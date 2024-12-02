@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UI_DualRespondPopup : UI_AcceptDenyPopup
 {
-    int _EnemyId;
+    int _enemyId;
 
     public override void Init()
     {
@@ -14,13 +14,13 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         GetButton((int)Buttons.Btn_Deny).gameObject.GetComponentInChildren<TMP_Text>().text = "거절";
     }
 
-    public void SetApplyDuelAnnounce(int opponentId)
+    public void SetApplyDuelAnnounce(int enemyId)
     {
         // 상대 Id 지정
-        _EnemyId = opponentId;
+        _enemyId = enemyId;
 
         // 상대방의 name을 알아내고 ~가 대결을 신청했다는 창을 띄움
-        GameObject opponentplayer = Managers.Object.FindById(opponentId);
+        GameObject opponentplayer = Managers.Object.FindById(enemyId);
         PlayerController pc = opponentplayer.GetComponent<PlayerController>();
         string announce = pc.name;
         announce += "님이  \n 대결을 신청하셨습니다";
@@ -33,7 +33,7 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 1;
         respondDuelPacket.FromId = Managers.Object.MyPlayer.Id;
-        respondDuelPacket.ToId = _EnemyId;
+        respondDuelPacket.ToId = _enemyId;
         Managers.Network.Send(respondDuelPacket);
 
         //대결 신청 창을 닫음
@@ -50,7 +50,7 @@ public class UI_DualRespondPopup : UI_AcceptDenyPopup
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 0;
         respondDuelPacket.FromId = Managers.Object.MyPlayer.Id;
-        respondDuelPacket.ToId = _EnemyId;
+        respondDuelPacket.ToId = _enemyId;
         Managers.Network.Send(respondDuelPacket);
 
         //대결 신청 창을 닫음

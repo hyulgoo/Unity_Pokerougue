@@ -36,8 +36,8 @@ public class UI_SelectBehaviorPopup : UI_Popup
 
     void OnClickPokemonButton()
     {
-        // MonsterChangeSceneÀ» ¶ç¿ò
-        // Managers.UI.ShowSceneUI<UI_MonsterChangeScene>();
+        // PokemonChangeSceneÀ» ¶ç¿ò
+        // Managers.UI.ShowSceneUI<UI_PokemonChangeScene>();
     }
 
     void OnClickBallButton()
