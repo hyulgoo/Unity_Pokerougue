@@ -37,59 +37,58 @@ namespace Server.Game
             List<BattleInfo> resultlist = new List<BattleInfo>();
             Random random = new Random();
             Player player = ObjectManager.Instance.Find(RoomId, packet.PlayerId);
-            PokemonInfo pokemonInfo = player.Pokemon[0].info;
-            PokemonInfo standardInfo = DataManager.MonsterDict[player.Pokemon[0].id].info;
-
-            if (pokemonInfo.State.Fire > 0)
+            PokemonData pokemonData = player.Pokemon[0];
+            PokemonData standardInfo = DataManager.PokemonDict[player.Pokemon[0].Id];
+            if (pokemonData.Info.State.Fire > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
-                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
-                pokemonInfo.State.Fire--;
-                result.FromInfo = pokemonInfo;
+                pokemonData.Info.Hp = pokemonData.Info.Hp - standardInfo.Info.Hp / 20;
+                pokemonData.Info.State.Fire--;
+                result.FromData= pokemonData;
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Dot > 0)
+            if (pokemonData.Info.State.Dot > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.StateInfo = new StateInfo();
                 result.ApplyType = ApplyType.Dot;
                 result.TargetType = TargetType.Oneself;
                 result.StateInfo.SkillId = packet.TurnInfo.SkillNum;
-                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 7;
-                pokemonInfo.State.Dot--;
-                result.FromInfo = pokemonInfo;
+                pokemonData.Info.Hp = pokemonData.Info.Hp - standardInfo.Info.Hp / 7;
+                pokemonData.Info.State.Dot--;
+                result.FromData = pokemonData;
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Poison > 0)
+            if (pokemonData.Info.State.Poison > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
-                pokemonInfo.Hp = pokemonInfo.Hp - standardInfo.Hp / 20;
-                pokemonInfo.State.Poison--;
-                result.FromInfo = pokemonInfo;
+                pokemonData.Info.Hp = pokemonData.Info.Hp - standardInfo.Info.Hp / 20;
+                pokemonData.Info.State.Poison--;
+                result.FromData = pokemonData;
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Confusion > 0)
+            if (pokemonData.Info.State.Confusion > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Confusion;
                 result.TargetType = TargetType.Oneself;
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
-                pokemonInfo.State.Confusion--;
+                pokemonData.Info.State.Confusion--;
                 if (recovery)
-                    pokemonInfo.State.Confusion = 0;
+                    pokemonData.Info.State.Confusion = 0;
 
                 resultlist.Add(result);
             }
 
-            if (pokemonInfo.State.Sturn > 0)
+            if (pokemonData.Info.State.Sturn > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Sturn;
@@ -97,9 +96,9 @@ namespace Server.Game
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
 
                 result.StateInfo.RecoverSturn = recovery;
-                pokemonInfo.State.Sturn--;
+                pokemonData.Info.State.Sturn--;
                 if (recovery)
-                    pokemonInfo.State.Sturn = 0;
+                    pokemonData.Info.State.Sturn = 0;
 
                 resultlist.Add(result);
             }

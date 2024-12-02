@@ -6,11 +6,11 @@ using UnityEngine;
 public class UIManager
 {
     int _order = 10;
-
+    float _uiSpeed = 0.1f;
     Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
     public UI_Scene SceneUI { get; set; }
     public UI_BattleScene BattleScene { get { return SceneUI.gameObject.GetComponent<UI_BattleScene>(); } }
-    public float ChatSpeed { get; set; } = 0.1f;
+    public float UISpeed { get { return _uiSpeed; } }
     public GameObject Root
     {
         get

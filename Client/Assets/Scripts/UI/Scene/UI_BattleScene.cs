@@ -10,8 +10,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class UI_BattleScene : UI_Scene
 {
-    int _myMonsterId;
-    int _enemyMonsterId;
+    int _myPokemonId;
+    int _enemyPokemonId;
     string _announceText = "";
 
     Sprite[] _hpbarSprites;
@@ -26,7 +26,7 @@ public class UI_BattleScene : UI_Scene
 
     enum Images
     {
-        Image_EnemyLevel_0,
+        Image_EnemyLevel_,
         Image_EnemyLevel_00,
         Image_EnemyLevel_000,
 
@@ -56,13 +56,16 @@ public class UI_BattleScene : UI_Scene
         BindObject(typeof(GameObjects));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
+
+        SetField(Managers.Object.ArenaType);
+        SetPlayerInfo();
     }
 
     public void SetPlayerInfo()
     {
         _hpbarSprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
-        _myMonsterId = Managers.Object.MyPlayer.GetCurPokemonData().id;
-        _enemyMonsterId = Managers.Object.Enemy.GetCurPokemonData().id;
+        _myPokemonId = Managers.Object.MyPlayer.GetCurPokemonData().Id;
+        _enemyPokemonId = Managers.Object.Enemy.GetCurPokemonData().Id;
 
         SetBattlePokemonInfo();
     }
@@ -88,17 +91,17 @@ public class UI_BattleScene : UI_Scene
     public void SetBattlePokemonInfo()
     {
         // 내 포켓몬 이름 설정
-        GetText((int)Texts.Text_MyName).text = Managers.Data.MonsterDict[_myMonsterId].name;
-        Sprite myImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/back/{_myMonsterId}")[0]; ;
+        GetText((int)Texts.Text_MyName).text = Managers.Data.PokeonDict[_myPokemonId].Name;
+        Sprite myImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/back/{_myPokemonId}")[0]; ;
         GetImage((int)Images.Image_My).sprite = myImage;
 
         // 상대방 포켓몬 이름 설정
-        GetText((int)Texts.Text_EnemyName).text = Managers.Data.MonsterDict[_enemyMonsterId].name;
-        Sprite enemyImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{_enemyMonsterId}")[0];
+        GetText((int)Texts.Text_EnemyName).text = Managers.Data.PokeonDict[_enemyPokemonId].Name;
+        Sprite enemyImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{_enemyPokemonId}")[0];
         GetImage((int)Images.Image_Enemy).sprite = enemyImage;
 
-        SetHPBar(targetRatio: 1f, isEnemy: true, setByHandler : false);
-        SetHPBar(targetRatio: 1f, isEnemy: false, setByHandler : false);
+        SetHPBar(targetRatio: 1f, targetType: TargetType.Oneself);
+        SetHPBar(targetRatio: 1f, targetType: TargetType.Enemy);
 
         MyTurn();
     }
@@ -108,7 +111,7 @@ public class UI_BattleScene : UI_Scene
         if (Managers.Object.MyTurn)
         {
             Managers.UI.ShowPopupUI<UI_SelectBehaviorPopup>();
-            SetAnnounce($"{Managers.Data.MonsterDict[_myMonsterId].name}는 무엇을 할까?");
+            SetAnnounce($"{Managers.Data.PokeonDict[_myPokemonId].Name}는 무엇을 할까?");
         }
         else
         {
@@ -119,59 +122,53 @@ public class UI_BattleScene : UI_Scene
     public void SetAnnounce(string announce, bool setByHandler = true)
     {
         _announceText = announce;
-        StartCoroutine("SetText", setByHandler);
+        StartCoroutine(SetTextCoroutine(setByHandler));
     }
 
     #region HP
 
-    const float _fillSpeed = 0.5f;
     const float targetDiff = 0.01f;
+    const float magnification = 10f;
 
-    public void SetHPBar(float targetRatio, bool isEnemy = false, bool setByHandler = true)
+    public void SetHPBar(float targetRatio, TargetType targetType)
     {
-        string coroutineName = isEnemy ? "SetEnemyHPbar" : "SetMyHpbar";
-        int target = isEnemy ? (int)GameObjects.EnemyHpbar : (int)GameObjects.MyHpbar;
-
-        StartCoroutine(coroutineName, (targetRatio, target, setByHandler));
+        StartCoroutine(SetHPbarCoroutine(targetRatio, targetType));
     }
 
-    IEnumerator SetHPbar((float, int, bool) data)
+    IEnumerator SetHPbarCoroutine(float targetRatio, TargetType targetType)
     {
-        float targetRatio = data.Item1;
-        int target = data.Item2;
-        bool setByHandle = data.Item3;
-        float curRatio;
-        
-        // 수치가 목표 값에 도달할 때까지 반복
-        while(targetRatio - GetObject(target).GetComponent<Slider>().value < targetDiff)
-        {
-            curRatio = GetObject(target).GetComponent<Slider>().value + (_fillSpeed * Time.deltaTime);
-            GetObject(target).GetComponent<Slider>().value = curRatio;
+        Slider slider = GetObject((int)targetType).GetComponent<Slider>();
 
+        GameObject fillObj = Util.FindChild(GetObject((int)targetType), "Fill", true);
+        Debug.Log("Cannot Found Fill Object");
+
+        float curRatio = slider.value;
+
+        while (targetRatio - curRatio < targetDiff)
+        {
             int hpstate = 2 - (int)(curRatio / 0.34f);
-            if (_HpbarSpriteNum[target] != hpstate)
+            if (_HpbarSpriteNum[(int)targetType] != hpstate)
             {
-                _HpbarSpriteNum[target] = hpstate;
-                GameObject fillObj = Util.FindChild(GetObject(target), "Fill", true);
-                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];// 다음 프레임까지 대기
+                _HpbarSpriteNum[(int)targetType] = hpstate;
+                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];
             }
+
+            curRatio = slider.value + (Managers.UI.UISpeed * magnification * Time.deltaTime);
+            slider.value = curRatio;
 
             yield return null;
         }
-
-        //if (setByHandle)
-        //    Managers.Job.Excute();
     }
 
     #endregion
 
-    IEnumerator SetText(bool setbyHandler = true)
+    IEnumerator SetTextCoroutine(bool setbyHandler)
     {
         GetText((int)Texts.Announce).text = "";
         for(int i = 0; i < _announceText.Length; ++i)
         {
             GetText((int)Texts.Announce).text += _announceText[i];
-            yield return new WaitForSeconds(Managers.UI.ChatSpeed);
+            yield return new WaitForSeconds(Managers.UI.UISpeed);
         }
 
         if (setbyHandler)

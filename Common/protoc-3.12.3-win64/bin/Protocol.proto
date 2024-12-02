@@ -26,7 +26,7 @@ enum MsgId {
   S_REQUEST_DUEL = 19;
   C_RESPOND_DUEL = 20;
   S_RESPOND_DUEL = 21;
-  C_SELECT_MST = 22;
+  C_SELECT_POKEMON = 22;
   S_START_BATTLE = 23;
   C_TURN = 24;
   S_TURN_BATTLE = 25;
@@ -41,7 +41,7 @@ enum MsgId {
 enum GameObjectType {
   NONETYPE = 0;
   PLAYER = 1;
-  MONSTER = 2;
+  POKEMON = 2;
   PROJECTILE = 3;
 }
 
@@ -330,9 +330,11 @@ message BattleInfo {
   ApplyType applyType = 1;
   TargetType targetType = 2;
   EffectiveType effective = 3;
-  PokemonInfo fromInfo = 4;
-  PokemonInfo toInfo = 5;
-  StateInfo stateInfo = 6;
+  int32 fromid = 4;
+  int32 toid = 5;
+  PokemonData fromData = 6;
+  PokemonData toData = 7;
+  StateInfo stateInfo = 8;
 }
 
 message PokeballInfo {
@@ -350,6 +352,13 @@ message StateInfo {
   bool recoverSturn = 4;
   bool recoverConfusion = 5;
   int32 skillId = 6;
+}
+
+message PokemonData
+{
+    int32 id = 1;
+    string name = 2;
+    PokemonInfo info = 3;
 }
 
 message PokemonInfo {

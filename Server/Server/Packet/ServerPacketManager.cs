@@ -37,8 +37,8 @@ class PacketManager
 		_handler.Add((ushort)MsgId.CRequestDuel, PacketHandler.C_RequestDuelHandler);		
 		_onRecv.Add((ushort)MsgId.CRespondDuel, MakePacket<C_RespondDuel>);
 		_handler.Add((ushort)MsgId.CRespondDuel, PacketHandler.C_RespondDuelHandler);		
-		_onRecv.Add((ushort)MsgId.CSelectMst, MakePacket<C_SelectPokemon>);
-		_handler.Add((ushort)MsgId.CSelectMst, PacketHandler.C_SelectPokemonHandler);		
+		_onRecv.Add((ushort)MsgId.CSelectPokemon, MakePacket<C_SelectPokemon>);
+		_handler.Add((ushort)MsgId.CSelectPokemon, PacketHandler.C_SelectPokemonHandler);		
 		_onRecv.Add((ushort)MsgId.CTurn, MakePacket<C_Turn>);
 		_handler.Add((ushort)MsgId.CTurn, PacketHandler.C_TurnHandler);		
 		_onRecv.Add((ushort)MsgId.CTurnEnd, MakePacket<C_TurnEnd>);

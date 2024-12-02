@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UI_SelectfromSelectionPopup : UI_Popup
 {
-    public UI_SelectMstScene MstScene { get; set; }
+    public UI_SelectPokemonScene MstScene { get; set; }
 
     public int Id { get; set; }
 

@@ -61,11 +61,11 @@ public class UI_SkillSelectPopup : UI_Popup
 
     void SetSkillInfo()
     {
-        int curpkmId = Managers.Object.MyPlayer.GetCurPokemonData().id;
+        int curpkmId = Managers.Object.MyPlayer.GetCurPokemonData().Id;
 
         for (int i = (int)Texts.Text_Skill_00; i <= (int)Texts.Text_Skill_03; ++i)
         {
-            int skillId = Managers.Object.MyPlayer.GetCurPokemonData().info.SkillId[i];
+            int skillId = Managers.Object.MyPlayer.GetCurPokemonData().Info.SkillId[i];
             string name = Managers.Data.SkillDict[skillId].name;
             // 스킬 이름 설정
             GetText(i).text = name;
@@ -106,7 +106,7 @@ public class UI_SkillSelectPopup : UI_Popup
         GetImage((int)Images.Image_SkillType).sprite = sprites[type];
 
         // 세부 정보
-        int pokemonid = Managers.Object.MyPlayer.GetCurPokemonData().id;
+        int pokemonid = Managers.Object.MyPlayer.GetCurPokemonData().Id;
         SkillInfo info = Managers.Data.SkillDict[skillId].info;
         int curpp = Managers.Object.MyPlayer.SkillPP[pokemonid][skillId];
 

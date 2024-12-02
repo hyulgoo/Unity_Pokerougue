@@ -102,7 +102,7 @@ class PacketHandler
 
         for(int i = 0; i < selectMstPacket.PokemonList.Count; ++i)
         {
-            player.Pokemon.Add(DataManager.MonsterDict[selectMstPacket.PokemonList[i]]);
+            player.Pokemon.Add(DataManager.PokemonDict[selectMstPacket.PokemonList[i]]);
         }
         room.Push(room.SelectMst, selectMstPacket.PlayerId);
 

@@ -104,8 +104,8 @@ namespace Server.Game
 					Dictionary<int, int> speedlist = new Dictionary<int, int>();
 					foreach (var player in _players[roomId])
 					{
-						int pokemonid = player.Value.Pokemon[0].id;
-						int speed = DataManager.MonsterDict[pokemonid].info.Spe;
+						int pokemonid = player.Value.Pokemon[0].Id;
+						int speed = DataManager.PokemonDict[pokemonid].Info.Spe;
 						speedlist.Add(speed, player.Key);
 					}
 

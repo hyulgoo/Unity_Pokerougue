@@ -74,15 +74,7 @@ namespace Data
     }
 
     [Serializable]
-    public class PokemonData
-    {
-        public int id;
-        public string name;
-        public PokemonInfo info;
-    }
-
-    [Serializable]
-    public class MonsterLoader : ILoader<int, PokemonData>
+    public class PokemonLoader : ILoader<int, PokemonData>
     {
         public List<PokemonData> pokemons = new List<PokemonData>();
 
@@ -91,7 +83,7 @@ namespace Data
             Dictionary<int, PokemonData> dict = new Dictionary<int, PokemonData>();
             foreach (PokemonData pokemon in pokemons)
             {
-                dict.Add(pokemon.id, pokemon);
+                dict.Add(pokemon.Id, pokemon);
             }
             return dict;
         }

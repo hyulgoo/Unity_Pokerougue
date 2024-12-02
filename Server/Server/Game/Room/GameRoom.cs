@@ -167,10 +167,10 @@ namespace Server.Game
 
                     for (int j = 0; j < 3; ++j)
 					{
-						packet.FromPokemon.Add(_players[myid].Pokemon[j].id);
-                        packet.ToPokemon.Add(_players[enemyid].Pokemon[j].id);
-						_players[myid].Pokemon[j].info.State = new ConditionAbnormality();
-                        _players[enemyid].Pokemon[j].info.State = new ConditionAbnormality();
+						packet.FromPokemon.Add(_players[myid].Pokemon[j].Id);
+                        packet.ToPokemon.Add(_players[enemyid].Pokemon[j].Id);
+						_players[myid].Pokemon[j].Info.State = new ConditionAbnormality();
+                        _players[enemyid].Pokemon[j].Info.State = new ConditionAbnormality();
                     }
                     
                     packet.IsMyTurn = myid == turnorder;

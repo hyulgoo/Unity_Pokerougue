@@ -17,7 +17,7 @@ public class UI_SelectPokemonButton : UI_Base, ISelectHandler
         }
     }
 
-    public UI_SelectMstScene SelectMstScene { get; set; }
+    public UI_SelectPokemonScene SelectMstScene { get; set; }
 
     enum GameObjects
     {

@@ -181,8 +181,6 @@ namespace Server
             System.Random r = new System.Random();
             bool isMiss = r.Next(0, 99) >= effect.Accuracy ? true : false;
 
-            PokemonInfo myInfo = myData.info;
-            PokemonInfo enemyInfo = enemyData.info;
             ApplyType applyType = effect.ApplyType;
 
             BattleInfo[] result = new BattleInfo[(int)TargetType.End];
@@ -196,42 +194,41 @@ namespace Server
                     result[i].ApplyType = applyType;
                     result[i].TargetType = effect.Target;
                     result[i].Effective = EffectiveType.Commoneffect;
-                    result[i].FromInfo = i == (int)TargetType.Oneself ? myInfo.Clone() : enemyInfo.Clone();
-                    result[i].ToInfo = i == (int)TargetType.Oneself ? enemyInfo.Clone() : myInfo.Clone();
+                    result[i].FromData= i == (int)TargetType.Oneself ? myData.Clone() : myData.Clone();
+                    result[i].ToData = i == (int)TargetType.Oneself ? enemyData.Clone() : myData.Clone();
                     result[i].StateInfo.IsMiss = isMiss;
                 }
                 return result;
             }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
-            PokemonInfo target = targetData.info;
-            PokemonInfo standard = DataManager.MonsterDict[targetData.id].info;
+            PokemonInfo target = targetData.Info;
+            PokemonInfo standard = DataManager.PokemonDict[targetData.Id].Info;
             EffectiveType effective = EffectiveType.Commoneffect;
             // 스킬타입이 공격 또는 특수공격인 경우 데미지 계산
             if (applyType == ApplyType.Atk || applyType == ApplyType.Spa)
             {
-                string attackerName = myData.name;
-                string targetName = targetData.name;
-                int Damege = CalcDamage(effect, myInfo, target, out effective);
+                string attackerName = myData.Name;
+                string targetName = targetData.Name;
+                int Damege = CalcDamage(effect, myData.Info, target, out effective);
                 target.Hp -= Damege;
             }
-            // 스킬타입이 공격타입이 아닌 경우
-            else
+            else // 스킬타입이 공격타입이 아닌 경우
             {
                 CalcBuffType(target, standard, applyType, effect.Value);
             }
 
             // 데미지를 계산한 이후 결과를 반영해줌.
             for (int i = 0; i < (int)TargetType.End; ++i)
-            {                
+            {
                 result[i] = new BattleInfo();
                 result[i].StateInfo = new StateInfo();
                 result[i].ApplyType = applyType;
                 result[i].TargetType = effect.Target;
                 result[i].Effective = effective;
                 result[i].StateInfo.IsMiss = isMiss;
-                result[i].FromInfo = i == (int)TargetType.Oneself ? myInfo.Clone() : enemyInfo.Clone();
-                result[i].ToInfo = i == (int)TargetType.Oneself ? enemyInfo.Clone() : myInfo.Clone();
+                result[i].FromData = i == (int)TargetType.Oneself ? myData.Clone() : enemyData.Clone();
+                result[i].ToData = i == (int)TargetType.Oneself ? enemyData.Clone() : myData.Clone();
             }
 
             return result;

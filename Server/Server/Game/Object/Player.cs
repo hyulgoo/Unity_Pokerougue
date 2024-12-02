@@ -26,7 +26,7 @@ namespace Server.Game
 			int[] list = new int[Pokemon.Count];
 			for (int i = 0; i < Pokemon.Count; i++)
 			{
-				list[i] = Pokemon[i].id;
+				list[i] = Pokemon[i].Id;
 			}
 			return list;
 		}

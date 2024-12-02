@@ -11,8 +11,6 @@ public class BattleScene : BaseScene
         SceneType = Define.Scene.Battle;
 
         UI_BattleScene scene = Managers.UI.ShowSceneUI<UI_BattleScene>();
-        scene.SetField(Managers.Object.ArenaType);
-        scene.SetPlayerInfo();
     }
 
     public override void Clear()

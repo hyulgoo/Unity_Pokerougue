@@ -22,17 +22,17 @@ public class PlayerController : MonoBehaviour
 
     public void AddPokemon(int pokemonNumber)
     {
-        PokemonData data = Managers.Data.MonsterDict[pokemonNumber];
+        PokemonData data = Managers.Data.PokeonDict[pokemonNumber];
         _pokemonDatas.Add(data);
     }
 
     public void ReleasePokemon(int order) { _pokemonDatas.RemoveAt(order); }
 
     public PokemonInfo GetCurMonsterInfo() { return GetMonsterInfo(0); }
-    public PokemonInfo GetMonsterInfo(int order) { return GetMonsterData(order).info; }
+    public PokemonInfo GetMonsterInfo(int order) { return GetMonsterData(order).Info; }
 
     public string GetCurPokemonName() { return GetMonsterName(0); }
-    public string GetMonsterName(int order) { return _pokemonDatas[order].name; }    
+    public string GetMonsterName(int order) { return _pokemonDatas[order].Name; }    
 
     public PokemonData GetCurPokemonData() { return _pokemonDatas[0]; }
     public PokemonData GetMonsterData(int order) { return _pokemonDatas[order]; }
@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
 
         PokemonInfo[] infos = new PokemonInfo[count];
         for(int i = 0; i < count; ++i)
-            infos[i] = datas[i].info;
+            infos[i] = datas[i].Info;
 
         return infos;
     }
@@ -63,10 +63,10 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < list.Count(); ++i)
         { 
             // 포켓몬 정보 추가
-            _pokemonDatas.Add(Managers.Data.MonsterDict[list[i]]);
+            _pokemonDatas.Add(Managers.Data.PokeonDict[list[i]]);
 
             // 스킬 pp 정보 추가
-            RepeatedField<int> skillIdList = Managers.Data.MonsterDict[list[i]].info.SkillId;
+            RepeatedField<int> skillIdList = Managers.Data.PokeonDict[list[i]].Info.SkillId;
             Dictionary<int, int> skillppDict = new Dictionary<int, int>();
             for(int j = 0; j < skillIdList.Count(); ++j)
             {

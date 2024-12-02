@@ -12,7 +12,6 @@ namespace Server.Game
 	{
 		JobTimer _timer = new JobTimer();
 		Queue<IJob> _jobQueue = new Queue<IJob>();
-        bool _flush = false;
 
         public bool _jobEnd = false;
 		public bool _excute = true;
@@ -42,7 +41,7 @@ namespace Server.Game
 		{
 			if (!_excute) return;
 
-			_timer.Flush();
+			//_timer.Flush();
 
 			IJob job = Pop();
 			if (job == null)
@@ -55,15 +54,10 @@ namespace Server.Game
 		IJob Pop()
 		{
 			if (_jobQueue.Count == 0)
-			{
-				_flush = false;
 				return null;
-			}
 
             if(_jobQueue.Count == 1)
-			{
 				_jobEnd = true;
-            }
 
             return _jobQueue.Dequeue();
 		}
