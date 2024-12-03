@@ -120,7 +120,6 @@ namespace Server.Game
 
         void Fight(C_Turn packet)
         {
-            // 전투 정보를 담는
             S_TurnBattle[] BattlePacket = new S_TurnBattle[(int)TargetType.End];
 
             BattlePacket[(int)TargetType.Oneself] = new S_TurnBattle();
@@ -130,7 +129,7 @@ namespace Server.Game
            
             Player player = ObjectManager.Instance.Find(RoomId, packet.PlayerId);
             Player Enemy = ObjectManager.Instance.Find(RoomId, enemyId);
-            PokemonData data = player.Pokemon[0];
+            PokemonData myData = player.Pokemon[0];
             PokemonData enemyData = Enemy.Pokemon[0];
             SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillNum];
 
@@ -140,7 +139,7 @@ namespace Server.Game
 
             for (int index = 0; index < skillData.info.SkillEffect.Count; index++)
             {
-                BattleInfo[] infos = Util.CalcBattle(data, enemyData, skillData.info.SkillEffect[index]);
+                BattleInfo[] infos = Util.CalcBattle(myData, enemyData, skillData.info.SkillEffect[index]);
                 for (int j = 0; j < (int)TargetType.End; ++j)
                     result[j].Add(infos[j]);
             }

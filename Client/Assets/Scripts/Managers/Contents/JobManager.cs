@@ -22,7 +22,7 @@ public class JobManager : JobSerializer
     {
         yield return new WaitForSeconds(2f);
         C_TurnEnd packet = new C_TurnEnd();
-        packet.PlayerId = Managers.Object.MyPlayer.Id;
+        packet.PlayerId = Managers.Player.MyPlayer.Id;
         Managers.Network.Send(packet);
     }
 }

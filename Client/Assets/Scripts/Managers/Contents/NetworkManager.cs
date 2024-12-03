@@ -42,8 +42,7 @@ public class NetworkManager
         Connector connector = new Connector();
 
         connector.Connect(endPoint,
-            () => { return _session; },
-            1);
+            () => { return _session; }, 1);
     }
 
 	public void Update()

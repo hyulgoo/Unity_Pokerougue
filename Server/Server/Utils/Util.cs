@@ -202,20 +202,20 @@ namespace Server
             }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
-            PokemonInfo target = targetData.Info;
-            PokemonInfo standard = DataManager.PokemonDict[targetData.Id].Info;
+            PokemonInfo targetInfo = targetData.Info;
+            PokemonInfo targetStandard = DataManager.PokemonDict[targetData.Id].Info;
             EffectiveType effective = EffectiveType.Commoneffect;
             // 스킬타입이 공격 또는 특수공격인 경우 데미지 계산
             if (applyType == ApplyType.Atk || applyType == ApplyType.Spa)
             {
                 string attackerName = myData.Name;
                 string targetName = targetData.Name;
-                int Damege = CalcDamage(effect, myData.Info, target, out effective);
-                target.Hp -= Damege;
+                int Damege = CalcDamage(effect, myData.Info, targetInfo, out effective);
+                targetInfo.Hp -= Damege;
             }
             else // 스킬타입이 공격타입이 아닌 경우
             {
-                CalcBuffType(target, standard, applyType, effect.Value);
+                CalcBuffType(targetInfo, targetStandard, applyType, effect.Value);
             }
 
             // 데미지를 계산한 이후 결과를 반영해줌.
@@ -227,8 +227,8 @@ namespace Server
                 result[i].TargetType = effect.Target;
                 result[i].Effective = effective;
                 result[i].StateInfo.IsMiss = isMiss;
-                result[i].FromData = i == (int)TargetType.Oneself ? myData.Clone() : enemyData.Clone();
-                result[i].ToData = i == (int)TargetType.Oneself ? enemyData.Clone() : myData.Clone();
+                result[i].FromData = myData.Clone();
+                result[i].ToData = targetData.Clone();
             }
 
             return result;
@@ -238,27 +238,27 @@ namespace Server
         {
             System.Random r = new System.Random();
 
-            int atk = skillInfo.ApplyType == ApplyType.Atk ? attackerInfo.Atk : attackerInfo.SpA;
-            int def = skillInfo.ApplyType == ApplyType.Atk ? targetInfo.Def : targetInfo.SpD;
+            int attackValue = skillInfo.ApplyType == ApplyType.Atk ? attackerInfo.Atk : attackerInfo.SpA;
+            int defenseValue = skillInfo.ApplyType == ApplyType.Atk ? targetInfo.Def : targetInfo.SpD;
 
             // 스킬 위력계수
-            int power = skillInfo.Value;
+            int skillPower = skillInfo.Value;
 
             // 6.5% 확률로 크리티컬 판정
-            int critical = r.Next(0, 1000) < 65 ? 2 : 1;
+            int criticalRatio = r.Next(0, 1000) < 65 ? 2 : 1;
 
             // 랜덤 데미지계수
-            int random = (r.Next(217, 256) * 100) / 255;
+            int randomRatio = (r.Next(217, 256) * 100) / 255;
 
             // 자속성 기술계수
             float myType = 1f;
             foreach(Type type in attackerInfo.Type)
             {
                 if (type == skillInfo.Type)
-                    myType = 1.5f;
+                    myType *= 1.5f;
             }
 
-            float damage = (((((((attackerInfo.Level * 2 / 5) + 2) * power * atk / 50) / def) * Mod1) + 2) * critical * Mod2 * ((float)random / 100f)) * myType;
+            float damage = (((((((attackerInfo.Level * 2 / 5) + 2) * skillPower * attackValue / 50) / defenseValue) * Mod1) + 2) * criticalRatio * Mod2 * ((float)randomRatio / 100f)) * myType;
 
             float effectRatio = 1f;
 
@@ -333,18 +333,14 @@ namespace Server
 
         public static void AddRepeatedFieldToList(RepeatedField<int> targetList, List<int> list)
         {
-            for (int i = 0; i < list.Count; i++)
-            {
-                targetList.Add(list[i]);
-            }
+            for (int index = 0; index < list.Count; index++)
+                targetList.Add(list[index]);
         }
 
         public static void AddRepeatedFieldToList(RepeatedField<BattleInfo> targetList, List<BattleInfo> list)
         {
-            for (int i = 0; i < list.Count; i++)
-            {
-                targetList.Add(list[i]);
-            }
+            for (int index = 0; index < list.Count; index++)
+                targetList.Add(list[index]);
         }
     }
 }

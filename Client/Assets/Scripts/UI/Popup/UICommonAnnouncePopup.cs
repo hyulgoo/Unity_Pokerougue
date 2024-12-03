@@ -1,0 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UICommonAnnouncePopup : UICommonPopup
+{
+    enum Texts
+    {
+        Announce
+    }
+
+    enum Buttons
+    {
+        Btn_Accept
+    }
+
+    public override void Init()
+    {
+        base.Init();
+
+        BindText(typeof(Texts));            
+        BindButton(typeof(Buttons));
+        GetButton((int)Buttons.Btn_Accept).onClick.AddListener(OnClickAcceptButton);
+    }
+
+    public void SetAnnounceText(string text)
+    {
+        GetText((int)Texts.Announce).text = text;
+    }
+
+    public void OnClickAcceptButton()
+    {
+        ClosePopupUI();
+    }
+}

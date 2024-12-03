@@ -55,9 +55,7 @@ namespace Server.Game
 			// 타인한테 정보 전송
 			S_Spawn spawnPacket = new S_Spawn();
 			foreach (Player go in _players.Values)
-			{
 				spawnPacket.Objects.Add(go.Info); 
-			}
 			
 			Broadcast(spawnPacket);
 		}
@@ -88,21 +86,19 @@ namespace Server.Game
 
 			// 플레이어가 없으면서 룸이 로비로 사용하지 않는 경우 room을 삭제
 			if(_players.Count == 0 && RoomId != 1)
-			{
 				GameLogic.Instance.Push(() => GameLogic.Instance.Remove(RoomId));
-			}
 		}
 
-		public void RequestDuel(int playerId, int opponentId)
+		public void RequestDuel(int playerId, int enemytId)
 		{
-			Int32 isOK = _players[playerId].Session.ServerState == PlayerServerState.ServerStateLobby ? 1 : 0;
+			int isOK = _players[playerId].Session.ServerState == PlayerServerState.ServerStateLobby ? 1 : 0;
             S_RequestSendOk requestSendOKpacket = new S_RequestSendOk() { SendOK = isOK };
 			_players[playerId].Session.Send(requestSendOKpacket);
 
 			if(isOK == 1)
 			{	
 				S_RequestDuel requestDuelpacket = new S_RequestDuel() { FromId = playerId };
-				_players[opponentId].Session.Send(requestDuelpacket);
+				_players[enemytId].Session.Send(requestDuelpacket);
 			}
         }
 
@@ -111,8 +107,8 @@ namespace Server.Game
 			S_RespondDuel respondDuelpacket = new S_RespondDuel();
 			respondDuelpacket.DuelOK = packet.DuelOK;
 
-            Player Respond = _players[packet.FromId];
-            Player opponent = _players[packet.ToId];
+            Player fromPlayer = _players[packet.FromId];
+            Player toPlayer = _players[packet.ToId];
 
             // 대결을 신청한 상대에게 응답패킷을 보냄
 			// 대결을 승낙하면 씬 전환을 해야하므로 본인에게도 다시 보냄
@@ -123,28 +119,26 @@ namespace Server.Game
                     GameRoom room = GameLogic.Instance.Add();
 
                     respondDuelpacket.EnemyId = packet.FromId;
-                    opponent.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
+                    toPlayer.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
 
                     respondDuelpacket.EnemyId = packet.ToId;
-                    Respond.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
+                    fromPlayer.Session.HandleRespondDuel(respondDuelpacket, room.RoomId);
                 });				
             }
 			else
 			{
                 respondDuelpacket.EnemyId = packet.FromId;
-                opponent.Session.HandleRespondDuel(respondDuelpacket, 0);
+                toPlayer.Session.HandleRespondDuel(respondDuelpacket, 0);
             }
         }
 
-		public void SelectMst(int playerId)
+		public void SelectPokemon(int playerId)
 		{
 			_playerReady[playerId] = true;
 
 			int cnt = 0;
 			foreach (bool ready in _playerReady.Values)
-			{
 				cnt = ready ? cnt + 1 : cnt;
-			}
 
 			if(cnt == _playerReady.Count)
 			{
@@ -174,7 +168,6 @@ namespace Server.Game
                     }
                     
                     packet.IsMyTurn = myid == turnorder;
-					//_players[myid].Session.HandleCreatePlayer();
                     _players[myid].Session.Send(packet);
                 }
             }

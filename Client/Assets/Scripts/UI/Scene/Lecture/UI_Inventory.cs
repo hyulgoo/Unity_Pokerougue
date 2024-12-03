@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class UI_Inventory : UI_Base
+public class UI_Inventory : UICommonBase
 {
 	public List<UI_Inventory_Item> Items { get; } = new List<UI_Inventory_Item>();
 

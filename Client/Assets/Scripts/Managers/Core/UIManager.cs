@@ -7,9 +7,9 @@ public class UIManager
 {
     int _order = 10;
     float _uiSpeed = 0.1f;
-    Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
-    public UI_Scene SceneUI { get; set; }
-    public UI_BattleScene BattleScene { get { return SceneUI.gameObject.GetComponent<UI_BattleScene>(); } }
+    Stack<UICommonPopup> _popupStack = new Stack<UICommonPopup>();
+    public UICommonScene SceneUI { get; set; }
+    public UIBattleScene BattleScene { get { return SceneUI.gameObject.GetComponent<UIBattleScene>(); } }
     public float UISpeed { get { return _uiSpeed; } }
     public GameObject Root
     {
@@ -39,7 +39,7 @@ public class UIManager
         }
     }
 
-	public T MakeWorldSpaceUI<T>(Transform parent = null, string name = null) where T : UI_Base
+	public T MakeWorldSpaceUI<T>(Transform parent = null, string name = null) where T : UICommonBase
 	{
 		if (string.IsNullOrEmpty(name))
 			name = typeof(T).Name;
@@ -55,7 +55,7 @@ public class UIManager
 		return Util.GetOrAddComponent<T>(go);
 	}
 
-	public T MakeSubItem<T>(Transform parent = null, string name = null) where T : UI_Base
+	public T MakeSubItem<T>(Transform parent = null, string name = null) where T : UICommonBase
 	{
 		if (string.IsNullOrEmpty(name))
 			name = typeof(T).Name;
@@ -67,7 +67,7 @@ public class UIManager
 		return Util.GetOrAddComponent<T>(go);
 	}
 
-	public T ShowSceneUI<T>(string name = null) where T : UI_Scene
+	public T ShowSceneUI<T>(string name = null) where T : UICommonScene
 	{
 		if (string.IsNullOrEmpty(name))
 			name = typeof(T).Name;
@@ -84,7 +84,7 @@ public class UIManager
         return sceneUI;
 	}
 
-	public T ShowPopupUI<T>(string name = null) where T : UI_Popup
+	public T ShowPopupUI<T>(string name = null) where T : UICommonPopup
     {
         if (string.IsNullOrEmpty(name))
             name = typeof(T).Name;
@@ -101,7 +101,7 @@ public class UIManager
 		return popup;
     }
 
-    public void ClosePopupUI(UI_Popup popup)
+    public void ClosePopupUI(UICommonPopup popup)
     {
 		if (_popupStack.Count == 0)
 			return;
@@ -120,7 +120,7 @@ public class UIManager
         if (_popupStack.Count <= 0)
             return;
 
-        UI_Popup popup = _popupStack.Pop();
+        UICommonPopup popup = _popupStack.Pop();
         Managers.Resource.Destroy(popup.gameObject);
         popup = null;
         _order--;
@@ -154,7 +154,7 @@ public class UIManager
         if (Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby) 
             return;
 
-        KeyValuePair<int, GameObject>[] nameidlist = Managers.Object.GetObjects();
+        KeyValuePair<int, GameObject>[] nameidlist = Managers.Player.GetObjects();
         int[] ids = new int[nameidlist.Length];
         string[] names = new string[nameidlist.Length];
 
@@ -165,7 +165,7 @@ public class UIManager
         }
 
         if (SceneUI == null) return;
-        UI_LobbyScene lc = SceneUI.gameObject.GetComponent<UI_LobbyScene>();
+        UILobbyScene lc = SceneUI.gameObject.GetComponent<UILobbyScene>();
         if (lc == null) return;
         lc.SetUserName(ids, names);
     }

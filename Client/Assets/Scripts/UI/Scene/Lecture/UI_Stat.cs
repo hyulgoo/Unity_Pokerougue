@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_Stat : UI_Base
+public class UI_Stat : UICommonBase
 {
 	enum Images
 	{

@@ -1,0 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class UIBattleSkillSelectButton : UICommonButton, ISelectHandler
+{
+    public int SkillId { get; set; }
+    public UIBattleSkillSelectPopup SkillSelectPopup { get; set; }
+
+    public override void OnSelect(BaseEventData eventData)
+    {
+        base.OnSelect(eventData);
+        SkillSelectPopup.SetCurSkillInfo(SkillId);
+    }
+}

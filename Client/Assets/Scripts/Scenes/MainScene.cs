@@ -15,7 +15,7 @@ public class MainScene : BaseScene
         GameObject player = Managers.Resource.Instantiate("Creature/MyPlayer");
         player.name = "Player";
 
-        Managers.UI.ShowSceneUI<UI_MainScene>();
+        Managers.UI.ShowSceneUI<UIMainScene>();
     }
 
     public override void Clear()

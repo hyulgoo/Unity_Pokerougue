@@ -27,7 +27,7 @@ public class UISelectManager
         _totButtoninPanel = panel.GetComponentsInChildren<Button>();
         if (_totButtoninPanel.Length > 0)
         {
-            UI_Base bc = panel.GetComponent<UI_Base>();
+            UICommonBase bc = panel.GetComponent<UICommonBase>();
             if (bc == null) return;
 
             if(bc._lastSelected != null)

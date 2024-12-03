@@ -118,7 +118,7 @@ public class Util
         return typeName;
     }
 
-    public float GetPokemonHPRatio(PokemonData data)
+    public static float GetPokemonHPRatio(PokemonData data)
     {        
         return data.Info.Hp / Managers.Data.PokeonDict[data.Id].Info.Hp; ;
     }

@@ -62,11 +62,17 @@ class PacketHandler
 
 		Player player = clientSession.MyPlayer;
         if (player == null)
+        {
+            Console.WriteLine("Fail To Found MyPlayer on C_RequestDuelHandler");
             return;
+        }
 
         GameRoom room = player.Room;
         if (room == null)
-            return;
+        {
+            Console.WriteLine("Fail To Found MyPlayer Room on C_RequestDuelHandler");
+            return; 
+        }
 
         room.Push(room.RequestDuel, requestDuelPaceket.FromId, requestDuelPaceket.ToId);
     }
@@ -78,11 +84,17 @@ class PacketHandler
 
         Player player = clientSession.MyPlayer;
         if (player == null)
-            return;
+        {
+            Console.WriteLine("Fail To Found MyPlayer on C_RespondDuelHandler");
+            return; 
+        }
 
         GameRoom room = player.Room;
         if (room == null)
-            return;
+        {
+            Console.WriteLine("Fail To Found MyPlayer Room on C_RespondDuelHandler");
+            return; 
+        }
 
         room.Push(room.RespondDuel, respondDuelPacket);
     }
@@ -101,12 +113,9 @@ class PacketHandler
             return;
 
         for(int i = 0; i < selectMstPacket.PokemonList.Count; ++i)
-        {
             player.Pokemon.Add(DataManager.PokemonDict[selectMstPacket.PokemonList[i]]);
-        }
-        room.Push(room.SelectMst, selectMstPacket.PlayerId);
 
-		// TODO 각 플레이어에게 자신이 고른 리스트와 상대가 고른 리스트를 보내줌.
+        room.Push(room.SelectPokemon, selectMstPacket.PlayerId);
     }
 
     public static void C_TurnHandler(PacketSession session, IMessage packet)

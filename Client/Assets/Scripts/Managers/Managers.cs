@@ -10,7 +10,7 @@ public class Managers : MonoBehaviour
     #region Contents
     InventoryManager _inven = new InventoryManager();
     MapManager _map = new MapManager();
-    ObjectManager _obj = new ObjectManager();
+    PlayerManager _player = new PlayerManager();
     NetworkManager _network = new NetworkManager();
     WebManager _web = new WebManager();
     UISelectManager _select = new UISelectManager();
@@ -18,7 +18,7 @@ public class Managers : MonoBehaviour
 
     public static InventoryManager Inven { get { return Instance._inven; } }
     public static MapManager Map { get { return Instance._map; } }
-    public static ObjectManager Object { get { return Instance._obj; } }
+    public static PlayerManager Player { get { return Instance._player; } }
     public static NetworkManager Network { get { return Instance._network; } }
     public static WebManager Web { get { return Instance._web; } }
     public static UISelectManager Select { get { return Instance._select; } }
@@ -78,6 +78,6 @@ public class Managers : MonoBehaviour
         Scene.Clear();
         UI.Clear();
         Pool.Clear();
-        Object.Clear();
+        Player.Clear();
     }
 }

@@ -1,11 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_LoginScene : UICommonScene
+public class UIMainLoginPopup : UICommonPopup
 {
     enum InputFields
     {
@@ -23,11 +23,14 @@ public class UI_LoginScene : UICommonScene
     {
         base.Init();
 
-        Bind<TMP_InputField>(typeof(InputFields));
-        Bind<Button>(typeof(Buttons));
+        BindInput(typeof(InputFields));
+        BindButton(typeof(Buttons));
 
         GetButton((int)Buttons.Btn_Create).onClick.AddListener(OnClickCreateButton);
         GetButton((int)Buttons.Btn_Login).onClick.AddListener(OnClickLoginButton);
+
+        GetInput((int)InputFields.AccountName).gameObject.GetOrAddComponent<UICommonInputField>().UI_Popup = this;
+        GetInput((int)InputFields.Password).gameObject.GetOrAddComponent<UICommonInputField>().UI_Popup = this;
     }
 
     public void OnClickCreateButton()
@@ -36,7 +39,7 @@ public class UI_LoginScene : UICommonScene
         string password = GetInput((int)InputFields.Password).text;
 
         CreateAccountPacketReq packet = new CreateAccountPacketReq()
-        {
+        { 
             AccountName = account,
             Password = password,
         };
@@ -68,13 +71,14 @@ public class UI_LoginScene : UICommonScene
             GetInput((int)InputFields.AccountName).text = "";
             GetInput((int)InputFields.Password).text = "";
 
-            if (res.LoginOk)
+            if(res.LoginOk)
             {
                 Managers.Network.AccountId = res.AccountId;
                 Managers.Network.Token = res.Token;
+                Managers.Network.Name = account;
 
-                UI_SelectServerPopup popup = Managers.UI.ShowPopupUI<UI_SelectServerPopup>();
-                popup.SetServers(res.ServerList);
+                Managers.Network.ConnectToGame(res.ServerList[0]);
+                Managers.Scene.LoadScene(Define.Scene.Lobby);
             }
         });
     }

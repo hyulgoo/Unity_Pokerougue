@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_SelectServerPopup : UI_Popup
+public class UI_SelectServerPopup : UICommonPopup
 {
 	public List<UI_SelectServerPopup_Item> Items { get; } = new List<UI_SelectServerPopup_Item>();
 

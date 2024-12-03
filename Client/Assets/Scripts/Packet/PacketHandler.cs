@@ -12,14 +12,14 @@ class PacketHandler
 	public static void S_EnterGameHandler(PacketSession session, IMessage packet)
 	{
 		S_EnterGame enterGamePacket = packet as S_EnterGame;
-		Managers.Object.Add(enterGamePacket.Player, myPlayer: true);
+		Managers.Player.Add(enterGamePacket.Player, myPlayer: true);
 		Managers.UI.SetLobbyPlayer();
 	}
 
 	public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
 	{
 		S_LeaveGame leaveGameHandler = packet as S_LeaveGame;
-		Managers.Object.Clear();
+		Managers.Player.Clear();
     }
 
 	public static void S_SpawnHandler(PacketSession session, IMessage packet)
@@ -27,7 +27,7 @@ class PacketHandler
 		S_Spawn spawnPacket = packet as S_Spawn;
 		foreach (ObjectInfo obj in spawnPacket.Objects)
 		{
-			Managers.Object.Add(obj, myPlayer: false);
+			Managers.Player.Add(obj, myPlayer: false);
         }
 
         Managers.UI.SetLobbyPlayer();
@@ -38,7 +38,7 @@ class PacketHandler
 		S_Despawn despawnPacket = packet as S_Despawn;
 		foreach (int id in despawnPacket.ObjectIds)
 		{
-			Managers.Object.Remove(id);
+			Managers.Player.Remove(id);
         }
         Managers.UI.SetLobbyPlayer();
 	}
@@ -81,7 +81,7 @@ class PacketHandler
 					playerinfo.ObjectId = info.PlayerDbId;
 					playerinfo.Name = info.Name;
 
-					Managers.Object.Add(playerinfo, myPlayer: false);
+					Managers.Player.Add(playerinfo, myPlayer: false);
 				}
 			}
         }
@@ -177,14 +177,14 @@ class PacketHandler
 		{
 			// 패킷 전송 성공
 			Managers.UI.ClosePopupUI();
-            UI_WaitingForRespondPopup popup = Managers.UI.ShowPopupUI<UI_WaitingForRespondPopup>();
+            UICommonWaitPopup popup = Managers.UI.ShowPopupUI<UICommonWaitPopup>();
 			popup.Text = "상대 응답 대기 중";
 		}
 		else
 		{
 			// 대결 신청 패킷 보내기 실패
 			Managers.UI.ClosePopupUI();
-			UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
+			UICommonAnnouncePopup popup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
 			popup.SetAnnounceText("상대가 로비에 존재하지 않습니다");
 		}
 	}
@@ -192,20 +192,23 @@ class PacketHandler
     public static void S_RequestDuelHandler(PacketSession session, IMessage packet)
     {
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
-        UI_DualRespondPopup popup = Managers.UI.ShowPopupUI<UI_DualRespondPopup>("UI_AcceptDenyPopup");
-		popup.SetApplyDuelAnnounce(requestDuel.FromId);
+        UILobbyDualRespondPopup popup = Managers.UI.ShowPopupUI<UILobbyDualRespondPopup>("UICommonRespondPopup");
+		if(popup == null)
+			Console.WriteLine("( UICommonRespondPopup )을 찾을 수 없습니다.");
+
+		popup.SetDuelRequestAnnounce(requestDuel.FromId);
     }
 
     public static void S_RespondDuelHandler(PacketSession session, IMessage packet)
     {
         S_RespondDuel respenDuel = (S_RespondDuel)packet;
 
-		bool letsDuel = respenDuel.DuelOK == 1 ? true : false;
+		bool battleStart = respenDuel.DuelOK == 1 ? true : false;
 
-		if(letsDuel)
+		if(battleStart)
         {
             Managers.UI.ClosePopupUI();
-            UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
+            UICommonAnnouncePopup popup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             popup.SetAnnounceText("게임이 곧 시작됩니다");
 
 			// 인게임으로 전환
@@ -214,7 +217,7 @@ class PacketHandler
         else
 		{
 			Managers.UI.ClosePopupUI();
-            UI_AnnouncePopup popup = Managers.UI.ShowPopupUI<UI_AnnouncePopup>();
+            UICommonAnnouncePopup popup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
 			popup.SetAnnounceText("상대가 거절하였습니다");
 		}
     }
@@ -225,13 +228,13 @@ class PacketHandler
 
 		Managers.Scene.LoadScene(Define.Scene.Battle);
 
-        Managers.Object.Add(startbattle.MyInfo, myPlayer: true);
-		Managers.Object.Add(startbattle.EnemyInfo, myPlayer: false);
+        Managers.Player.Add(startbattle.MyInfo, myPlayer: true);
+		Managers.Player.Add(startbattle.EnemyInfo, myPlayer: false);
 
-		Managers.Object.MyPlayer.SetMonsterData(startbattle.FromPokemon);
-        Managers.Object.Enemy.SetMonsterData(startbattle.ToPokemon);
-		Managers.Object.ArenaType = startbattle.ArenaType;
-		Managers.Object.MyTurn = startbattle.IsMyTurn;
+		Managers.Player.MyPlayer.SetMonsterData(startbattle.FromPokemon);
+        Managers.Player.Enemy.SetMonsterData(startbattle.ToPokemon);
+		Managers.Player.ArenaType = startbattle.ArenaType;
+		Managers.Player.MyTurn = startbattle.IsMyTurn;
     }
 
     public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
@@ -239,7 +242,7 @@ class PacketHandler
         S_TurnBattle battle = (S_TurnBattle)packet;
 
         DefaultTurnInfo(battle);
-        TurnInfo(battle);
+        TurnBattleInfo(battle);
     }
 
 	static void DefaultTurnInfo(S_TurnBattle battle)
@@ -253,27 +256,28 @@ class PacketHandler
 			TargetType targetType = TargetType.End;
 
 			if (battleInfo.TargetType == TargetType.Oneself)
-				targetType = Managers.Object.MyTurn ?  TargetType.Oneself : TargetType.Enemy;
+				targetType = Managers.Player.MyTurn ?  TargetType.Oneself : TargetType.Enemy;
             else
-                targetType = Managers.Object.MyTurn ? TargetType.Enemy : TargetType.Oneself;
+                targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
+
+            float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
 
             if (battleInfo.ApplyType == ApplyType.Dot)
 			{
 				string skillName = Managers.Data.SkillDict[battleInfo.StateInfo.SkillId].name;
 				announce = $"{battleInfo.ToData.Name}은(는) {skillName}에 의해 지속데미지를 받고있다.";
-				Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
-				Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(battleInfo.ToData.Info.Hp, targetType); });
 			}
 			else if (battleInfo.ApplyType == ApplyType.StatusEffect)
 			{
 				announce = $"{battleInfo.ToData.Name}은(는) 지속데미지를 받고있다.";
-				Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
-				Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(battleInfo.ToData.Info.Hp, TargetType.Oneself); });
-			}
+            }
+
+            Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+            Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetHPRatio, targetType); });
         }
     }
 
-	static void TurnInfo(S_TurnBattle battle)
+	static void TurnBattleInfo(S_TurnBattle battle)
 	{
         // 전투에 의한 턴 정보
         for (int i = 0; i < battle.Info.Count; ++i)
@@ -284,9 +288,9 @@ class PacketHandler
             TargetType targetType = TargetType.End;
 
             if (battleInfo.TargetType == TargetType.Oneself)
-                targetType = Managers.Object.MyTurn ? TargetType.Oneself : TargetType.Enemy;
+                targetType = Managers.Player.MyTurn ? TargetType.Oneself : TargetType.Enemy;
             else
-                targetType = Managers.Object.MyTurn ? TargetType.Enemy : TargetType.Oneself;
+                targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
 
             if (battleInfo.StateInfo.IsMiss)
             {
@@ -296,24 +300,23 @@ class PacketHandler
                 return;
             }
 
-			// 자신을 때리는 종류의 스킬인 경우 
+            float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
+
+            // 자신을 때리는 종류의 스킬인 경우 
             if (battleInfo.TargetType == TargetType.Oneself)
             {				
                 announce = $"{battleInfo.ToData.Name}은(는) 반동으로 인해 데미지를 입었다.";
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(battleInfo.ToData.Info.Hp, targetType); });
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetHPRatio, targetType); });
                 Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
             }
             else
             {
-				if(Managers.Object.MyTurn == false)
-				{
-					string skillName = Managers.Data.SkillDict[battle.SkillId].name;
-					Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce($"{battleInfo.FromData.Name}의 {skillName}!"); });
-                }
+				string skillName = Managers.Data.SkillDict[battle.SkillId].name;
+				Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce($"{battleInfo.FromData.Name}의 {skillName}!"); });
+                
+                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetHPRatio, targetType); });
 
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(battleInfo.ToData.Info.Hp, targetType); });
-
-                if (Managers.Object.MyTurn && battleInfo.Effective != EffectiveType.Commoneffect)
+                if (Managers.Player.MyTurn && battleInfo.Effective != EffectiveType.Commoneffect)
                 {
                     announce = battleInfo.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
                     Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
@@ -346,6 +349,6 @@ class PacketHandler
     {
         S_Turn turn = (S_Turn)packet;
 
-        Managers.Object.MyTurn = turn.MyTurn;
+        Managers.Player.MyTurn = turn.MyTurn;
     }
 }

@@ -14,7 +14,7 @@ namespace Server.Game
 		Queue<IJob> _jobQueue = new Queue<IJob>();
 
         public bool _jobEnd = false;
-		public bool _excute = true;
+		public bool _excute = false;
 
 		public IJob PushAfter(int tickAfter, Action action) { return PushAfter(tickAfter, new Job(action)); }
 		public IJob PushAfter<T1>(int tickAfter, Action<T1> action, T1 t1) { return PushAfter(tickAfter, new Job<T1>(action, t1)); }
@@ -54,10 +54,10 @@ namespace Server.Game
 		IJob Pop()
 		{
 			if (_jobQueue.Count == 0)
-				return null;
-
-            if(_jobQueue.Count == 1)
-				_jobEnd = true;
+            {
+                _jobEnd = true;
+                return null;
+			}
 
             return _jobQueue.Dequeue();
 		}
