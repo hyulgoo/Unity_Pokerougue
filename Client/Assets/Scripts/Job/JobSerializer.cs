@@ -13,8 +13,8 @@ namespace Server.Game
 		JobTimer _timer = new JobTimer();
 		Queue<IJob> _jobQueue = new Queue<IJob>();
 
-        public bool _jobEnd = false;
-		public bool _excute = false;
+        protected bool _jobEnd = false;
+        protected bool _excute = false;
 
 		public IJob PushAfter(int tickAfter, Action action) { return PushAfter(tickAfter, new Job(action)); }
 		public IJob PushAfter<T1>(int tickAfter, Action<T1> action, T1 t1) { return PushAfter(tickAfter, new Job<T1>(action, t1)); }
@@ -39,7 +39,8 @@ namespace Server.Game
 
 		public void Flush()
 		{
-			if (!_excute) return;
+			if (_excute == false) 
+				return;
 
 			//_timer.Flush();
 
@@ -54,10 +55,12 @@ namespace Server.Game
 		IJob Pop()
 		{
 			if (_jobQueue.Count == 0)
-            {
-                _jobEnd = true;
                 return null;
-			}
+
+			if (_jobQueue.Count == 1 && Managers.Player.IsTurnProgressing)
+				_jobEnd = true;
+			else
+				_jobEnd = false;
 
             return _jobQueue.Dequeue();
 		}

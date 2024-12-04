@@ -1,5 +1,6 @@
 ﻿using Data;
 using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Google.Protobuf.Protocol;
 using ServerCore;
 using System;
@@ -240,51 +241,47 @@ class PacketHandler
     public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
     {
         S_TurnBattle battle = (S_TurnBattle)packet;
-
-        DefaultTurnInfo(battle);
-        TurnBattleInfo(battle);
+		Managers.Player.IsTurnProgressing = true;
+        DefaultTurnInfo(battle.TurnInfo);
+        TurnBattleInfo(battle.Info, battle.SkillId);
     }
 
-	static void DefaultTurnInfo(S_TurnBattle battle)
+	static void DefaultTurnInfo(RepeatedField<BattleInfo> battleInfoList)
 	{
-        // 상태이상에 의한 턴 정보
-        for (int i = 0; i < battle.TurnInfo.Count; ++i)
+		foreach (BattleInfo battleInfo in battleInfoList)
         {
-            BattleInfo battleInfo = battle.TurnInfo[i];
             string announce = "";
+            TargetType targetType = TargetType.End;
 
-			TargetType targetType = TargetType.End;
-
-			if (battleInfo.TargetType == TargetType.Oneself)
-				targetType = Managers.Player.MyTurn ?  TargetType.Oneself : TargetType.Enemy;
+            if (battleInfo.TargetType == TargetType.Oneself)
+                targetType = Managers.Player.MyTurn ? TargetType.Oneself : TargetType.Enemy;
             else
                 targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
 
             float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
 
             if (battleInfo.ApplyType == ApplyType.Dot)
-			{
-				string skillName = Managers.Data.SkillDict[battleInfo.StateInfo.SkillId].name;
-				announce = $"{battleInfo.ToData.Name}은(는) {skillName}에 의해 지속데미지를 받고있다.";
-			}
-			else if (battleInfo.ApplyType == ApplyType.StatusEffect)
-			{
-				announce = $"{battleInfo.ToData.Name}은(는) 지속데미지를 받고있다.";
+            {
+                string skillName = Managers.Data.SkillDict[battleInfo.StateInfo.SkillId].name;
+                announce = $"{battleInfo.ToData.Name}은(는) {skillName}에 의해 지속데미지를 받고있다.";
+            }
+            else if (battleInfo.ApplyType == ApplyType.StatusEffect)
+            {
+                announce = $"{battleInfo.ToData.Name}은(는) 지속데미지를 받고있다.";
             }
 
-            Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
-            Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetHPRatio, targetType); });
+			UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+            Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+            Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
         }
     }
 
-	static void TurnBattleInfo(S_TurnBattle battle)
-	{
-        // 전투에 의한 턴 정보
-        for (int i = 0; i < battle.Info.Count; ++i)
+	static void TurnBattleInfo(RepeatedField<BattleInfo> battleInfoList, int skillId)
+    {
+		foreach (BattleInfo battleInfo in battleInfoList)
         {
-            BattleInfo battleInfo = battle.Info[i];
             string announce = "";
-
+            UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
             TargetType targetType = TargetType.End;
 
             if (battleInfo.TargetType == TargetType.Oneself)
@@ -295,31 +292,32 @@ class PacketHandler
             if (battleInfo.StateInfo.IsMiss)
             {
                 announce = $"{battleInfo.FromData.Name}의 공격은 빗나갔다!";
-
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 return;
             }
 
             float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
-
-            // 자신을 때리는 종류의 스킬인 경우 
             if (battleInfo.TargetType == TargetType.Oneself)
-            {				
+            {
                 announce = $"{battleInfo.ToData.Name}은(는) 반동으로 인해 데미지를 입었다.";
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetHPRatio, targetType); });
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
             }
             else
             {
-				string skillName = Managers.Data.SkillDict[battle.SkillId].name;
-				Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce($"{battleInfo.FromData.Name}의 {skillName}!"); });
-                
-                Managers.Job.Push(() => { Managers.UI.BattleScene.SetHPBar(targetHPRatio, targetType); });
+                if (Managers.Player.MyTurn == false)
+                {
+                    string skillName = Managers.Data.SkillDict[skillId].name;
+                    announce = $"{battleInfo.FromData.Name}의 {skillName}!";
+                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+                }
 
-                if (Managers.Player.MyTurn && battleInfo.Effective != EffectiveType.Commoneffect)
+                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+
+                if (battleInfo.Effective != EffectiveType.CommonEffect)
                 {
                     announce = battleInfo.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
-                    Managers.Job.Push(() => { Managers.UI.BattleScene.SetAnnounce(announce); });
+                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce); });
                 }
             }
         }
@@ -350,5 +348,8 @@ class PacketHandler
         S_Turn turn = (S_Turn)packet;
 
         Managers.Player.MyTurn = turn.MyTurn;
+
+        UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+		battleScene.MyTurn();
     }
 }

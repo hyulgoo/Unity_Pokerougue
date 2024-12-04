@@ -9,7 +9,6 @@ public class UIManager
     float _uiSpeed = 0.1f;
     Stack<UICommonPopup> _popupStack = new Stack<UICommonPopup>();
     public UICommonScene SceneUI { get; set; }
-    public UIBattleScene BattleScene { get { return SceneUI.gameObject.GetComponent<UIBattleScene>(); } }
     public float UISpeed { get { return _uiSpeed; } }
     public GameObject Root
     {

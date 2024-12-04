@@ -9,11 +9,11 @@ public class PlayerManager
 	public MyPlayerController MyPlayer { get; set; } = null;
 	public CommonPlayerController Enemy { get; set; } = null;
 
-	public int ArenaType { get; set; }
+    public int ArenaType { get; set; }
+    public bool MyTurn { get; set; }
+    public bool IsTurnProgressing { get; set; }
 
-	public bool MyTurn { get; set; }
-
-	Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
+    Dictionary<int, GameObject> _objects = new Dictionary<int, GameObject>();
 	
 	public static GameObjectType GetObjectTypeById(int id)
 	{
@@ -25,42 +25,42 @@ public class PlayerManager
 	{
 		if (MyPlayer != null && MyPlayer.Id == info.ObjectId)
 			return;
+
 		if (_objects.ContainsKey(info.ObjectId))
 			return;
 
 		GameObjectType objectType = GetObjectTypeById(info.ObjectId);
-		if (objectType == GameObjectType.Player)
+		if (objectType != GameObjectType.Player)
+			return;
+		
+		if (myPlayer)
 		{
-			if (myPlayer)
-			{
-				GameObject go = Managers.Resource.Instantiate("Creature/MyPlayer");
-				go.name = info.Name;
-				_objects.Add(info.ObjectId, go);
+			GameObject go = Managers.Resource.Instantiate("Creature/MyPlayer");
+			go.name = info.Name;
+			_objects.Add(info.ObjectId, go);
 
-				MyPlayer = go.GetComponent<MyPlayerController>();
-				MyPlayer.Id = info.ObjectId;
-			}
-			else
-			{
-				GameObject go = Managers.Resource.Instantiate("Creature/Player");
-				go.name = info.Name;
-				_objects.Add(info.ObjectId, go);
-
-				CommonPlayerController pc = go.GetComponent<CommonPlayerController>();
-				pc.Id = info.ObjectId;
-
-				if(Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby)
-				{
-					Enemy = pc;
-				}
-			}
+			MyPlayer = go.GetComponent<MyPlayerController>();
+			MyPlayer.Id = info.ObjectId;
 		}
+		else
+		{
+			GameObject player = Managers.Resource.Instantiate("Creature/Player");
+			player.name = info.Name;
+			_objects.Add(info.ObjectId, player);
+
+			CommonPlayerController playerController = player.GetComponent<CommonPlayerController>();
+			playerController.Id = info.ObjectId;
+
+			if(Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby)
+				Enemy = playerController;
+		}		
 	}
 
 	public void Remove(int id)
 	{
 		if (MyPlayer != null && MyPlayer.Id == id)
 			return;
+
 		if (_objects.ContainsKey(id) == false)
 			return;
 

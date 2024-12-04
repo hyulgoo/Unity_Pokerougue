@@ -6,6 +6,10 @@ using System.Collections.Generic;
 
 namespace Server
 {
+    namespace Google.Protobuf.Protocol
+    {
+
+    }
     class Util
     {
         public static float Mod1 { get; set; } = 1f;
@@ -176,81 +180,59 @@ namespace Server
             return damageRatio;
         }
 
-        public static BattleInfo[] CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect)
+        public static RepeatedField<BattleInfo> CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect)
         {
-            System.Random r = new System.Random();
-            bool isMiss = r.Next(0, 99) >= effect.Accuracy ? true : false;
+            RepeatedField<BattleInfo> result = new RepeatedField<BattleInfo>();
 
-            ApplyType applyType = effect.ApplyType;
+            System.Random random = new System.Random();
+            bool isMiss = random.Next(0, 99) >= effect.Accuracy ? true : false;
 
-            BattleInfo[] result = new BattleInfo[(int)TargetType.End];
-            // 빗나갔다면 바로 return
             if (isMiss)
             {
-                for (int i = 0; i < (int)TargetType.End; ++i)
-                {
-                    result[i] = new BattleInfo();
-                    result[i].StateInfo = new StateInfo();
-                    result[i].ApplyType = applyType;
-                    result[i].TargetType = effect.Target;
-                    result[i].Effective = EffectiveType.Commoneffect;
-                    result[i].FromData= i == (int)TargetType.Oneself ? myData.Clone() : myData.Clone();
-                    result[i].ToData = i == (int)TargetType.Oneself ? enemyData.Clone() : myData.Clone();
-                    result[i].StateInfo.IsMiss = isMiss;
-                }
+                BattleInfo missBattleInfo = new BattleInfo();
+                missBattleInfo.StateInfo = new StateInfo();
+                missBattleInfo.ApplyType = effect.ApplyType;
+                missBattleInfo.TargetType = effect.Target;
+                missBattleInfo.Effective = EffectiveType.CommonEffect;
+                missBattleInfo.FromData = myData.Clone();
+                missBattleInfo.ToData = effect.Target == (int)TargetType.Oneself ? myData.Clone() : enemyData.Clone();
+                missBattleInfo.StateInfo.IsMiss = isMiss;
+                result.Add(missBattleInfo);
+
                 return result;
             }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
-            PokemonInfo targetInfo = targetData.Info;
-            PokemonInfo targetStandard = DataManager.PokemonDict[targetData.Id].Info;
-            EffectiveType effective = EffectiveType.Commoneffect;
-            // 스킬타입이 공격 또는 특수공격인 경우 데미지 계산
-            if (applyType == ApplyType.Atk || applyType == ApplyType.Spa)
-            {
-                string attackerName = myData.Name;
-                string targetName = targetData.Name;
-                int Damege = CalcDamage(effect, myData.Info, targetInfo, out effective);
-                targetInfo.Hp -= Damege;
-            }
-            else // 스킬타입이 공격타입이 아닌 경우
-            {
-                CalcBuffType(targetInfo, targetStandard, applyType, effect.Value);
-            }
+            EffectiveType effective = EffectiveType.CommonEffect;
+
+            if (effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa)
+                effective = CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info);
+            else 
+                CalcBuffType(targetData, effect.ApplyType, effect.Value);
 
             // 데미지를 계산한 이후 결과를 반영해줌.
-            for (int i = 0; i < (int)TargetType.End; ++i)
-            {
-                result[i] = new BattleInfo();
-                result[i].StateInfo = new StateInfo();
-                result[i].ApplyType = applyType;
-                result[i].TargetType = effect.Target;
-                result[i].Effective = effective;
-                result[i].StateInfo.IsMiss = isMiss;
-                result[i].FromData = myData.Clone();
-                result[i].ToData = targetData.Clone();
-            }
+            BattleInfo battleInfo = new BattleInfo();
+            battleInfo.StateInfo = new StateInfo();
+            battleInfo.ApplyType = effect.ApplyType;
+            battleInfo.TargetType = effect.Target;
+            battleInfo.Effective = effective;
+            battleInfo.StateInfo.IsMiss = isMiss;
+            battleInfo.FromData = myData.Clone();
+            battleInfo.ToData = targetData.Clone();
+            result.Add(battleInfo);
 
             return result;
         }
 
-        static int CalcDamage(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo, out EffectiveType effective)
+        static EffectiveType CalcDamageAndReturnEffective(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo)
         {
             System.Random r = new System.Random();
 
             int attackValue = skillInfo.ApplyType == ApplyType.Atk ? attackerInfo.Atk : attackerInfo.SpA;
             int defenseValue = skillInfo.ApplyType == ApplyType.Atk ? targetInfo.Def : targetInfo.SpD;
-
-            // 스킬 위력계수
             int skillPower = skillInfo.Value;
-
-            // 6.5% 확률로 크리티컬 판정
             int criticalRatio = r.Next(0, 1000) < 65 ? 2 : 1;
-
-            // 랜덤 데미지계수
             int randomRatio = (r.Next(217, 256) * 100) / 255;
-
-            // 자속성 기술계수
             float myType = 1f;
             foreach(Type type in attackerInfo.Type)
             {
@@ -261,7 +243,6 @@ namespace Server
             float damage = (((((((attackerInfo.Level * 2 / 5) + 2) * skillPower * attackValue / 50) / defenseValue) * Mod1) + 2) * criticalRatio * Mod2 * ((float)randomRatio / 100f)) * myType;
 
             float effectRatio = 1f;
-
             foreach (Type type in targetInfo.Type)
             {
                 float ratio = CalcAttackType(skillInfo.Type, type);
@@ -270,20 +251,22 @@ namespace Server
 
             damage *= effectRatio;
 
-            effective = EffectiveType.Commoneffect;
+            EffectiveType effective = EffectiveType.CommonEffect;
             if (effectRatio != 1f)
                 effective = effectRatio > 1f ? EffectiveType.Effective : EffectiveType.Ineffective;
             
             damage *= Mode3;
 
-            if(damage > targetInfo.Hp)
-                damage = targetInfo.Hp;
+            targetInfo.Hp = (int)damage >= targetInfo.Hp ? 0 : targetInfo.Hp - (int)damage;
 
-            return (int)damage;
+            return effective;
         }
 
-        static void CalcBuffType(PokemonInfo targetInfo, PokemonInfo stadardInfo, ApplyType skillType, int value)
+        static void CalcBuffType(PokemonData targetData, ApplyType skillType, int value)
         {
+            PokemonInfo targetInfo = targetData.Info;
+            PokemonInfo stadardInfo = DataManager.PokemonDict[targetData.Id].Info;
+
             switch (skillType)
             {
                 case ApplyType.Recovery:

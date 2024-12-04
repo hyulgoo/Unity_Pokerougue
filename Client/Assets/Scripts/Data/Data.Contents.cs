@@ -63,7 +63,7 @@ namespace Data
     }
     #endregion
 
-    #region Monster
+    #region Pokemon
 
     [Serializable]
     public class RewardData

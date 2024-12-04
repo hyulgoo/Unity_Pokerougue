@@ -103,9 +103,9 @@ public class UIBattleScene : UICommonScene
         Sprite enemyImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{_enemyPokemonId}")[0];
         GetImage((int)Images.Image_Enemy).sprite = enemyImage;
 
-        SetHPBar(targetRatio: 1f, targetType: TargetType.Oneself, true);
+        SetHPBar(targetRatio: 1f, targetType: TargetType.Oneself, false);
         SetHPBar(targetRatio: 1f, targetType: TargetType.Enemy, false);
-        SetAnnounce("", false);
+        SetAnnounce("", true);
 
         MyTurn();
     }
@@ -142,24 +142,21 @@ public class UIBattleScene : UICommonScene
             Managers.Job.Excute();
     }
 
-    const float targetDiff = 0.01f;
-    const float magnification = 3f;
+    const float targetDiff = 0.05f;
+    const float magnification = 1.5f;
 
     public void SetHPBar(float targetRatio, TargetType targetType, bool setByHandler = true)
     {
         StartCoroutine(SetHPbarCoroutine(targetRatio, targetType, setByHandler));
     }
 
-    IEnumerator SetHPbarCoroutine(float targetRatio, TargetType targetType, bool setByHandler = true)
+    IEnumerator SetHPbarCoroutine(float targetRatio, TargetType targetType, bool setByHandler)
     {
         Slider slider = GetObject((int)targetType).GetComponent<Slider>();
-
         GameObject fillObj = Util.FindChild(GetObject((int)targetType), "Fill", true);
-        Debug.Log("Cannot Found Fill Object");
-
         float curRatio = slider.value;
 
-        while (targetRatio - curRatio > targetDiff)
+        while (Mathf.Abs(targetRatio - curRatio) > Mathf.Abs(targetDiff))
         {
             int hpstate = 2 - (int)(curRatio / 0.34f);
             if (_HpbarSpriteNum[(int)targetType] != hpstate)
@@ -168,7 +165,7 @@ public class UIBattleScene : UICommonScene
                 fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];
             }
 
-            curRatio =  Mathf.Lerp(slider.value, targetRatio, Time.deltaTime * magnification);
+            curRatio = Mathf.Lerp(slider.value, targetRatio, Time.deltaTime * magnification);
             slider.value = curRatio;
 
             yield return null;

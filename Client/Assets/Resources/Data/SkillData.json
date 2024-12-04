@@ -6,7 +6,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Grass",
             "value": 130,
@@ -14,7 +14,7 @@
             "duration": 1
           },
           {
-            "skillType": "DebuffSpa",
+            "applyType": "DebuffSpa",
             "target": "Oneself",
             "type": "Grass",
             "value": 2,
@@ -31,7 +31,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Grass",
             "value": 75,
@@ -39,7 +39,7 @@
             "duration": 1
           },
           {
-            "skillType": "Recovery",
+            "applyType": "Recovery",
             "target": "Oneself",
             "type": "Grass",
             "value": 37,
@@ -56,7 +56,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Dark",
             "value": 80,
@@ -64,7 +64,7 @@
             "duration": 1
           },
           {
-            "skillType": "DebuffAtk",
+            "applyType": "DebuffAtk",
             "target": "Enemy",
             "type": "Grass",
             "value": 37,
@@ -81,7 +81,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Dot",
+            "applyType": "Dot",
             "target": "Enemy",
             "type": "Grass",
             "value": 35,
@@ -89,7 +89,7 @@
             "duration": 5
           },
           {
-            "skillType": "Recovery",
+            "applyType": "Recovery",
             "target": "Oneself",
             "type": "Grass",
             "value": 35,
@@ -106,7 +106,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Fire",
             "value": 120,
@@ -114,7 +114,7 @@
             "duration": 1
           },
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Oneself",
             "type": "Fire",
             "value": 40,
@@ -131,7 +131,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffSpa",
+            "applyType": "BuffSpa",
             "target": "Oneself",
             "type": "Psychic",
             "value": 1,
@@ -139,7 +139,7 @@
             "duration": 1
           },
           {
-            "skillType": "BuffSpd",
+            "applyType": "BuffSpd",
             "target": "Oneself",
             "type": "Psychic",
             "value": 1,
@@ -156,7 +156,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Fire",
             "value": 35,
@@ -173,7 +173,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Fighting",
             "value": 120,
@@ -190,7 +190,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Water",
             "value": 110,
@@ -207,7 +207,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Flying",
             "value": 80,
@@ -224,7 +224,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Water",
             "value": 35,
@@ -241,7 +241,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Water",
             "value": 65,
@@ -258,7 +258,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Flying",
             "value": 120,
@@ -266,7 +266,7 @@
             "duration": 1
           },
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Oneself",
             "type": "Flying",
             "value": 40,
@@ -283,7 +283,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffSpd",
+            "applyType": "BuffSpd",
             "target": "Oneself",
             "type": "Flying",
             "value": 2,
@@ -300,7 +300,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Normal",
             "value": 90,
@@ -308,7 +308,7 @@
             "duration": 1
           },
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Oneself",
             "type": "Normal",
             "value": 22,
@@ -325,7 +325,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Flying",
             "value": 60,
@@ -342,7 +342,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Fighting",
             "value": 120,
@@ -359,7 +359,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffSpd",
+            "applyType": "BuffSpd",
             "target": "Oneself",
             "type": "Psychic",
             "value": 2,
@@ -376,7 +376,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffAtk",
+            "applyType": "BuffAtk",
             "target": "Oneself",
             "type": "Normal",
             "value": 2,
@@ -393,7 +393,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Electric",
             "value": 90,
@@ -401,7 +401,7 @@
             "duration": 1
           },
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Oneself",
             "type": "Electric",
             "value": 22,
@@ -418,7 +418,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "DebuffSpe",
+            "applyType": "DebuffSpe",
             "target": "Enemy",
             "type": "Normal",
             "value": 2,
@@ -435,7 +435,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Electric",
             "value": 40,
@@ -452,7 +452,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Water",
             "value": 40,
@@ -469,7 +469,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Water",
             "value": 90,
@@ -486,7 +486,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Normal",
             "value": 60,
@@ -503,7 +503,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Normal",
             "value": 250,
@@ -511,7 +511,7 @@
             "duration": 1
           },
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Oneself",
             "type": "Normal",
             "value": 1000,
@@ -528,7 +528,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffSpe",
+            "applyType": "BuffSpe",
             "target": "Oneself",
             "type": "Normal",
             "value": 1,
@@ -545,7 +545,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Spa",
+            "applyType": "Spa",
             "target": "Enemy",
             "type": "Ghost",
             "value": 80,
@@ -562,7 +562,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Ghost",
             "value": 30,
@@ -570,7 +570,7 @@
             "duration": 1
           },
           {
-            "skillType": "Sturn",
+            "applyType": "Sturn",
             "target": "Enemy",
             "type": "Ghost",
             "value": 1,
@@ -587,7 +587,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffDef",
+            "applyType": "BuffDef",
             "target": "Oneself",
             "type": "Normal",
             "value": 1,
@@ -595,7 +595,7 @@
             "duration": 1
           },
           {
-            "skillType": "BuffSpd",
+            "applyType": "BuffSpd",
             "target": "Oneself",
             "type": "Normal",
             "value": 1,
@@ -612,7 +612,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "BuffSpa",
+            "applyType": "BuffSpa",
             "target": "Enemy",
             "type": "Dark",
             "value": 1,
@@ -620,7 +620,7 @@
             "duration": 1
           },
           {
-            "skillType": "Confusion",
+            "applyType": "Confusion",
             "target": "Enemy",
             "type": "Dark",
             "value": 1,
@@ -637,7 +637,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Normal",
             "value": 70,
@@ -645,7 +645,7 @@
             "duration": 1
           },
           {
-            "skillType": "Sturn",
+            "applyType": "Sturn",
             "target": "Enemy",
             "type": "Normal",
             "value": 1,
@@ -662,7 +662,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "DebuffAtk",
+            "applyType": "DebuffAtk",
             "target": "Enemy",
             "type": "Normal",
             "value": 2,
@@ -679,7 +679,7 @@
       "info": {
         "skillEffect": [
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Normal",
             "value": 30,
@@ -687,7 +687,7 @@
             "duration": 1
           },
           {
-            "skillType": "Atk",
+            "applyType": "Atk",
             "target": "Enemy",
             "type": "Normal",
             "value": 30,

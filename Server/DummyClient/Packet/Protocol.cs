@@ -138,9 +138,9 @@ namespace Google.Protobuf.Protocol {
             "CBIHCgNET1QQCRIRCg1TVEFUVVNfRUZGRUNUEAoSDgoKREVCVUZGX0FUSxAL",
             "Eg4KCkRFQlVGRl9TUEEQDBIOCgpERUJVRkZfREVGEA0SDgoKREVCVUZGX1NQ",
             "RBAOEg4KCkRFQlVGRl9TUEUQDxIJCgVTVFVSThAQEg0KCUNPTkZVU0lPThAR",
-            "KkEKDUVmZmVjdGl2ZVR5cGUSEAoMQ09NTU9ORUZGRUNUEAASDQoJRUZGRUNU",
-            "SVZFEAESDwoLSU5FRkZFQ1RJVkUQAkIbqgIYR29vZ2xlLlByb3RvYnVmLlBy",
-            "b3RvY29sYgZwcm90bzM="));
+            "KkIKDUVmZmVjdGl2ZVR5cGUSEQoNQ09NTU9OX0VGRkVDVBAAEg0KCUVGRkVD",
+            "VElWRRABEg8KC0lORUZGRUNUSVZFEAJCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Q",
+            "cm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.PlayerServerState), typeof(global::Google.Protobuf.Protocol.ItemType), typeof(global::Google.Protobuf.Protocol.ConsumableType), typeof(global::Google.Protobuf.Protocol.ActionType), typeof(global::Google.Protobuf.Protocol.Type), typeof(global::Google.Protobuf.Protocol.Arenas), typeof(global::Google.Protobuf.Protocol.TargetType), typeof(global::Google.Protobuf.Protocol.ApplyType), typeof(global::Google.Protobuf.Protocol.EffectiveType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -351,7 +351,7 @@ namespace Google.Protobuf.Protocol {
   }
 
   public enum EffectiveType {
-    [pbr::OriginalName("COMMONEFFECT")] Commoneffect = 0,
+    [pbr::OriginalName("COMMON_EFFECT")] CommonEffect = 0,
     [pbr::OriginalName("EFFECTIVE")] Effective = 1,
     [pbr::OriginalName("INEFFECTIVE")] Ineffective = 2,
   }
@@ -5511,7 +5511,7 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "effective" field.</summary>
     public const int EffectiveFieldNumber = 3;
-    private global::Google.Protobuf.Protocol.EffectiveType effective_ = global::Google.Protobuf.Protocol.EffectiveType.Commoneffect;
+    private global::Google.Protobuf.Protocol.EffectiveType effective_ = global::Google.Protobuf.Protocol.EffectiveType.CommonEffect;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Google.Protobuf.Protocol.EffectiveType Effective {
       get { return effective_; }
@@ -5604,7 +5604,7 @@ namespace Google.Protobuf.Protocol {
       int hash = 1;
       if (ApplyType != global::Google.Protobuf.Protocol.ApplyType.None) hash ^= ApplyType.GetHashCode();
       if (TargetType != global::Google.Protobuf.Protocol.TargetType.Oneself) hash ^= TargetType.GetHashCode();
-      if (Effective != global::Google.Protobuf.Protocol.EffectiveType.Commoneffect) hash ^= Effective.GetHashCode();
+      if (Effective != global::Google.Protobuf.Protocol.EffectiveType.CommonEffect) hash ^= Effective.GetHashCode();
       if (Fromid != 0) hash ^= Fromid.GetHashCode();
       if (Toid != 0) hash ^= Toid.GetHashCode();
       if (fromData_ != null) hash ^= FromData.GetHashCode();
@@ -5631,7 +5631,7 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(16);
         output.WriteEnum((int) TargetType);
       }
-      if (Effective != global::Google.Protobuf.Protocol.EffectiveType.Commoneffect) {
+      if (Effective != global::Google.Protobuf.Protocol.EffectiveType.CommonEffect) {
         output.WriteRawTag(24);
         output.WriteEnum((int) Effective);
       }
@@ -5669,7 +5669,7 @@ namespace Google.Protobuf.Protocol {
       if (TargetType != global::Google.Protobuf.Protocol.TargetType.Oneself) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) TargetType);
       }
-      if (Effective != global::Google.Protobuf.Protocol.EffectiveType.Commoneffect) {
+      if (Effective != global::Google.Protobuf.Protocol.EffectiveType.CommonEffect) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Effective);
       }
       if (Fromid != 0) {
@@ -5704,7 +5704,7 @@ namespace Google.Protobuf.Protocol {
       if (other.TargetType != global::Google.Protobuf.Protocol.TargetType.Oneself) {
         TargetType = other.TargetType;
       }
-      if (other.Effective != global::Google.Protobuf.Protocol.EffectiveType.Commoneffect) {
+      if (other.Effective != global::Google.Protobuf.Protocol.EffectiveType.CommonEffect) {
         Effective = other.Effective;
       }
       if (other.Fromid != 0) {

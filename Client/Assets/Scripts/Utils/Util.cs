@@ -119,7 +119,7 @@ public class Util
     }
 
     public static float GetPokemonHPRatio(PokemonData data)
-    {        
-        return data.Info.Hp / Managers.Data.PokeonDict[data.Id].Info.Hp; ;
+    {
+        return (float)data.Info.Hp / (float)Managers.Data.PokeonDict[data.Id].Info.Hp; ;
     }
 }

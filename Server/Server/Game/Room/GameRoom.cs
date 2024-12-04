@@ -16,12 +16,11 @@ namespace Server.Game
 	public partial class GameRoom : JobSerializer
 	{
 		public int RoomId { get; set; }
-
+		private bool isWaitingPlayerTurnEnd = false;
 		Dictionary<int, Player> _players = new Dictionary<int, Player>();
-
 		Dictionary<int, bool> _playerReady = new Dictionary<int, bool>();
 
-		public void Init()
+        public void Init()
 		{			
 		}
 
@@ -37,7 +36,7 @@ namespace Server.Game
 			if (gameObject == null)
 				return;
 
-			GameObjectType type = ObjectManager.GetObjectTypeById(gameObject.Id);
+			GameObjectType type = PlayerManager.GetObjectTypeById(gameObject.Id);
 
 			if (type == GameObjectType.Player)
 			{
@@ -62,7 +61,7 @@ namespace Server.Game
 
 		public void LeaveGame(int objectId)
 		{
-			GameObjectType type = ObjectManager.GetObjectTypeById(objectId);
+			GameObjectType type = PlayerManager.GetObjectTypeById(objectId);
 
 			if (type == GameObjectType.Player)
 			{
@@ -142,12 +141,15 @@ namespace Server.Game
 
 			if(cnt == _playerReady.Count)
 			{
-				int[] list = _players.Keys.ToArray();
+                foreach (var value in _playerReady.ToList())
+                    _playerReady[value.Key] = false;
+
+                int[] list = _players.Keys.ToArray();
 
                 S_StartBattle packet = new S_StartBattle();
                 Random random = new Random();
                 packet.ArenaType = random.Next(0, (int)Arenas.End);
-				int turnorder = ObjectManager.Instance.GetTurn(RoomId);
+				int turnorder = PlayerManager.Instance.GetTurn(RoomId);
                 for (int i = 0; i < (int)TargetType.End; ++i)
                 {
                     int myid = list[i];
@@ -175,7 +177,7 @@ namespace Server.Game
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
 		{
-			Player player = ObjectManager.Instance.Add<Player>(RoomId);
+			Player player = PlayerManager.Instance.Add<Player>(RoomId);
 			player.PlayerDbId = info.PlayerDbId;
 			player.Info.Name = info.Name;
 			player.Session = session;

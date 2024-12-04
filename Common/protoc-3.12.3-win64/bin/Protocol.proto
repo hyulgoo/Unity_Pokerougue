@@ -159,7 +159,7 @@ enum ApplyType {
 }
 
 enum EffectiveType {
-  COMMONEFFECT = 0;
+  COMMON_EFFECT = 0;
   EFFECTIVE = 1;
   INEFFECTIVE = 2;
 }

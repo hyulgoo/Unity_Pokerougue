@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Server.Game
 {
-	public class ObjectManager
+	public class PlayerManager
 	{
-		public static ObjectManager Instance { get; } = new ObjectManager();
+		public static PlayerManager Instance { get; } = new PlayerManager();
 
 		object _lock = new object();
 		Dictionary<int, Dictionary<int, Player>> _players = new Dictionary<int, Dictionary<int, Player>>();

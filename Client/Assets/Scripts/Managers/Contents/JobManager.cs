@@ -13,16 +13,21 @@ public class JobManager : JobSerializer
 
     public void Excute()
     {
+        if (_jobEnd && Managers.Player.IsTurnProgressing)
+        {
+            _jobEnd = false;
+            Managers.Player.IsTurnProgressing = false;
+
+            C_TurnEnd packet = new C_TurnEnd();
+            packet.PlayerId = Managers.Player.MyPlayer.Id;
+            Managers.Network.Send(packet);
+        }
+
         _excute = true;
-        if (_jobEnd)
-            Managers.Instance.StartCoroutine(TurnEnd());
     }
 
     IEnumerator TurnEnd()
     {
         yield return new WaitForSeconds(2f);
-        C_TurnEnd packet = new C_TurnEnd();
-        packet.PlayerId = Managers.Player.MyPlayer.Id;
-        Managers.Network.Send(packet);
     }
 }
