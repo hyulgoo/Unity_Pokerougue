@@ -12,11 +12,10 @@ namespace Server.Game
 		public static PlayerManager Instance { get; } = new PlayerManager();
 
 		object _lock = new object();
-		Dictionary<int, Dictionary<int, Player>> _players = new Dictionary<int, Dictionary<int, Player>>();
+		Dictionary<int, Dictionary<int, Player>> _roomAndPlayers = new Dictionary<int, Dictionary<int, Player>>();
 
 		int _counter = 0;
 		// [UNUSED(1)][TYPE(7)][ID(24)]
-		Dictionary<int, Stack<int>> _turn = new Dictionary<int, Stack<int>>();
 
 		public T Add<T>(int roomId) where T : GameObject, new()
 		{
@@ -25,19 +24,19 @@ namespace Server.Game
 			lock (_lock)
 			{
 				Dictionary<int, Player> dict;
-				bool find = _players.TryGetValue(roomId, out dict);
+				bool find = _roomAndPlayers.TryGetValue(roomId, out dict);
 
 				if(!find)
                 {
 					dict = new Dictionary<int, Player>();
-                    _players.Add(roomId, dict);
+                    _roomAndPlayers.Add(roomId, dict);
                 }
 
 				gameObject.Id = GenerateId(gameObject.ObjectType);
 
 				if (gameObject.ObjectType == GameObjectType.Player)
 				{
-					_players[roomId].Add(gameObject.Id, gameObject as Player);
+					_roomAndPlayers[roomId].Add(gameObject.Id, gameObject as Player);
 				}
 			}
 
@@ -65,7 +64,7 @@ namespace Server.Game
 			lock (_lock)
 			{
 				if (objectType == GameObjectType.Player)
-					return _players[roomId].Remove(objectId);
+					return _roomAndPlayers[roomId].Remove(objectId);
 			}
 
 			return false;
@@ -80,7 +79,7 @@ namespace Server.Game
 				if (objectType == GameObjectType.Player)
 				{
 					Player player = null;
-					if (_players[roomId].TryGetValue(objectId, out player))
+					if (_roomAndPlayers[roomId].TryGetValue(objectId, out player))
 						return player;
 				}
 			}
@@ -88,40 +87,33 @@ namespace Server.Game
 			return null;
         }
 
-        public int GetTurn(int roomId)
+        public int GetCurrentTurnPlayerId(int roomId, bool includeCurrentTurnPlayer = false)
         {
 			lock (_lock)
 			{
-                Stack<int> stack;
-				bool find = _turn.TryGetValue(roomId, out stack);
-				if(!find)
-				{
-					_turn.Add(roomId, new Stack<int>());
-				}
+				int nextTurnPlayerId = 0;
+				int nextTurnPlayerPokemonSpeed = 0;
+                foreach (var player in _roomAndPlayers[roomId])
+                {
+                    int playerId = player.Key;
+                    int playerCurrentPokemonSpeed = player.Value.Pokemon[0].Info.Spe;
 
-				if (_turn[roomId].Count == 0)
-				{
-					Dictionary<int, int> speedlist = new Dictionary<int, int>();
-					foreach (var player in _players[roomId])
-					{
-						int pokemonid = player.Value.Pokemon[0].Id;
-						int speed = DataManager.PokemonDict[pokemonid].Info.Spe;
-						speedlist.Add(speed, player.Key);
-					}
+					if (includeCurrentTurnPlayer == false && (player.Value.Room.CurrentTurnPlayerId == playerId))
+						continue;
 
-					foreach (var key in speedlist.Keys.OrderBy(k => k))
-					{
-						_turn[roomId].Push(speedlist[key]);
+                    if (nextTurnPlayerPokemonSpeed < playerCurrentPokemonSpeed)
+                    {
+                        nextTurnPlayerId = playerId;
+						nextTurnPlayerPokemonSpeed = playerCurrentPokemonSpeed;
                     }
-				}
+                    else if (nextTurnPlayerPokemonSpeed == playerCurrentPokemonSpeed && nextTurnPlayerId == player.Value.Room.CurrentTurnPlayerId)
+                    {
+                        nextTurnPlayerId = playerId;
+                    }
+                }
 
-				return _turn[roomId].Pop();
+				return nextTurnPlayerId;
 			}
         }
-
-		public void ClearTurn(int roomId)
-		{
-            _turn[roomId].Clear();
-		}
     }
 }

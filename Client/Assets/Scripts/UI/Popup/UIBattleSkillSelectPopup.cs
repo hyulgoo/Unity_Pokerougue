@@ -135,6 +135,6 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         UIBattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UIBattleScene>();
         string monsterName = Managers.Player.MyPlayer.GetCurPokemonName();
         string skillName = Managers.Data.SkillDict[_selectedSkillId].name;
-        Managers.Job.Push(() => scene.SetAnnounce($"{monsterName}ÀÇ {skillName}!"));
+        Managers.Job.Push(() => scene.SetAnnounce($"{monsterName}ÀÇ {skillName}!", true));
     }
 }

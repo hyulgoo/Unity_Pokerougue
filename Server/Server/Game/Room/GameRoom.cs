@@ -16,7 +16,8 @@ namespace Server.Game
 	public partial class GameRoom : JobSerializer
 	{
 		public int RoomId { get; set; }
-		private bool isWaitingPlayerTurnEnd = false;
+		public int CurrentTurnPlayerId { get; set; } = 0;
+        private bool isWaitingPlayerTurnEnd = false;
 		Dictionary<int, Player> _players = new Dictionary<int, Player>();
 		Dictionary<int, bool> _playerReady = new Dictionary<int, bool>();
 
@@ -30,7 +31,6 @@ namespace Server.Game
 			Flush();
 		}
 
-		Random _rand = new Random();
 		public void EnterGame(GameObject gameObject)
 		{
 			if (gameObject == null)
@@ -149,7 +149,7 @@ namespace Server.Game
                 S_StartBattle packet = new S_StartBattle();
                 Random random = new Random();
                 packet.ArenaType = random.Next(0, (int)Arenas.End);
-				int turnorder = PlayerManager.Instance.GetTurn(RoomId);
+				CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
                 for (int i = 0; i < (int)TargetType.End; ++i)
                 {
                     int myid = list[i];
@@ -169,7 +169,7 @@ namespace Server.Game
                         _players[enemyid].Pokemon[j].Info.State = new ConditionAbnormality();
                     }
                     
-                    packet.IsMyTurn = myid == turnorder;
+                    packet.IsMyTurn = myid == CurrentTurnPlayerId;
                     _players[myid].Session.Send(packet);
                 }
             }
@@ -211,9 +211,7 @@ namespace Server.Game
 		public void Broadcast(IMessage packet)
 		{
 			foreach (Player p in _players.Values)
-			{
 				p.Session.Send(packet);
-			}
 		}
 	}
 }

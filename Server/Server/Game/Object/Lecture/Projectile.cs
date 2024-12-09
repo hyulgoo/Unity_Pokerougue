@@ -1,0 +1,22 @@
+﻿using Google.Protobuf.Protocol;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Server.Game.Object.Lecture
+{
+    public class Projectile : GameObject
+    {
+        public Data.SkillData Data { get; set; }
+
+        public Projectile()
+        {
+            ObjectType = GameObjectType.Projectile;
+        }
+
+        public override void Update()
+        {
+
+        }
+    }
+}

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UISelectSelectionPopup : UICommonPopup
 {
-    public UISelectPokemonScene MstScene { get; set; }
+    public UISelectPokemonScene SelectScene { get; set; }
 
     public int Id { get; set; }
 
@@ -32,7 +32,7 @@ public class UISelectSelectionPopup : UICommonPopup
 
     void OnClickAddPartyButton()
     {
-        if(!MstScene.PickPokemon(Id))
+        if(!SelectScene.PickPokemon(Id))
         {
             UICommonAnnouncePopup popup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             popup.SetAnnounceText("더이상 고를 수 없습니다");

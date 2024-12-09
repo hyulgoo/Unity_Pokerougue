@@ -18,3 +18,4 @@ EditorBuildSettings:
     path: Assets/Scenes/Battle.unity
     guid: 755438b39caebf148baada92c5a12723
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

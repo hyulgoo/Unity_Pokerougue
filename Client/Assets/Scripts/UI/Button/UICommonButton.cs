@@ -11,13 +11,13 @@ public class UICommonButton : MonoBehaviour, ISelectHandler
     public virtual void OnSelect(BaseEventData eventData)
     {
         GameObject go = Managers.Select.CurPanel;
-
         if (go == null) 
             return;
-        UICommonBase uibase = go.GetComponent<UICommonBase>();
 
+        UICommonBase uibase = go.GetComponent<UICommonBase>();
         if (uibase == null) 
             return;
+
         uibase._lastSelected = eventData.selectedObject.GetComponent<Button>();
         uibase.SetPointerPos(eventData.selectedObject.transform);
     }

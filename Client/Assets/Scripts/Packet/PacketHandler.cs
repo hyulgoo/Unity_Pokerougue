@@ -232,8 +232,8 @@ class PacketHandler
         Managers.Player.Add(startbattle.MyInfo, myPlayer: true);
 		Managers.Player.Add(startbattle.EnemyInfo, myPlayer: false);
 
-		Managers.Player.MyPlayer.SetMonsterData(startbattle.FromPokemon);
-        Managers.Player.Enemy.SetMonsterData(startbattle.ToPokemon);
+		Managers.Player.MyPlayer.SetPokemonData(startbattle.FromPokemon);
+        Managers.Player.Enemy.SetPokemonData(startbattle.ToPokemon);
 		Managers.Player.ArenaType = startbattle.ArenaType;
 		Managers.Player.MyTurn = startbattle.IsMyTurn;
     }
@@ -302,14 +302,20 @@ class PacketHandler
                 announce = $"{battleInfo.ToData.Name}은(는) 반동으로 인해 데미지를 입었다.";
                 Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+
+                if (targetHPRatio <= 0f)
+                {
+                    Managers.Job.Push(() => { battleScene.SetAnnounce($"{battleInfo.ToData.Name}은(는) 쓰려졌다.", true); });
+					if(Managers.Player.MyTurn)
+						Managers.Job.Push(() => { battleScene.CurrentPokemonFainting(); });
+                }
             }
             else
             {
                 if (Managers.Player.MyTurn == false)
                 {
                     string skillName = Managers.Data.SkillDict[skillId].name;
-                    announce = $"{battleInfo.FromData.Name}의 {skillName}!";
-                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+                    Managers.Job.Push(() => { battleScene.SetAnnounce($"{battleInfo.FromData.Name}의 {skillName}!", true); });
                 }
 
                 Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
@@ -317,7 +323,14 @@ class PacketHandler
                 if (battleInfo.Effective != EffectiveType.CommonEffect)
                 {
                     announce = battleInfo.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
-                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce); });
+                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+                }
+
+                if (targetHPRatio <= 0f)
+                {
+                    Managers.Job.Push(() => { battleScene.SetAnnounce($"{battleInfo.ToData.Name}은(는) 쓰려졌다.", true); });
+					if(Managers.Player.MyTurn == false)
+						Managers.Job.Push(() => { battleScene.CurrentPokemonFainting(); });
                 }
             }
         }

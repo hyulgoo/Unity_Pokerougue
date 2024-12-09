@@ -11,7 +11,7 @@ public class CommonPlayerController : MonoBehaviour
     public string Name { get; set; }
     public int Id { get; set; }
 
-    List<PokemonData> _pokemonDatas = new List<PokemonData>();
+    List<PokemonData> _pokemonDataList = new List<PokemonData>();
 
     public Dictionary<int, Dictionary<int, int>> SkillPP { get; } = new Dictionary<int, Dictionary<int, int>>();
 
@@ -23,23 +23,23 @@ public class CommonPlayerController : MonoBehaviour
     public void AddPokemon(int pokemonNumber)
     {
         PokemonData data = Managers.Data.PokeonDict[pokemonNumber];
-        _pokemonDatas.Add(data);
+        _pokemonDataList.Add(data);
     }
 
-    public void ReleasePokemon(int order) { _pokemonDatas.RemoveAt(order); }
+    public void ReleasePokemon(int order) { _pokemonDataList.RemoveAt(order); }
 
-    public PokemonInfo GetCurMonsterInfo() { return GetMonsterInfo(0); }
-    public PokemonInfo GetMonsterInfo(int order) { return GetMonsterData(order).Info; }
+    public PokemonInfo GetCurPokemonInfo() { return GetPokemonInfo(0); }
+    public PokemonInfo GetPokemonInfo(int order) { return GetPokemonData(order).Info; }
 
-    public string GetCurPokemonName() { return GetMonsterName(0); }
-    public string GetMonsterName(int order) { return _pokemonDatas[order].Name; }    
+    public string GetCurPokemonName() { return GetPokemonName(0); }
+    public string GetPokemonName(int order) { return _pokemonDataList[order].Name; }    
 
-    public PokemonData GetCurPokemonData() { return _pokemonDatas[0]; }
-    public PokemonData GetMonsterData(int order) { return _pokemonDatas[order]; }
+    public PokemonData GetCurPokemonData() { return _pokemonDataList[0]; }
+    public PokemonData GetPokemonData(int order) { return _pokemonDataList[order]; }
 
-    public PokemonInfo[] GetAllMonsterinfo()
+    public PokemonInfo[] GetAllPokemoninfo()
     {
-        PokemonData[] datas = GetAllMonsterData();
+        PokemonData[] datas = GetAllPokemonData();
         int count = datas.Count();
 
         PokemonInfo[] infos = new PokemonInfo[count];
@@ -49,21 +49,21 @@ public class CommonPlayerController : MonoBehaviour
         return infos;
     }
 
-    public PokemonData[] GetAllMonsterData() { return _pokemonDatas.ToArray(); }
+    public PokemonData[] GetAllPokemonData() { return _pokemonDataList.ToArray(); }
 
-    public void ChangeMonsterOrder(int changetoCurorder)
+    public void ChangePokemonOrder(int changetoCurorder)
     {
-        PokemonData tmp = _pokemonDatas[changetoCurorder];
-        _pokemonDatas.RemoveAt(changetoCurorder);
-        _pokemonDatas.Insert(0, tmp);
+        PokemonData tmp = _pokemonDataList[changetoCurorder];
+        _pokemonDataList.RemoveAt(changetoCurorder);
+        _pokemonDataList.Insert(0, tmp);
     }
 
-    public void SetMonsterData(RepeatedField<int> list)
+    public void SetPokemonData(RepeatedField<int> list)
     {
         for (int i = 0; i < list.Count(); ++i)
         { 
             // 포켓몬 정보 추가
-            _pokemonDatas.Add(Managers.Data.PokeonDict[list[i]]);
+            _pokemonDataList.Add(Managers.Data.PokeonDict[list[i]]);
 
             // 스킬 pp 정보 추가
             RepeatedField<int> skillIdList = Managers.Data.PokeonDict[list[i]].Info.SkillId;

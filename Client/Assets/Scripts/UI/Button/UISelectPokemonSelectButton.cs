@@ -34,34 +34,35 @@ public class UISelectPokemonSelectButton : UICommonBase, ISelectHandler
     void OnClickButton()
     {
         UISelectSelectionPopup popup = Managers.UI.ShowPopupUI<UISelectSelectionPopup>();
-        popup.MstScene = SelectScene;
+        popup.SelectScene = SelectScene;
         popup.Id = Id;
     }
 
     public void SetIconImage()
     {
         Image iconImg = GetObject((int)GameObjects.Icon).GetComponent<Image>();
-        Sprite curMstSprite = Managers.Resource.Load<Sprite>($"Sprite/pokemon/icons/{Id}");
-        iconImg.sprite = curMstSprite;
+        Sprite curPokemonSprite = Managers.Resource.Load<Sprite>($"Sprite/pokemon/icons/{Id}");
+        iconImg.sprite = curPokemonSprite;
     }
 
     public void OnSelect(BaseEventData eventData)
     {
         GameObject go = Managers.Select.CurPanel;
+        if (go == null) 
+            return;
 
-        if (go == null) return;
         UICommonBase uibase = go.GetComponent<UICommonBase>();
+        if (uibase == null) 
+            return;
 
-        if (uibase == null) return;
         uibase._lastSelected = eventData.selectedObject.GetComponent<Button>();
         uibase.SetPointerPos(eventData.selectedObject.transform);
 
-        SetParentCurMstInfo();
+        SetSceneCurrentSelectPokemonInfo();
     }
 
-    public void SetParentCurMstInfo()
+    public void SetSceneCurrentSelectPokemonInfo()
     {
-        // ¹öÆ° ¼±ÅÃ ½Ã CurPokemon Info¸¦ ¶ç¿öÁÜ.
-        SelectScene.SetSelectPokemonInfo(Id);
+        SelectScene.SetCurrentSelectPokemonInfo(Id);
     }
 }

@@ -195,20 +195,24 @@ namespace Server.Game
 
             if (cnt != _playerReady.Count)
                 return;
-            
+
+            int[] keys = _playerReady.Keys.ToArray();
+            foreach (int key in keys)
+                _playerReady[key] = false;
+
             int[] list = _players.Keys.ToArray();
 
             S_Turn packet = new S_Turn();
-            int turnorder = PlayerManager.Instance.GetTurn(RoomId);
-            for (int i = 0; i < (int)TargetType.End; ++i)
+            CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
+            for (int index = 0; index < (int)TargetType.End; ++index)
             {
-                int myid = list[i];
-                int enemyid = list[i + 1 == (int)TargetType.End ? 0 : i + 1];
+                int myid = list[index];
+                int enemyid = list[index + 1 == (int)TargetType.End ? 0 : index + 1];
 
-                packet.MyTurn = myid == turnorder;
+                packet.MyTurn = myid == CurrentTurnPlayerId;
 
                 _players[myid].Session.Send(packet);
-            }            
+            }
         }
     }
 }

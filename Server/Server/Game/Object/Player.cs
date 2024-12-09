@@ -16,18 +16,14 @@ namespace Server.Game
 		public ClientSession Session { get; set; }
 		public Inventory Inven { get; private set; } = new Inventory();
 		public List<PokemonData> Pokemon { get; set; } = new List<PokemonData>();
-        public Player()
-		{
-			ObjectType = GameObjectType.Player;
-		}
+        public Player() { ObjectType = GameObjectType.Player; }
 
 		public int[] GetPokemonList()
 		{
 			int[] list = new int[Pokemon.Count];
 			for (int i = 0; i < Pokemon.Count; i++)
-			{
 				list[i] = Pokemon[i].Id;
-			}
+
 			return list;
 		}
 

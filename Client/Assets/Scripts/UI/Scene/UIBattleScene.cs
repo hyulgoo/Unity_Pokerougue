@@ -10,12 +10,13 @@ using static UnityEngine.GraphicsBuffer;
 
 public class UIBattleScene : UICommonScene
 {
-    int _myPokemonId;
-    int _enemyPokemonId;
-    string _announceText = "";
+    private int _myPokemonId;
+    private int _enemyPokemonId;
+    private string _announceText = "";
 
-    Sprite[] _hpbarSprites;
-    int[] _HpbarSpriteNum = new int[(int)TargetType.End] { -1, -1 };
+    private int[] _HpbarSpriteNum = new int[(int)TargetType.End] { -1, -1 };
+    private Sprite[] _hpbarSprites;
+    public Sprite[] HpSprites { get { return _hpbarSprites; } }
 
     enum GameObjects
     {
@@ -115,15 +116,20 @@ public class UIBattleScene : UICommonScene
         if (Managers.Player.MyTurn)
         {
             Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
-            Managers.Job.Push(() => SetAnnounce($"{Managers.Data.PokeonDict[_myPokemonId].Name}(은)는 무엇을 할까?") );
+            Managers.Job.Push(() => SetAnnounce($"{Managers.Data.PokeonDict[_myPokemonId].Name}(은)는 무엇을 할까?", true) );
         }
         else
         {
-            Managers.Job.Push(() => SetAnnounce("상대 차례를 기다리는 중"));
+            Managers.Job.Push(() => SetAnnounce("상대 차례를 기다리는 중", true));
         }
     }
 
-    public void SetAnnounce(string announce, bool setByHandler = true)
+    public void CurrentPokemonFainting()
+    {
+        Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
+    }
+
+    public void SetAnnounce(string announce, bool setByHandler)
     {
         _announceText = announce;
         StartCoroutine(SetTextCoroutine(setByHandler));

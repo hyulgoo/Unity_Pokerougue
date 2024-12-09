@@ -74,23 +74,22 @@ public class UISelectPokemonScene : UICommonScene
 
         foreach (int id in Managers.Data.PokeonDict.Keys)
         {
-            // 몬스터 아이콘을 넣어줌.
-            GameObject pokebtnobj = Managers.Resource.Instantiate("Add/Pokemon");
-            pokebtnobj.transform.SetParent(GetObject((int)GameObjects.Content).transform);
+            GameObject pokemonButtonObject = Managers.Resource.Instantiate("Add/Pokemon");
+            pokemonButtonObject.transform.SetParent(GetObject((int)GameObjects.Content).transform);
             
             // 왠지 모르겠는데 Grid Layout Group에 들어가서 그런가 스케일이 1.15근처로 설정됨
             // 강제로 1로 맞춰줌.
-            RectTransform rt = pokebtnobj.GetComponent<RectTransform>();
+            RectTransform rt = pokemonButtonObject.GetComponent<RectTransform>();
             rt.localScale = new Vector2(1, 1);
 
-            UISelectPokemonSelectButton selectbtn = pokebtnobj.GetComponent<UISelectPokemonSelectButton>();
+            UISelectPokemonSelectButton selectbtn = pokemonButtonObject.GetComponent<UISelectPokemonSelectButton>();
             selectbtn.Id = id;
             selectbtn.SelectScene = this;
 
-            if (!isFirst)
+            if (isFirst == false)
             {
-                pokebtnobj.GetComponent<Button>().Select();
-                pokebtnobj.GetComponent<UISelectPokemonSelectButton>().SetParentCurMstInfo();
+                pokemonButtonObject.GetComponent<Button>().Select();
+                pokemonButtonObject.GetComponent<UISelectPokemonSelectButton>().SetSceneCurrentSelectPokemonInfo();
                 isFirst = true;
             }
         }
@@ -111,9 +110,10 @@ public class UISelectPokemonScene : UICommonScene
         return true;
     }
 
-    public void SetSelectPokemonInfo(int pokemonNumber)
+    public void SetCurrentSelectPokemonInfo(int pokemonNumber)
     {
         Image curMstAnimator= GetObject((int)GameObjects.Image_Mst).GetOrAddComponent<Image>();
+
         // TODO : 현재 포켓몬의 애니메이션을 틀어줌
         Sprite[] sprites = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
         curMstAnimator.sprite = sprites[0];
