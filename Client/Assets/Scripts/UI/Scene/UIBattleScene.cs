@@ -124,7 +124,7 @@ public class UIBattleScene : UICommonScene
         }
     }
 
-    public void CurrentPokemonFainting()
+    public void CurrentPokemonFallDown()
     {
         Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
     }

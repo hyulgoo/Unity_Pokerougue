@@ -60,10 +60,9 @@ namespace Server.Game
             if (myPokemonData.Info.State.Dot > 0)
             {
                 BattleInfo result = new BattleInfo();
-                result.StateInfo = new StateInfo();
                 result.ApplyType = ApplyType.Dot;
                 result.TargetType = TargetType.Oneself;
-                result.StateInfo.SkillId = packet.TurnInfo.SkillNum;
+                result.LatingSkillId = packet.TurnInfo.SkillId;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 7;
                 myPokemonData.Info.State.Dot--;
                 result.FromData = myPokemonData;
@@ -100,9 +99,8 @@ namespace Server.Game
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Sturn;
                 result.TargetType = TargetType.Oneself;
-                bool recovery = random.Next(0, 100) > 60 ? true : false;
 
-                result.StateInfo.RecoverSturn = recovery;
+                bool recovery = random.Next(0, 100) > 60 ? true : false;
                 myPokemonData.Info.State.Sturn--;
                 if (recovery)
                     myPokemonData.Info.State.Sturn = 0;
@@ -135,7 +133,7 @@ namespace Server.Game
 
             PokemonData myData = player.Pokemon[0];
             PokemonData enemyData = Enemy.Pokemon[0];
-            SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillNum];
+            SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillId];
 
             RepeatedField<BattleInfo> battleResult = new RepeatedField<BattleInfo>();
 
@@ -148,7 +146,7 @@ namespace Server.Game
             for (int index = 0; index < (int)TargetType.End; ++index)
             {
                 BattlePacket[index].PlayerId = packet.PlayerId;
-                BattlePacket[index].SkillId = packet.TurnInfo.SkillNum;
+                BattlePacket[index].SkillId = packet.TurnInfo.SkillId;
                 BattlePacket[index].Info.AddRange(battleResult.Clone());
                 BattlePacket[index].TurnInfo.AddRange(DefaultTurn(packet.Clone()));
             }

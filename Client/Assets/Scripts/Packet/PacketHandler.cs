@@ -5,6 +5,7 @@ using Google.Protobuf.Protocol;
 using ServerCore;
 using System;
 using System.Drawing;
+using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -242,98 +243,202 @@ class PacketHandler
     {
         S_TurnBattle battle = (S_TurnBattle)packet;
 		Managers.Player.IsTurnProgressing = true;
-        DefaultTurnInfo(battle.TurnInfo);
-        TurnBattleInfo(battle.Info, battle.SkillId);
+
+        if (DefaultTurnInfo(battle.TurnInfo))
+            return;
+
+        BattleTurnInfo(battle.Info, battle.SkillId);
     }
 
-	static void DefaultTurnInfo(RepeatedField<BattleInfo> battleInfoList)
+	static bool DefaultTurnInfo(RepeatedField<BattleInfo> battleInfoList)
 	{
 		foreach (BattleInfo battleInfo in battleInfoList)
         {
             string announce = "";
+            string toName = battleInfo.ToData.Name;
+            float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
             TargetType targetType = TargetType.End;
 
             if (battleInfo.TargetType == TargetType.Oneself)
                 targetType = Managers.Player.MyTurn ? TargetType.Oneself : TargetType.Enemy;
             else
                 targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
-
-            float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
-
+             
             if (battleInfo.ApplyType == ApplyType.Dot)
             {
-                string skillName = Managers.Data.SkillDict[battleInfo.StateInfo.SkillId].name;
-                announce = $"{battleInfo.ToData.Name}은(는) {skillName}에 의해 지속데미지를 받고있다.";
+                string skillName = Managers.Data.SkillDict[battleInfo.LatingSkillId].name;
+                announce = $"{toName}은(는) {skillName}에 의해 지속데미지를 받고있다.";
             }
             else if (battleInfo.ApplyType == ApplyType.StatusEffect)
             {
-                announce = $"{battleInfo.ToData.Name}은(는) 지속데미지를 받고있다.";
+                announce = $"{toName}은(는) 지속데미지를 받고있다.";
             }
 
 			UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
             Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
             Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+
+            if (targetHPRatio <= 0f)
+            {
+                Managers.Job.Push(() => { battleScene.SetAnnounce($"{toName}은(는) 쓰려졌다.", true); });
+
+                if (Managers.Player.MyTurn == false)
+                    Managers.Job.Push(() => { battleScene.CurrentPokemonFallDown(); });
+                else
+                    Managers.Job.Push(() => { battleScene.SetAnnounce("상대 차례를 기다리는 중", true); });
+
+                return true;
+            }
         }
+
+        return false;
     }
 
-	static void TurnBattleInfo(RepeatedField<BattleInfo> battleInfoList, int skillId)
+	static void BattleTurnInfo(RepeatedField<BattleInfo> battleInfoList, int skillId)
     {
 		foreach (BattleInfo battleInfo in battleInfoList)
         {
-            string announce = "";
             UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
             TargetType targetType = TargetType.End;
+            string skillName = Managers.Data.SkillDict[skillId].name;
+            string fromName = battleInfo.FromData.Name;
+            string toName = battleInfo.ToData.Name;
+            float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
 
             if (battleInfo.TargetType == TargetType.Oneself)
                 targetType = Managers.Player.MyTurn ? TargetType.Oneself : TargetType.Enemy;
             else
                 targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
 
-            if (battleInfo.StateInfo.IsMiss)
+            if (Managers.Player.MyTurn == false)
+                Managers.Job.Push(() => { battleScene.SetAnnounce($"{fromName}의 {skillName}!", true); });
+
+            if ((battleInfo.StateFlag & BattleStateFlag.Miss) == BattleStateFlag.Miss)
             {
-                announce = $"{battleInfo.FromData.Name}의 공격은 빗나갔다!";
+                string announce = $"{fromName}의 공격은 빗나갔다!";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 return;
             }
 
-            float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
-            if (battleInfo.TargetType == TargetType.Oneself)
+            if (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
             {
-                announce = $"{battleInfo.ToData.Name}은(는) 반동으로 인해 데미지를 입었다.";
-                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
-                Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
-
-                if (targetHPRatio <= 0f)
+                if (battleInfo.TargetType == TargetType.Oneself)
                 {
-                    Managers.Job.Push(() => { battleScene.SetAnnounce($"{battleInfo.ToData.Name}은(는) 쓰려졌다.", true); });
-					if(Managers.Player.MyTurn)
-						Managers.Job.Push(() => { battleScene.CurrentPokemonFainting(); });
+                    string announce = $"{toName}은(는) 반동으로 인해 데미지를 입었다.";
+                    Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+
+                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, true);
+                }
+                else
+                {
+                    Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+
+                    if ((battleInfo.StateFlag & BattleStateFlag.Critical) == BattleStateFlag.Critical)
+                        Managers.Job.Push(() => { battleScene.SetAnnounce("급소에 맞았다!", true); });
+
+                    bool isEffective = (battleInfo.StateFlag & BattleStateFlag.Effective) == BattleStateFlag.Effective;
+                    bool isIneffective = (battleInfo.StateFlag & BattleStateFlag.Ineffective) == BattleStateFlag.Ineffective;
+                    if (isEffective || isIneffective)
+                        Managers.Job.Push(() => { battleScene.SetAnnounce(isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다.", true); });
+
+                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, false);
                 }
             }
             else
             {
-                if (Managers.Player.MyTurn == false)
-                {
-                    string skillName = Managers.Data.SkillDict[skillId].name;
-                    Managers.Job.Push(() => { battleScene.SetAnnounce($"{battleInfo.FromData.Name}의 {skillName}!", true); });
-                }
-
-                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
-
-                if (battleInfo.Effective != EffectiveType.CommonEffect)
-                {
-                    announce = battleInfo.Effective == EffectiveType.Effective ? "효과는 굉장했다." : "효과가 별로인듯 하다.";
-                    Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
-                }
-
-                if (targetHPRatio <= 0f)
-                {
-                    Managers.Job.Push(() => { battleScene.SetAnnounce($"{battleInfo.ToData.Name}은(는) 쓰려졌다.", true); });
-					if(Managers.Player.MyTurn == false)
-						Managers.Job.Push(() => { battleScene.CurrentPokemonFainting(); });
-                }
+                string announce = GetNoneAttackBattleAnnounce(battleInfo);
+                Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
             }
         }
+    }
+
+    static void ChechPokemonFallDown(UIBattleScene battleScene, string fallDownPokemonName, float hpRatio, bool isMyPokemon)
+    {
+        if (hpRatio > 0f)
+            return;
+
+        Managers.Job.Push(() => { battleScene.SetAnnounce($"{fallDownPokemonName}은(는) 쓰려졌다.", true); });
+        if (Managers.Player.MyTurn)
+        {
+            if (isMyPokemon)
+                Managers.Job.Push(() => { battleScene.CurrentPokemonFallDown(); });
+            else
+                Managers.Job.Push(() => { battleScene.SetAnnounce("상대 차례를 기다리는 중", true); });
+        }
+        else
+        {
+            if (isMyPokemon)
+                Managers.Job.Push(() => { battleScene.SetAnnounce("상대 차례를 기다리는 중", true); });
+            else
+                Managers.Job.Push(() => { battleScene.CurrentPokemonFallDown(); });
+        }
+    }
+
+    static string GetNoneAttackBattleAnnounce(BattleInfo battleInfo)
+    {
+        string valueTypeWord = "";
+        string valueWord = battleInfo.SkillValue == 1 ? "" : "크게 ";
+        string behaviorWord = "";
+
+        switch (battleInfo.ApplyType)
+        {
+            case ApplyType.Recovery:
+                valueTypeWord = "체력을";
+                behaviorWord = "회복했다";
+                break;
+            case ApplyType.BuffAtk:
+                valueTypeWord = "공격력이";
+                behaviorWord = "올라갔다";
+                break;
+            case ApplyType.BuffSpa:
+                valueTypeWord = "특수공격력이";
+                behaviorWord = "올라갔다";
+                break;
+            case ApplyType.BuffDef:
+                valueTypeWord = "방어력이";
+                behaviorWord = "올라갔다";
+                break;
+            case ApplyType.BuffSpd:
+                valueTypeWord = "특수방어력이";
+                behaviorWord = "올라갔다";
+                break;
+            case ApplyType.BuffSpe:
+                valueTypeWord = "스피드가";
+                behaviorWord = "올라갔다";
+                break;
+            case ApplyType.StatusEffect:
+                behaviorWord = "상태이상에 걸렸다";
+                break;
+            case ApplyType.DebuffAtk:
+                valueTypeWord = "공격력이";
+                behaviorWord = "내려갔다";
+                break;
+            case ApplyType.DebuffSpa:
+                valueTypeWord = "특수공격력이";
+                behaviorWord = "내려갔다";
+                break;
+            case ApplyType.DebuffDef:
+                valueTypeWord = "방어력이";
+                behaviorWord = "내려갔다";
+                break;
+            case ApplyType.DebuffSpd:
+                valueTypeWord = "특수방어력이";
+                behaviorWord = "내려갔다";
+                break;
+            case ApplyType.DebuffSpe:
+                valueTypeWord = "스피드가";
+                behaviorWord = "내려갔다";
+                break;
+            case ApplyType.Sturn:
+                behaviorWord = "기절했다";
+                break;
+            case ApplyType.Confusion:
+                behaviorWord = "혼란에 빠졌다";
+                break;
+        }
+
+        return $"{battleInfo.ToData.Name}의 {valueTypeWord} {valueWord}{behaviorWord}.";
     }
 
     public static void S_TurnPokeballHandler(PacketSession session, IMessage packet)

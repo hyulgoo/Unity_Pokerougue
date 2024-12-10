@@ -1,10 +1,10 @@
 using Google.Protobuf.Protocol;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIBattlePokemonChangePopup : UICommonPopup
-{
-    
+{    
     enum Images
     {
         Image_Pokemon00,
@@ -25,27 +25,24 @@ public class UIBattlePokemonChangePopup : UICommonPopup
     enum Texts
     {
         Text_HP00,
-        Text_PokemonName00,
-        Text_PokemonLevel00,
-
         Text_HP01,
-        Text_PokemonName01,
-        Text_PokemonLevel01,
-
         Text_HP02,
-        Text_PokemonName02,
-        Text_PokemonLevel02,
-
         Text_HP03,
-        Text_PokemonName03,
-        Text_PokemonLevel03,
-
         Text_HP04,
-        Text_PokemonName04,
-        Text_PokemonLevel04,
-
         Text_HP05,
+
+        Text_PokemonName00,
+        Text_PokemonName01,
+        Text_PokemonName02,
+        Text_PokemonName03,
+        Text_PokemonName04,
         Text_PokemonName05,
+
+        Text_PokemonLevel00,
+        Text_PokemonLevel01,
+        Text_PokemonLevel02,
+        Text_PokemonLevel03,
+        Text_PokemonLevel04,
         Text_PokemonLevel05,
     }
 
@@ -72,49 +69,54 @@ public class UIBattlePokemonChangePopup : UICommonPopup
     private void SetPokemonBtnList()
     {
         PokemonData[] pokemonDataList = Managers.Player.MyPlayer.GetAllPokemonData();
-        for (int index = 0; index < pokemonDataList.Length; index++)
+        UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+        if (battleScene == null)
         {
-            if (pokemonDataList.Length <= index)
-                break;
+            Debug.Log("BattleScene Not Found");
+            return;
+        }
 
-            GameObject pokemonInfoObject = GetObject((int)index);
-            if (pokemonInfoObject == null)
+        for (int index = 0; index < Define.PokemonMaxCount; index++)
+        {
+            Image pokemonImage = GetImage((int)index);
+            TMP_Text pokemonHpText = GetText((int)index);
+            TMP_Text pokemonNameText = GetText((int)index + Define.PokemonMaxCount);
+            TMP_Text pokemonLevelText = GetText((int)index + Define.PokemonMaxCount * 2);
+            Slider hpSlider = Get<Slider>((int)index);
+            GameObject hpSliderObject = hpSlider.gameObject;
+
+            if (index < pokemonDataList.Length)
             {
-                Debug.Log("PokemonInfoObject Not Found");
-                return;
+                // Image
+                Sprite curPokemonSprite = Managers.Resource.Load<Sprite>($"Sprite/pokemon/icons/{pokemonDataList[index].Id}");
+                pokemonImage.sprite = curPokemonSprite;
+                pokemonImage.color = Color.white;
+
+                // Texts
+                int curHp = pokemonDataList[index].Info.Hp;
+                int maxHp = Managers.Data.PokeonDict[pokemonDataList[index].Id].Info.Hp;
+
+                pokemonHpText.text = curHp.ToString();
+                pokemonHpText.text += "/" + maxHp.ToString();
+                pokemonNameText.text = pokemonDataList[index].Name;
+                pokemonLevelText.text = pokemonDataList[index].Info.Level.ToString();
+
+                // Slider            
+                float hpRatio = (float)curHp / (float)maxHp;
+                hpSlider.value = hpRatio;
+                int hpstate = 2 - (int)(hpRatio / 0.34f);
+
+                Image fillObj = Util.FindChild<Image>(hpSliderObject, "Fill", true);
+                fillObj.sprite = battleScene.HpSprites[hpstate];
             }
-
-            Text pokemonNameText = Util.FindChild<Text>(pokemonInfoObject, "Text_Name", true);
-            pokemonNameText.text = pokemonDataList[index].Name;
-
-            Text pokemonLevelText = Util.FindChild<Text>(pokemonInfoObject, "Text_Level", true);
-            pokemonNameText.text = pokemonDataList[index].Info.Level.ToString();
-
-            Sprite curPokemonSprite = Managers.Resource.Load<Sprite>($"Sprite/pokemon/icons/{pokemonDataList[index].Id}");
-            Image pokemonImage = Util.FindChild<Image>(pokemonInfoObject, "Image_Pokemon", true);
-            pokemonImage.sprite = curPokemonSprite;
-
-            // hp
-            int curHp = Managers.Player.MyPlayer.GetCurPokemonInfo().Hp;
-            int maxHp = Managers.Data.PokeonDict[pokemonDataList[index].Id].Info.Hp;
-
-            Text pokemonHpText = Util.FindChild<Text>(pokemonInfoObject, "Text_HP", true);
-            pokemonHpText.text = curHp.ToString();
-            pokemonHpText.text += "/" + maxHp.ToString();
-            
-            float hpRatio = (float)curHp / (float)maxHp;
-            Slider hpSlider = Util.FindChild<Slider>(pokemonInfoObject, "Slider", true);
-            hpSlider.value = hpRatio;
-            int hpstate = 2 - (int)(hpRatio / 0.34f);
-            UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
-            if (battleScene == null)
+            else
             {
-                Debug.Log("BattleScene Not Found");
-                return;
+                pokemonImage.color = Color.clear;
+                pokemonHpText.text = "";
+                pokemonNameText.text = "";
+                pokemonLevelText.text = "";
+                hpSlider.value = 0f;
             }
-
-            Image fillObj = Util.FindChild<Image>(pokemonInfoObject, "Fill", true);
-            fillObj.sprite = battleScene.HpSprites[hpstate];
         }
     }
 }

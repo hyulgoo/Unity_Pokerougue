@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Define
 {
+    public const int PokemonMaxCount = 6;
+    
     public enum Scene
     {
         Unknown,
@@ -26,4 +28,6 @@ public class Define
         Click,
         Drag,
     }    
+
+    
 }

@@ -76,7 +76,7 @@ enum Type {
   BUG = 1;
   DARK = 2;
   DRAGON = 3;
-  ELECTRIC= 4;
+  ELECTRIC = 4;
   FAIRY = 5;
   FIGHTING = 6;
   FIRE = 7;
@@ -87,7 +87,7 @@ enum Type {
   ICE = 12;
   NORMAL = 13;
   POISON = 14;
-  PSYCHIC= 15;
+  PSYCHIC = 15;
   ROCK = 16;
   STEEL = 17;
   WATER = 18;
@@ -100,7 +100,7 @@ enum Arenas {
   CAVE_ = 3;
   CONSTRUCTIONSITE_ = 4;
   DESERT_ = 5;
-  DOJO = 6;
+  DOJO_ = 6;
   FACTORY_ = 7;
   FAIRYCAVE_ = 8;
   FOREST_ = 9;
@@ -158,10 +158,14 @@ enum ApplyType {
   CONFUSION = 17;
 }
 
-enum EffectiveType {
-  COMMON_EFFECT = 0;
-  EFFECTIVE = 1;
-  INEFFECTIVE = 2;
+enum BattleStateFlag {
+  DEFAULT = 0;
+  MISS = 1;
+  CRITICAL = 2;
+  EFFECTIVE = 4;
+  INEFFECTIVE = 8;
+  DEBUFF_STURN = 16;
+  DEBUFF_CONFUSION = 32;
 }
 
 message S_EnterGame {
@@ -320,8 +324,8 @@ message ObjectInfo {
 }
 
 message TurnInfo {
-  ActionType action  = 1;
-  int32 skillNum = 2;
+  ActionType action = 1;
+  int32 skillId = 2;
   int32 ballType = 3;
   int32 changeNum = 4;
 }
@@ -329,12 +333,13 @@ message TurnInfo {
 message BattleInfo {
   ApplyType applyType = 1;
   TargetType targetType = 2;
-  EffectiveType effective = 3;
-  int32 fromid = 4;
-  int32 toid = 5;
+  int32 fromId = 4;
+  int32 toId = 5;
   PokemonData fromData = 6;
   PokemonData toData = 7;
-  StateInfo stateInfo = 8;
+  BattleStateFlag stateFlag = 8;
+  int32 skillValue = 9;
+  int32 latingSkillId = 10;
 }
 
 message PokeballInfo {
@@ -343,15 +348,6 @@ message PokeballInfo {
 
 message ChangeInfo {
   int32 changePokemon = 1;
-}
-
-message StateInfo {
-  bool isMiss = 1;
-  bool isSturn = 2;
-  bool isConfusion = 3;
-  bool recoverSturn = 4;
-  bool recoverConfusion = 5;
-  int32 skillId = 6;
 }
 
 message PokemonData

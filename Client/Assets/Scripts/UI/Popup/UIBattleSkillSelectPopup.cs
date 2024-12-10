@@ -114,7 +114,7 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         if(category == ApplyType.Atk || category == ApplyType.Spa )
             GetText((int)Texts.Text_SkillPower).text = $"{info.SkillEffect[0].Value}";
         else
-            GetText((int)Texts.Text_SkillPower).text = "0";
+            GetText((int)Texts.Text_SkillPower).text = "-";
 
         GetText((int)Texts.Text_SkillAccuracy).text = $"{info.SkillEffect[0].Accuracy}";
     }
@@ -126,7 +126,7 @@ public class UIBattleSkillSelectPopup : UICommonPopup
 
         TurnInfo turnInfo = new TurnInfo();
         turnInfo.Action = ActionType.Fight;
-        turnInfo.SkillNum = _selectedSkillId;
+        turnInfo.SkillId = _selectedSkillId;
         
         turnpacket.TurnInfo = turnInfo;
 
