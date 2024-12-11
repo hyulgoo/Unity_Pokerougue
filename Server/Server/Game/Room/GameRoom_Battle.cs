@@ -6,6 +6,7 @@ using Server.Data;
 using Server.DB;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -35,7 +36,6 @@ namespace Server.Game
                     Runaway(packet);
                     break;
             }
-
         }
 
         RepeatedField<BattleInfo> DefaultTurn(C_Turn packet)
@@ -131,15 +131,15 @@ namespace Server.Game
             Player player = PlayerManager.Instance.Find(RoomId, packet.PlayerId);
             Player Enemy = PlayerManager.Instance.Find(RoomId, enemyId);
 
-            PokemonData myData = player.Pokemon[0];
-            PokemonData enemyData = Enemy.Pokemon[0];
+            PokemonData myPokemonData = player.Pokemon[0];
+            PokemonData enemyPokemonData = Enemy.Pokemon[0];
             SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillId];
 
             RepeatedField<BattleInfo> battleResult = new RepeatedField<BattleInfo>();
 
             foreach (SkillEffect skillEffect in skillData.info.SkillEffect)
             {
-                RepeatedField<BattleInfo> battleInfo = Util.CalcBattle(myData, enemyData, skillEffect).Clone();
+                RepeatedField<BattleInfo> battleInfo = Util.CalcBattle(myPokemonData, enemyPokemonData, skillEffect).Clone();
                 battleResult.AddRange(battleInfo);
             }
 
@@ -158,25 +158,19 @@ namespace Server.Game
         void PokeBall(C_Turn packet)
         {
             S_TurnPokeball pokeballPacket = new S_TurnPokeball();
-            PokeballInfo info = new PokeballInfo();
-            pokeballPacket.Info = info;
-
+            pokeballPacket.BallType = packet.TurnInfo.BallType;
             Broadcast(pokeballPacket);
         }
 
         void Change(C_Turn packet)
         {
-            S_TurnPokeball pokeballPacket = new S_TurnPokeball();
-            PokeballInfo info = new PokeballInfo();
-            pokeballPacket.Info = info;
-
+            S_TurnChange pokeballPacket = new S_TurnChange();            
             Broadcast(pokeballPacket);
         }
 
         void Runaway(C_Turn packet)
         {
             S_TurnRunaway runawayPacket = new S_TurnRunaway();
-
             Broadcast(runawayPacket);
         }
 
@@ -187,30 +181,48 @@ namespace Server.Game
 
             _playerReady[playerId] = true;
 
-            int cnt = 0;
+            int readyCount = 0;
             foreach (bool ready in _playerReady.Values)
-                cnt = ready ? cnt + 1 : cnt;
+                readyCount = ready ? ++readyCount : readyCount;
 
-            if (cnt != _playerReady.Count)
+            if (readyCount != _playerReady.Count)
                 return;
 
-            int[] keys = _playerReady.Keys.ToArray();
-            foreach (int key in keys)
-                _playerReady[key] = false;
-
-            int[] list = _players.Keys.ToArray();
-
-            S_Turn packet = new S_Turn();
+            int[] playerKeyArray = _players.Keys.ToArray();
             CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
             for (int index = 0; index < (int)TargetType.End; ++index)
             {
-                int myid = list[index];
-                int enemyid = list[index + 1 == (int)TargetType.End ? 0 : index + 1];
+                int myId = playerKeyArray[index];
+                int enemyid = playerKeyArray[index + 1 == (int)TargetType.End ? 0 : index + 1];
 
-                packet.MyTurn = myid == CurrentTurnPlayerId;
+                S_Turn packet = new S_Turn();
+                packet.MyTurn = myId == CurrentTurnPlayerId;
 
-                _players[myid].Session.Send(packet);
+                _playerReady[myId] = false;
+                _players[myId].Session.Send(packet);
             }
+
+            isWaitingPlayerTurnEnd = false;
+        }
+
+        public void ChangeFalldownPokemon(C_ChangeFalldownPokemon packet)
+        {
+            S_ChangePokemon changePokemonPacket = new S_ChangePokemon();
+            changePokemonPacket.PlayerId = packet.PlayerId;
+            changePokemonPacket.ChangePokemonId = packet.ChangePokemonId;
+
+            List<PokemonData> pokemonDataList = _players[packet.PlayerId].Pokemon;
+            for (int index = 0; index < pokemonDataList.Count; ++index)
+            {
+                if (pokemonDataList[index].Id != packet.ChangePokemonId)
+                    continue;
+                
+                (pokemonDataList[0], pokemonDataList[index]) = (pokemonDataList[index], pokemonDataList[0]);
+                Broadcast(changePokemonPacket);
+                return;
+            }
+
+            Debug.Assert(false, "Cannot Found ChangePokemon");
         }
     }
 }

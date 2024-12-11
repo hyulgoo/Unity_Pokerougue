@@ -5,7 +5,8 @@ using UnityEngine;
 public class Define
 {
     public const int PokemonMaxCount = 6;
-    
+    public const int InValidNumber = -1;
+
     public enum Scene
     {
         Unknown,

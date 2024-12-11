@@ -7,6 +7,7 @@ using Server.Game;
 using ServerCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -39,14 +40,18 @@ class PacketHandler
 		ClientSession clientSession = (ClientSession)session;
 
 		Player player = clientSession.MyPlayer;
-		if (player == null)
-			return;
+        if (player == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_EquipItemHandler");
+        }
 
-		GameRoom room = player.Room;
-		if (room == null)
-			return;
+        GameRoom room = player.Room;
+        if (room == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_EquipItemHandler");
+        }
 
-		room.Push(room.HandleEquipItem, player, equipPacket);
+        room.Push(room.HandleEquipItem, player, equipPacket);
 	}
 
 	public static void C_PongHandler(PacketSession session, IMessage packet)
@@ -63,15 +68,13 @@ class PacketHandler
 		Player player = clientSession.MyPlayer;
         if (player == null)
         {
-            Console.WriteLine("Fail To Found MyPlayer on C_RequestDuelHandler");
-            return;
+            Debug.Assert(false, "Fail To Found MyPlayer on C_RequestDuelHandler");
         }
 
         GameRoom room = player.Room;
         if (room == null)
         {
-            Console.WriteLine("Fail To Found MyPlayer Room on C_RequestDuelHandler");
-            return; 
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_RequestDuelHandler");
         }
 
         room.Push(room.RequestDuel, requestDuelPaceket.FromId, requestDuelPaceket.ToId);
@@ -85,15 +88,13 @@ class PacketHandler
         Player player = clientSession.MyPlayer;
         if (player == null)
         {
-            Console.WriteLine("Fail To Found MyPlayer on C_RespondDuelHandler");
-            return; 
+            Debug.Assert(false, "Fail To Found MyPlayer on C_RespondDuelHandler");
         }
 
         GameRoom room = player.Room;
         if (room == null)
         {
-            Console.WriteLine("Fail To Found MyPlayer Room on C_RespondDuelHandler");
-            return; 
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_RespondDuelHandler");
         }
 
         room.Push(room.RespondDuel, respondDuelPacket);
@@ -101,51 +102,83 @@ class PacketHandler
 
     public static void C_SelectPokemonHandler(PacketSession session, IMessage packet)
     {
-        C_SelectPokemon selectMstPacket = (C_SelectPokemon)packet;
+        C_SelectPokemon selectPokemonPacket = (C_SelectPokemon)packet;
         ClientSession clientSession = (ClientSession)session;
 
         Player player = clientSession.MyPlayer;
         if (player == null)
-            return;
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_SelectPokemonHandler");
+        }
 
         GameRoom room = player.Room;
         if (room == null)
-            return;
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_SelectPokemonHandler");
+        }
 
-        for(int i = 0; i < selectMstPacket.PokemonList.Count; ++i)
-            player.Pokemon.Add(DataManager.PokemonDict[selectMstPacket.PokemonList[i]]);
+        for(int i = 0; i < selectPokemonPacket.PokemonList.Count; ++i)
+            player.Pokemon.Add(DataManager.PokemonDict[selectPokemonPacket.PokemonList[i]]);
 
-        room.Push(room.SelectPokemon, selectMstPacket.PlayerId);
+        room.Push(room.SelectPokemon, selectPokemonPacket.PlayerId);
     }
 
     public static void C_TurnHandler(PacketSession session, IMessage packet)
     {
-        C_Turn turnpacket = (C_Turn)packet;
+        C_Turn turnPacket = (C_Turn)packet;
         ClientSession clientSession = (ClientSession)session;
 
         Player player = clientSession.MyPlayer;
         if (player == null)
-            return;
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnHandler");
+        }
 
         GameRoom room = player.Room;
         if (room == null)
-            return;
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnHandler");
+        }
 
-        room.Push(room.Turn, turnpacket);
+        room.Push(room.Turn, turnPacket);
     }
     public static void C_TurnEndHandler(PacketSession session, IMessage packet)
     {
-        C_TurnEnd turnpacket = (C_TurnEnd)packet;
+        C_TurnEnd turnPacket = (C_TurnEnd)packet;
         ClientSession clientSession = (ClientSession)session;
 
         Player player = clientSession.MyPlayer;
         if (player == null)
-            return;
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
+        }
 
         GameRoom room = player.Room;
         if (room == null)
-            return;
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
+        }
 
-        room.Push(room.TurnEnd, turnpacket.PlayerId);
+        room.Push(room.TurnEnd, turnPacket.PlayerId);
+    }
+
+    public static void C_ChangeFalldownPokemonHandler(PacketSession session, IMessage packet)
+    {
+        C_ChangeFalldownPokemon changeFalldownPokemonPacket = (C_ChangeFalldownPokemon)packet;
+        ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
+        }
+
+        GameRoom room = player.Room;
+        if (room == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
+        }
+
+        room.Push(room.ChangeFalldownPokemon, changeFalldownPokemonPacket);
     }
 }

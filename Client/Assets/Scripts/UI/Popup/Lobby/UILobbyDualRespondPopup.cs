@@ -37,7 +37,7 @@ public class UILobbyDualRespondPopup : UICommonReplyPopup
 
         //대결 신청 창을 닫음
         ClosePopupUI();
-
+            
         // 서버 응답 대기창 생성
         UICommonWaitPopup popup = Managers.UI.ShowPopupUI<UICommonWaitPopup>();
         popup.Text = "서버 응답 대기 중";

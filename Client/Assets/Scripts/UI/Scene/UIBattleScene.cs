@@ -10,11 +10,9 @@ using static UnityEngine.GraphicsBuffer;
 
 public class UIBattleScene : UICommonScene
 {
-    private int _myPokemonId;
-    private int _enemyPokemonId;
-    private string _announceText = "";
+    private string _announceText = string.Empty;
 
-    private int[] _HpbarSpriteNum = new int[(int)TargetType.End] { -1, -1 };
+    private int[] _HpbarSpriteNum = new int[(int)TargetType.End] { Define.InValidNumber, Define.InValidNumber };
     private Sprite[] _hpbarSprites;
     public Sprite[] HpSprites { get { return _hpbarSprites; } }
 
@@ -68,10 +66,9 @@ public class UIBattleScene : UICommonScene
     public void SetPlayerInfo()
     {
         _hpbarSprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
-        _myPokemonId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
-        _enemyPokemonId = Managers.Player.Enemy.GetCurPokemonData().Id;
 
         SetBattlePokemonInfo();
+        MyTurn();
     }
 
     public void SetField(int type)
@@ -94,6 +91,9 @@ public class UIBattleScene : UICommonScene
 
     public void SetBattlePokemonInfo()
     {
+        int _myPokemonId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
+        int _enemyPokemonId = Managers.Player.Enemy.GetCurPokemonData().Id;
+
         // 내 포켓몬 이름 설정
         GetText((int)Texts.Text_MyName).text = Managers.Data.PokeonDict[_myPokemonId].Name;
         Sprite myImage = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/back/{_myPokemonId}")[0]; ;
@@ -106,9 +106,7 @@ public class UIBattleScene : UICommonScene
 
         SetHPBar(targetRatio: 1f, targetType: TargetType.Oneself, false);
         SetHPBar(targetRatio: 1f, targetType: TargetType.Enemy, false);
-        SetAnnounce("", true);
-
-        MyTurn();
+        SetAnnounce(string.Empty, true);
     }
 
     public void MyTurn()
@@ -116,7 +114,8 @@ public class UIBattleScene : UICommonScene
         if (Managers.Player.MyTurn)
         {
             Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
-            Managers.Job.Push(() => SetAnnounce($"{Managers.Data.PokeonDict[_myPokemonId].Name}(은)는 무엇을 할까?", true) );
+            string myPokemonName = Managers.Data.PokeonDict[Managers.Player.MyPlayer.GetCurPokemonData().Id].Name;
+            Managers.Job.Push(() => SetAnnounce($"{myPokemonName}(은)는 무엇을 할까?", true) );
         }
         else
         {

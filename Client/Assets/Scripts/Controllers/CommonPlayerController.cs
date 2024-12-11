@@ -51,13 +51,6 @@ public class CommonPlayerController : MonoBehaviour
 
     public PokemonData[] GetAllPokemonData() { return _pokemonDataList.ToArray(); }
 
-    public void ChangePokemonOrder(int changetoCurorder)
-    {
-        PokemonData tmp = _pokemonDataList[changetoCurorder];
-        _pokemonDataList.RemoveAt(changetoCurorder);
-        _pokemonDataList.Insert(0, tmp);
-    }
-
     public void SetPokemonData(RepeatedField<int> list)
     {
         for (int i = 0; i < list.Count(); ++i)
@@ -74,5 +67,19 @@ public class CommonPlayerController : MonoBehaviour
             }
             SkillPP.Add(list[i], skillppDict);
         }
+    }
+
+    public void ChangePokemonOrderById(int id)
+    {
+        for (int index = 0; index < _pokemonDataList.Count; ++index)
+        {
+            if (_pokemonDataList[index].Id != id)
+                continue;
+
+            (_pokemonDataList[0], _pokemonDataList[index]) = (_pokemonDataList[index], _pokemonDataList[0]);
+            return;
+        }
+
+        Debug.Assert(false, "Cannot Found ChangePokemon!!");
     }
 }

@@ -11,7 +11,7 @@ public abstract class UICommonBase : MonoBehaviour
 	protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
 
 	public Button _lastSelected = null;
-	public Image _pointer;
+	public Image _pointer = null;
 
     public abstract void Init();
 
@@ -49,7 +49,10 @@ public abstract class UICommonBase : MonoBehaviour
 	{
 		UnityEngine.Object[] objects = null;
 		if (_objects.TryGetValue(typeof(T), out objects) == false)
-			return null;
+		{
+			Debug.Assert(false, "Fail to Get UIElement!!");
+			return null; 
+		}
 
 		return objects[idx] as T;
 	}
@@ -80,7 +83,8 @@ public abstract class UICommonBase : MonoBehaviour
     // 현재 선택된 버튼을 가리키는 Obj PosSetting
     public void SetPointerPos(Transform parent)
     {
-		if (_pointer == null) return;
+		if (_pointer == null) 
+			return;
 
         _pointer.transform.SetParent(parent);
         RectTransform selectrect = _pointer.GetComponent<RectTransform>();

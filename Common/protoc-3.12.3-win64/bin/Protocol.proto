@@ -36,6 +36,8 @@ enum MsgId {
   S_TURN_PASS = 29;
   C_TURN_End = 30;
   S_TURN = 31;
+  C_CHANGE_FALLDOWN_POKEMON = 32;
+  S_CHANGE_POKEMON = 33;
 }
 
 enum GameObjectType {
@@ -168,6 +170,10 @@ enum BattleStateFlag {
   DEBUFF_CONFUSION = 32;
 }
 
+enum PokeballType {
+  BASEBALL = 0;
+}
+
 message S_EnterGame {
   ObjectInfo player = 1;
 }
@@ -288,12 +294,12 @@ message S_TurnBattle {
 message S_TurnPokeball {
   int32 playerId = 1;
   repeated BattleInfo turnInfo = 2;
-  PokeballInfo info = 3;
+  PokeballType ballType = 3;
 }
 
 message S_TurnChange {
   int32 playerId = 1;
-  ChangeInfo info = 2;
+  int32 changePokemon = 2;
 }
 
 message S_TurnRunaway {
@@ -308,9 +314,19 @@ message C_TurnEnd {
   int32 playerId = 1;
 }
 
+message C_ChangeFalldownPokemon {
+  int32 playerId = 1;
+  int32 changePokemonId = 2;
+}
+
 message S_Turn {
   int32 playerId = 1;
   bool myTurn = 2;
+}
+
+message S_ChangePokemon {
+  int32 playerId = 1;
+  int32 changePokemonId = 2;
 }
 
 message LobbyPlayerInfo {
@@ -326,8 +342,8 @@ message ObjectInfo {
 message TurnInfo {
   ActionType action = 1;
   int32 skillId = 2;
-  int32 ballType = 3;
-  int32 changeNum = 4;
+  PokeballType ballType = 3;
+  int32 changePokemonId = 4;
 }
 
 message BattleInfo {
@@ -342,19 +358,11 @@ message BattleInfo {
   int32 latingSkillId = 10;
 }
 
-message PokeballInfo {
-  int32 ballType = 1;
-}
-
-message ChangeInfo {
-  int32 changePokemon = 1;
-}
-
 message PokemonData
 {
-    int32 id = 1;
-    string name = 2;
-    PokemonInfo info = 3;
+  int32 id = 1;
+  string name = 2;
+  PokemonInfo info = 3;
 }
 
 message PokemonInfo {

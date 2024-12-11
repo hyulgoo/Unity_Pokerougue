@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class UIBattleSkillSelectPopup : UICommonPopup
 {
-    int _selectedSkillId {  get; set; }
+    int _selectedSkillId = Define.InValidNumber;
 
     enum Buttons
     {
@@ -50,25 +50,23 @@ public class UIBattleSkillSelectPopup : UICommonPopup
 
     protected override void Update()
     {
-        if(Input.GetKey(KeyCode.Backspace))
-        {
-            ClosePopupUI();
-            Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
-        }
+        if (Input.GetKey(KeyCode.Backspace) == false)
+            return;
+
+        ClosePopupUI();
+        Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
     }
 
     void SetSkillInfo()
     {
-        int curpkmId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
-
-        for (int i = (int)Texts.Text_Skill_00; i <= (int)Texts.Text_Skill_03; ++i)
+        for (int index = (int)Texts.Text_Skill_00; index <= (int)Texts.Text_Skill_03; ++index)
         {
-            int skillId = Managers.Player.MyPlayer.GetCurPokemonData().Info.SkillId[i];
+            int skillId = Managers.Player.MyPlayer.GetCurPokemonData().Info.SkillId[index];
             string name = Managers.Data.SkillDict[skillId].name;
             // 스킬 이름 설정
-            GetText(i).text = name;
+            GetText(index).text = name;
             // 버튼에 스크립트 넣고 멤버로 info 넣어주기.
-            UIBattleSkillSelectButton button = GetButton(i).gameObject.GetOrAddComponent<UIBattleSkillSelectButton>();
+            UIBattleSkillSelectButton button = GetButton(index).gameObject.GetOrAddComponent<UIBattleSkillSelectButton>();
             button.SkillSelectPopup = this;
             button.SkillId = skillId;
         }
@@ -79,39 +77,52 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         _selectedSkillId = skillId;
 
         // 이미지 설정
-        Sprite[] sprites; int type;
-        sprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/type_bgs");
-        type = (int)Managers.Data.SkillDict[skillId].info.SkillEffect[0].Type;
-        GetImage((int)Images.Image_SkillAttribute).sprite = sprites[type];
-        GetText((int)Texts.Text_SkillAttribute).text = Util.GetTypeName((Type)type);
+        Sprite[] spritesArray; 
+        int skillType;
 
-        sprites = Managers.Resource.LoadAll<Sprite>("Sprite/categories_legacy");
-        ApplyType category = Managers.Data.SkillDict[skillId].info.SkillEffect[0].ApplyType;
+        const string typebgSpriteName = "Sprite/ui/type_bgs";
+        spritesArray = Managers.Resource.LoadAll<Sprite>(typebgSpriteName);
+        if (spritesArray == null)
+        {
+            Debug.Assert(false, $"Cannot Found {typebgSpriteName}");
+        }
 
-        switch (category)
+        skillType = (int)Managers.Data.SkillDict[skillId].info.SkillEffect[0].Type;
+        GetImage((int)Images.Image_SkillAttribute).sprite = spritesArray[skillType];
+        GetText((int)Texts.Text_SkillAttribute).text = Util.GetTypeName((Type)skillType);
+
+        const string categorySpriteName = "Sprite/categories_legacy";
+        spritesArray = Managers.Resource.LoadAll<Sprite>(categorySpriteName);
+        if (spritesArray == null)
+        {
+            Debug.Assert(false, $"Cannot Found {categorySpriteName}");
+        }
+
+        ApplyType applyType = Managers.Data.SkillDict[skillId].info.SkillEffect[0].ApplyType;
+        switch (applyType)
         {
             case ApplyType.Atk:
-                type = 0;
+                skillType = 0;
                 break;
             case ApplyType.Spa:
-                type = 1;
+                skillType = 1;
                 break;
             default:
-                type = 2;
+                skillType = 2;
                 break;
         }
 
-        GetImage((int)Images.Image_SkillType).sprite = sprites[type];
+        GetImage((int)Images.Image_SkillType).sprite = spritesArray[skillType];
 
         // 세부 정보
-        int pokemonid = Managers.Player.MyPlayer.GetCurPokemonData().Id;
+        int currentPokemonId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
         SkillInfo info = Managers.Data.SkillDict[skillId].info;
-        int curpp = Managers.Player.MyPlayer.SkillPP[pokemonid][skillId];
+        int currentSkillPP = Managers.Player.MyPlayer.SkillPP[currentPokemonId][skillId];
 
-        GetText((int)Texts.Text_SkillPP).text = $"{curpp}/{info.Pp}";
+        GetText((int)Texts.Text_SkillPP).text = $"{currentSkillPP}/{info.Pp}";
 
         // 공격 스킬이 아닐 경우에는 위력을 0으로 설정함
-        if(category == ApplyType.Atk || category == ApplyType.Spa )
+        if(applyType == ApplyType.Atk || applyType == ApplyType.Spa )
             GetText((int)Texts.Text_SkillPower).text = $"{info.SkillEffect[0].Value}";
         else
             GetText((int)Texts.Text_SkillPower).text = "-";
@@ -121,6 +132,11 @@ public class UIBattleSkillSelectPopup : UICommonPopup
 
     void OnClickSkillButton()
     {
+        if (_selectedSkillId == Define.InValidNumber)
+        {
+            Debug.Assert(false, "SelectedSkillId is InValid");
+        }
+
         C_Turn turnpacket = new C_Turn();
         turnpacket.PlayerId = Managers.Player.MyPlayer.Id;
 
@@ -133,6 +149,7 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         Managers.Network.Send(turnpacket);
         Managers.UI.CloseAllPopupUI();
         UIBattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UIBattleScene>();
+
         string monsterName = Managers.Player.MyPlayer.GetCurPokemonName();
         string skillName = Managers.Data.SkillDict[_selectedSkillId].name;
         Managers.Job.Push(() => scene.SetAnnounce($"{monsterName}의 {skillName}!", true));

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UIBattleSkillSelectButton : UICommonButton, ISelectHandler
+public class UIBattleSkillSelectButton : UICommonButton
 {
     public int SkillId { get; set; }
     public UIBattleSkillSelectPopup SkillSelectPopup { get; set; }

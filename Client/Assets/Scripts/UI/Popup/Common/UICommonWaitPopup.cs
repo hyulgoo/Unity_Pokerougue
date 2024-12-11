@@ -7,10 +7,12 @@ using UnityEngine;
 
 public class UICommonWaitPopup : UICommonPopup
 {
-    public string Text { get; set; }
+    public string Text { set { _text = value; } }
+    string _text;
 
-    float _updateDelay = 0.7f;
-    int _curCount = 0;
+    const float _updateDelay = 0.7f;
+    int _currentDotCount = 0;
+    const int _maxDotCount = 3;
 
     enum Texts
     {
@@ -21,22 +23,22 @@ public class UICommonWaitPopup : UICommonPopup
     public override void Init()
     {
         base.Init();
+
         BindText(typeof(Texts));
         InputMode = false;
-
-        StartCoroutine(ChangeText(_updateDelay));
+        StartCoroutine(SetWaitingText(_updateDelay));
     }
 
-    IEnumerator ChangeText(float delay)
+    IEnumerator SetWaitingText(float delay)
     {
         // . -> .. -> ... -> . 순서로 _text 뒤에 붙도록 함
-        _curCount = _curCount == 3 ? 1 : _curCount + 1;
-        string text = Text;
-        for (int i = 0; i < _curCount; i++)
+        _currentDotCount = _currentDotCount == _maxDotCount ? 1 : _currentDotCount + 1;
+        string text = _text;
+        for (int index = 0; index < _currentDotCount; index++)
             text += ".";
         GetText((int)Texts.Announce).text = text;
         yield return new WaitForSeconds(delay);
 
-        yield return StartCoroutine(ChangeText(delay));
+        yield return StartCoroutine(SetWaitingText(delay));
     }    
 }

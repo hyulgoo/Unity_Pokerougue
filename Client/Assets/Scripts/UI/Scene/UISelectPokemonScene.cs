@@ -11,7 +11,7 @@ using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 public class UISelectPokemonScene : UICommonScene
 {
     const int MaxCount = 3;
-    int[] _pokemonList = new int[MaxCount];
+    List<int> _pokemonList = new List<int>();
     public int CurOrder { get; set; } = 0;
 
     enum Texts
@@ -100,7 +100,7 @@ public class UISelectPokemonScene : UICommonScene
         if (CurOrder >= MaxCount)
             return false;
 
-        _pokemonList[CurOrder] = pokemonNum;
+        _pokemonList.Add(pokemonNum);
         int order = (int)GameObjects.Image_SelectedMst_0 + CurOrder;
         CurOrder++;
 
@@ -147,6 +147,13 @@ public class UISelectPokemonScene : UICommonScene
 
     void OnClickReadyButton()
     {
+        if (_pokemonList.Count != MaxCount)
+        {
+            UICommonAnnouncePopup Announcepopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            Announcepopup.SetAnnounceText("아직 포켓몬을 전부 선택하지 않았습니다!");
+            return;
+        }
+
         // 서버로 내가 고른 list를 보내줌.
         C_SelectPokemon packet = new C_SelectPokemon();
         packet.PlayerId = Managers.Player.MyPlayer.Id;
