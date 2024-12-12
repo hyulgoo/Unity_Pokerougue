@@ -38,6 +38,7 @@ enum MsgId {
   S_TURN = 31;
   C_CHANGE_FALLDOWN_POKEMON = 32;
   S_CHANGE_POKEMON = 33;
+  S_DUAL_END = 34;
 }
 
 enum GameObjectType {
@@ -327,6 +328,15 @@ message S_Turn {
 message S_ChangePokemon {
   int32 playerId = 1;
   int32 changePokemonId = 2;
+}
+
+message S_DualEnd {
+  repeated DualResultInfo dualResultInfo = 1;
+}
+
+message DualResultInfo {
+  int32 playerId = 1;
+  bool isWin = 2;
 }
 
 message LobbyPlayerInfo {

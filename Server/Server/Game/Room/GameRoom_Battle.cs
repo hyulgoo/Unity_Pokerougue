@@ -124,7 +124,7 @@ namespace Server.Game
         void Fight(C_Turn packet)
         {
             S_TurnBattle[] BattlePacket = new S_TurnBattle[(int)TargetType.End];
-            for(int index = 0; index < (int)TargetType.End; ++index)
+            for (int index = 0; index < (int)TargetType.End; ++index)
                 BattlePacket[index] = new S_TurnBattle();
 
             int enemyId = FindEnemyIdById(packet.PlayerId);
@@ -133,22 +133,24 @@ namespace Server.Game
 
             PokemonData myPokemonData = player.Pokemon[0];
             PokemonData enemyPokemonData = Enemy.Pokemon[0];
+
+            RepeatedField<BattleInfo> battleTurnResult = new RepeatedField<BattleInfo>();
+            battleTurnResult = DefaultTurn(packet.Clone());
+
             SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillId];
-
-            RepeatedField<BattleInfo> battleResult = new RepeatedField<BattleInfo>();
-
+            RepeatedField<BattleInfo> battleFightResult = new RepeatedField<BattleInfo>();
             foreach (SkillEffect skillEffect in skillData.info.SkillEffect)
             {
                 RepeatedField<BattleInfo> battleInfo = Util.CalcBattle(myPokemonData, enemyPokemonData, skillEffect).Clone();
-                battleResult.AddRange(battleInfo);
+                battleFightResult.AddRange(battleInfo);
             }
 
             for (int index = 0; index < (int)TargetType.End; ++index)
             {
                 BattlePacket[index].PlayerId = packet.PlayerId;
                 BattlePacket[index].SkillId = packet.TurnInfo.SkillId;
-                BattlePacket[index].Info.AddRange(battleResult.Clone());
-                BattlePacket[index].TurnInfo.AddRange(DefaultTurn(packet.Clone()));
+                BattlePacket[index].TurnInfo.AddRange(battleTurnResult);
+                BattlePacket[index].Info.AddRange(battleFightResult.Clone());
             }
 
             _players[packet.PlayerId].Session.Send(BattlePacket[(int)TargetType.Oneself]);
@@ -181,25 +183,48 @@ namespace Server.Game
 
             _playerReady[playerId] = true;
 
-            int readyCount = 0;
+            int readyPlayerCount = 0;
             foreach (bool ready in _playerReady.Values)
-                readyCount = ready ? ++readyCount : readyCount;
+                readyPlayerCount = ready ? ++readyPlayerCount : readyPlayerCount;
 
-            if (readyCount != _playerReady.Count)
+            if (readyPlayerCount != _playerReady.Count)
                 return;
 
-            int[] playerKeyArray = _players.Keys.ToArray();
             CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
-            for (int index = 0; index < (int)TargetType.End; ++index)
+
+            Dictionary<int, bool> playerDualResultArray = new Dictionary<int, bool>();
+            foreach (Player player in _players.Values)
+                playerDualResultArray.Add(player.Id, player.IsRemainPokemonExist());
+
+            bool isDualEnd = playerDualResultArray.Values.Contains(false);
+            if (isDualEnd)
             {
-                int myId = playerKeyArray[index];
-                int enemyid = playerKeyArray[index + 1 == (int)TargetType.End ? 0 : index + 1];
+                S_DualEnd dualEndPacket = new S_DualEnd();
+                foreach (var playerDualResult in playerDualResultArray)
+                {
+                    DualResultInfo dualResultInfo = new DualResultInfo();
+                    dualResultInfo.PlayerId = playerDualResult.Key;
+                    dualResultInfo.IsWin = playerDualResult.Value;
 
-                S_Turn packet = new S_Turn();
-                packet.MyTurn = myId == CurrentTurnPlayerId;
+                    dualEndPacket.DualResultInfo.Add(dualResultInfo);
+                }
 
-                _playerReady[myId] = false;
-                _players[myId].Session.Send(packet);
+                Broadcast(dualEndPacket);
+            }
+            else
+            {
+                List<int> playerKeyArray = _players.Keys.ToList();
+                for (int index = 0; index < playerKeyArray.Count; ++index)
+                {
+                    int myId = playerKeyArray[index];
+                    int enemyid = playerKeyArray[index + 1 == playerKeyArray.Count ? 0 : index + 1];
+
+                    S_Turn turnPacket = new S_Turn();
+                    turnPacket.MyTurn = myId == CurrentTurnPlayerId;
+
+                    _playerReady[myId] = false;
+                    _players[myId].Session.Send(turnPacket);
+                }
             }
 
             isWaitingPlayerTurnEnd = false;

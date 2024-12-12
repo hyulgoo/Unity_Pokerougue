@@ -82,4 +82,15 @@ public class CommonPlayerController : MonoBehaviour
 
         Debug.Assert(false, "Cannot Found ChangePokemon!!");
     }
+
+    public bool isRemainPokemonExist()
+    {
+        foreach (PokemonData pokemonData in _pokemonDataList)
+        {
+            if (pokemonData.Info.Hp > 0)
+                return true;
+        }
+
+        return false;
+    }
 }

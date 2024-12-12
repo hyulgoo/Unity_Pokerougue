@@ -123,9 +123,15 @@ public class UIBattleScene : UICommonScene
         }
     }
 
-    public void CurrentPokemonFallDown()
+    public void ChangeFalldownPokemon()
     {
         Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
+    }
+
+    public void DualEnd(bool isWin)
+    {
+        string text = isWin ? $"{Managers.Player.Enemy.Name}(¿Í)°úÀÇ ´ë°á¿¡¼­ ½Â¸®Çß´Ù!" : $"{Managers.Player.MyPlayer.Name}(Àº)´Â ´« ¾ÕÀÌ Ä¯Ä¯ÇØÁ³´Ù.";
+        Managers.Job.Push(() => SetAnnounce(text, true));
     }
 
     public void SetAnnounce(string announce, bool setByHandler)
@@ -136,7 +142,7 @@ public class UIBattleScene : UICommonScene
 
     IEnumerator SetTextCoroutine(bool setByHandler)
     {
-        GetText((int)Texts.Announce).text = "";
+        GetText((int)Texts.Announce).text = string.Empty;
         foreach (char value in _announceText)
         {
             GetText((int)Texts.Announce).text += value;
@@ -144,7 +150,7 @@ public class UIBattleScene : UICommonScene
         }
 
         if (setByHandler)
-            Managers.Job.Excute();
+            Managers.Job.Excute(); 
     }
 
     const float targetDiff = 0.05f;

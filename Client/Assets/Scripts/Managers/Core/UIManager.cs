@@ -28,14 +28,9 @@ public class UIManager
         canvas.overrideSorting = true;
 
         if (sort)
-        {
-            canvas.sortingOrder = _order;
-            _order++;
-        }
+            canvas.sortingOrder = _order++;
         else
-        {
             canvas.sortingOrder = 0;
-        }
     }
 
 	public T MakeWorldSpaceUI<T>(Transform parent = null, string name = null) where T : UICommonBase

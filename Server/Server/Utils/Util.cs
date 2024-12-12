@@ -188,35 +188,42 @@ namespace Server
             bool isMiss = random.Next(0, 101) > effect.Accuracy ? true : false;
             bool isCritical = random.Next(0, 1000) < 65 ? true : false;
 
+            BattleInfo battleInfo = new BattleInfo();
+            battleInfo.ApplyType = effect.ApplyType;
+            battleInfo.TargetType = effect.Target;
+            battleInfo.StateFlag = BattleStateFlag.Default;
+            battleInfo.FromData = myData.Clone();
+            battleInfo.ToData = effect.Target == (int)TargetType.Oneself ? myData.Clone() : enemyData.Clone();
+
             if (isMiss)
             {
-                BattleInfo missBattleInfo = new BattleInfo();
-                missBattleInfo.ApplyType = effect.ApplyType;
-                missBattleInfo.TargetType = effect.Target;
-                missBattleInfo.StateFlag = BattleStateFlag.Default;
-                missBattleInfo.FromData = myData.Clone();
-                missBattleInfo.ToData = effect.Target == (int)TargetType.Oneself ? myData.Clone() : enemyData.Clone();
-                missBattleInfo.StateFlag = isMiss ? missBattleInfo.StateFlag |= BattleStateFlag.Miss : missBattleInfo.StateFlag &= ~BattleStateFlag.Miss;
-                result.Add(missBattleInfo);
+                battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.Miss;
+                result.Add(battleInfo);
 
                 return result;
             }
+            else if (myData.Info.State.Sturn > 0)
+            {
+                battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.DebuffSturn;
+                result.Add(battleInfo);
 
-            // 데미지를 계산한 이후 결과를 반영해줌.
-            BattleInfo battleInfo = new BattleInfo();
+                return result;
+            }
+            else if (myData.Info.State.Confusion > 0)
+            {
+                battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.DebuffConfusion;
+            }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
+            if ((battleInfo.StateFlag & BattleStateFlag.DebuffConfusion) == BattleStateFlag.DebuffConfusion)
+                targetData = random.Next(0, 100) < 70 ? myData : targetData;
 
             if (effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa)
                 CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info, isCritical, battleInfo.StateFlag);
             else 
                 CalcBuffType(targetData, effect.ApplyType, effect.Value);
 
-            battleInfo.ApplyType = effect.ApplyType;
-            battleInfo.TargetType = effect.Target;
-            battleInfo.StateFlag = isMiss ? battleInfo.StateFlag |= BattleStateFlag.Miss : battleInfo.StateFlag &= ~BattleStateFlag.Miss;
             battleInfo.StateFlag = isCritical ? battleInfo.StateFlag |= BattleStateFlag.Critical : battleInfo.StateFlag &= ~BattleStateFlag.Critical;
-            battleInfo.FromData = myData.Clone();
             battleInfo.ToData = targetData.Clone();
             battleInfo.SkillValue = effect.Value;
             result.Add(battleInfo);
@@ -226,13 +233,13 @@ namespace Server
 
         static void CalcDamageAndReturnEffective(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo, bool isCritical, BattleStateFlag battleStateFlag)
         {
-            System.Random r = new System.Random();
+            System.Random random = new System.Random();
 
             int attackValue = skillInfo.ApplyType == ApplyType.Atk ? attackerInfo.Atk : attackerInfo.SpA;
             int defenseValue = skillInfo.ApplyType == ApplyType.Atk ? targetInfo.Def : targetInfo.SpD;
             int skillPower = skillInfo.Value;
             int criticalRatio = isCritical ? 2 : 1;
-            int randomRatio = (r.Next(217, 256) * 100) / 255;
+            int randomRatio = (random.Next(217, 256) * 100) / 255;
 
             float myType = 1f;
             foreach(Type type in attackerInfo.Type)

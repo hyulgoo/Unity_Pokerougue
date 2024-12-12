@@ -145,7 +145,7 @@ partial class PacketHandler
 
         bool isShowChangePokemonPopup = (Managers.Player.MyTurn && isMyPokemon) || (Managers.Player.MyTurn == false && isMyPokemon == false);
         if (isShowChangePokemonPopup)
-            Managers.Job.Push(() => { battleScene.CurrentPokemonFallDown(); });
+            Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(); });
 
         return true;
     }
@@ -262,5 +262,23 @@ partial class PacketHandler
         else
             Managers.Player.Enemy.ChangePokemonOrderById(changePokemonPacket.ChangePokemonId);
         battleScene.SetBattlePokemonInfo();
+    }
+
+    public static void S_DualEndHandler(PacketSession session, IMessage packet)
+    {
+        S_DualEnd dualEndPacket = new S_DualEnd();
+        foreach (DualResultInfo dualResultInfo in dualEndPacket.DualResultInfo)
+        {
+            if (dualResultInfo.PlayerId != Managers.Player.MyPlayer.Id)
+                continue;
+
+            UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+            if (battleScene == null)
+            {
+                Debug.Assert(false, "Cannot Found BattleScene!!");
+            }
+
+            battleScene.DualEnd(dualResultInfo.IsWin);
+        }
     }
 }

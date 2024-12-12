@@ -27,7 +27,18 @@ namespace Server.Game
 			return list;
 		}
 
-		public void OnLeaveGame()
+		public bool IsRemainPokemonExist()
+		{
+			foreach (var pokemon in Pokemon)
+			{
+				if (pokemon.Info.Hp > 0)
+					return true;
+			}
+
+			return false;
+        }
+
+        public void OnLeaveGame()
 		{
 			// TODO
 			// DB 연동?
