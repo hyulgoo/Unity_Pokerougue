@@ -11,6 +11,6 @@ public class UIBattleSkillSelectButton : UICommonButton
     public override void OnSelect(BaseEventData eventData)
     {
         base.OnSelect(eventData);
-        SkillSelectPopup.SetCurSkillInfo(SkillId);
+        SkillSelectPopup.SetSelectSkillInfo(SkillId);
     }
 }

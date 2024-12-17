@@ -3,6 +3,7 @@ using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIBattleSkillSelectPopup : UICommonPopup
 {
@@ -63,16 +64,27 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         {
             int skillId = Managers.Player.MyPlayer.GetCurPokemonData().Info.SkillId[index];
             string name = Managers.Data.SkillDict[skillId].name;
-            // 스킬 이름 설정
-            GetText(index).text = name;
-            // 버튼에 스크립트 넣고 멤버로 info 넣어주기.
-            UIBattleSkillSelectButton button = GetButton(index).gameObject.GetOrAddComponent<UIBattleSkillSelectButton>();
-            button.SkillSelectPopup = this;
-            button.SkillId = skillId;
+
+            TMPro.TMP_Text skillNameText = GetText(index);
+            skillNameText.text = name;
+
+            int currentPokemonId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
+            SkillInfo info = Managers.Data.SkillDict[skillId].info;
+            int currentSkillPP = Managers.Player.MyPlayer.SkillPP[currentPokemonId][skillId];
+
+            if (currentSkillPP == 0)
+            {
+                Button curSkillButton = GetButton(index);
+                curSkillButton.interactable = false;
+            }
+
+            UIBattleSkillSelectButton skillButton = GetButton(index).gameObject.GetOrAddComponent<UIBattleSkillSelectButton>();
+            skillButton.SkillSelectPopup = this;
+            skillButton.SkillId = skillId;
         }
     }
 
-    public void SetCurSkillInfo(int skillId)
+    public void SetSelectSkillInfo(int skillId)
     {
         _selectedSkillId = skillId;
 
@@ -121,12 +133,8 @@ public class UIBattleSkillSelectPopup : UICommonPopup
 
         GetText((int)Texts.Text_SkillPP).text = $"{currentSkillPP}/{info.Pp}";
 
-        // 공격 스킬이 아닐 경우에는 위력을 0으로 설정함
-        if(applyType == ApplyType.Atk || applyType == ApplyType.Spa )
-            GetText((int)Texts.Text_SkillPower).text = $"{info.SkillEffect[0].Value}";
-        else
-            GetText((int)Texts.Text_SkillPower).text = "-";
-
+        // 공격 스킬이 아닐 경우에는 위력을 -으로 설정함
+        GetText((int)Texts.Text_SkillPower).text = (applyType == ApplyType.Atk || applyType == ApplyType.Spa) ? $"{info.SkillEffect[0].Value}" : "-";
         GetText((int)Texts.Text_SkillAccuracy).text = $"{info.SkillEffect[0].Accuracy}";
     }
 
@@ -149,9 +157,5 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         Managers.Network.Send(turnpacket);
         Managers.UI.CloseAllPopupUI();
         UIBattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UIBattleScene>();
-
-        string monsterName = Managers.Player.MyPlayer.GetCurPokemonName();
-        string skillName = Managers.Data.SkillDict[_selectedSkillId].name;
-        Managers.Job.Push(() => scene.SetAnnounce($"{monsterName}의 {skillName}!", true));
     }
 }

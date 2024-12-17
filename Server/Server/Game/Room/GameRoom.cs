@@ -22,7 +22,7 @@ namespace Server.Game
 		Dictionary<int, bool> _playerReady = new Dictionary<int, bool>();
 
         public void Init()
-		{			
+		{
 		}
 
 		// 누군가 주기적으로 호출해줘야 한다
@@ -198,7 +198,7 @@ namespace Server.Game
 			return null;
 		}
 
-		int FindEnemyIdById(int playerId)
+		int FindEnemyIdByMyId(int playerId)
 		{
             foreach (int id in _players.Keys)
             {

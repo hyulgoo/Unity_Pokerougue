@@ -20,12 +20,11 @@ public class UIBattleScene : UICommonScene
     {
         MyHpbar,
         EnemyHpbar,
-        End
     }
 
     enum Images
     {
-        Image_EnemyLevel_,
+        Image_EnemyLevel_0,
         Image_EnemyLevel_00,
         Image_EnemyLevel_000,
 

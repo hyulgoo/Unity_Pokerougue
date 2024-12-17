@@ -169,6 +169,11 @@ enum BattleStateFlag {
   INEFFECTIVE = 8;
   DEBUFF_STURN = 16;
   DEBUFF_CONFUSION = 32;
+  DEBUFF_FIRE = 64;
+  DEBUFF_POISON = 128;
+  DEBUFF_DOT = 256;
+  RECOVERY_STURN = 512;
+  RECOVERY_CONFUSION = 1024;
 }
 
 enum PokeballType {
@@ -300,7 +305,8 @@ message S_TurnPokeball {
 
 message S_TurnChange {
   int32 playerId = 1;
-  int32 changePokemon = 2;
+  repeated BattleInfo turnInfo = 2;
+  int32 changePokemon = 3;
 }
 
 message S_TurnRunaway {

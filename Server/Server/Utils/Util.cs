@@ -180,10 +180,8 @@ namespace Server
 
         #endregion
 
-        public static RepeatedField<BattleInfo> CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect)
+        public static BattleInfo CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect)
         {
-            RepeatedField<BattleInfo> result = new RepeatedField<BattleInfo>();
-
             System.Random random = new System.Random();
             bool isMiss = random.Next(0, 101) > effect.Accuracy ? true : false;
             bool isCritical = random.Next(0, 1000) < 65 ? true : false;
@@ -192,43 +190,26 @@ namespace Server
             battleInfo.ApplyType = effect.ApplyType;
             battleInfo.TargetType = effect.Target;
             battleInfo.StateFlag = BattleStateFlag.Default;
-            battleInfo.FromData = myData.Clone();
-            battleInfo.ToData = effect.Target == (int)TargetType.Oneself ? myData.Clone() : enemyData.Clone();
 
             if (isMiss)
             {
                 battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.Miss;
-                result.Add(battleInfo);
-
-                return result;
-            }
-            else if (myData.Info.State.Sturn > 0)
-            {
-                battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.DebuffSturn;
-                result.Add(battleInfo);
-
-                return result;
-            }
-            else if (myData.Info.State.Confusion > 0)
-            {
-                battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.DebuffConfusion;
+                return battleInfo;
             }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
-            if ((battleInfo.StateFlag & BattleStateFlag.DebuffConfusion) == BattleStateFlag.DebuffConfusion)
-                targetData = random.Next(0, 100) < 70 ? myData : targetData;
-
             if (effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa)
                 CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info, isCritical, battleInfo.StateFlag);
             else 
-                CalcBuffType(targetData, effect.ApplyType, effect.Value);
+                CalcBuffType(targetData, effect.ApplyType, effect.Value, battleInfo.StateFlag);
 
-            battleInfo.StateFlag = isCritical ? battleInfo.StateFlag |= BattleStateFlag.Critical : battleInfo.StateFlag &= ~BattleStateFlag.Critical;
+            if(isCritical)
+                battleInfo.StateFlag |= BattleStateFlag.Critical;
+            battleInfo.FromData = myData.Clone();
             battleInfo.ToData = targetData.Clone();
             battleInfo.SkillValue = effect.Value;
-            result.Add(battleInfo);
 
-            return result;
+            return battleInfo;
         }
 
         static void CalcDamageAndReturnEffective(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo, bool isCritical, BattleStateFlag battleStateFlag)
@@ -269,7 +250,7 @@ namespace Server
             targetInfo.Hp = (int)damage >= targetInfo.Hp ? 0 : targetInfo.Hp - (int)damage;
         }
 
-        static void CalcBuffType(PokemonData targetData, ApplyType skillType, int value)
+        static void CalcBuffType(PokemonData targetData, ApplyType skillType, int value, BattleStateFlag battleFlag)
         {
             PokemonInfo targetInfo = targetData.Info;
             PokemonInfo stadardInfo = DataManager.PokemonDict[targetData.Id].Info;
@@ -278,6 +259,8 @@ namespace Server
             {
                 case ApplyType.Recovery:
                     targetInfo.Hp += stadardInfo.Hp / 3;
+                    if (targetInfo.Hp > stadardInfo.Hp)
+                        targetInfo.Hp = stadardInfo.Hp;
                     break;
                 case ApplyType.BuffAtk:
                     targetInfo.Atk = targetInfo.Atk + (stadardInfo.Atk / 5 * value);
@@ -296,6 +279,7 @@ namespace Server
                     break;
                 case ApplyType.Dot:
                     targetInfo.State.Dot = 3;
+                    battleFlag |= BattleStateFlag.DebuffDot;
                     break;
                 case ApplyType.DebuffAtk:
                     targetInfo.Atk = targetInfo.Atk - (stadardInfo.Atk / 5 * value);

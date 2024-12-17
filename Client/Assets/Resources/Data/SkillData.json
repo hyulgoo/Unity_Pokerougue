@@ -697,6 +697,23 @@
         ],
         "pp": 20
       }
+    },
+    {
+      "id": "999",
+      "name": "",
+      "info": {
+        "skillEffect": [
+          {
+            "applyType": "Atk",
+            "target": "Enemy",
+            "type": "Normal",
+            "value": 40,
+            "accuracy": 100,
+            "duration": 1
+          }
+        ],
+        "pp": 999
+      }
     }
   ]
 } 
