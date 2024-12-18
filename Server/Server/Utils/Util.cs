@@ -199,8 +199,14 @@ namespace Server
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
             if (effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa)
-                CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info, isCritical, battleInfo.StateFlag);
-            else 
+            { 
+                float effectRatio = CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info, isCritical);
+                if (effectRatio < 1f)
+                    battleInfo.StateFlag |= BattleStateFlag.Ineffective;
+                else if (effectRatio > 1f)
+                    battleInfo.StateFlag |= BattleStateFlag.Effective;
+            }
+            else
                 CalcBuffType(targetData, effect.ApplyType, effect.Value, battleInfo.StateFlag);
 
             if(isCritical)
@@ -212,7 +218,7 @@ namespace Server
             return battleInfo;
         }
 
-        static void CalcDamageAndReturnEffective(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo, bool isCritical, BattleStateFlag battleStateFlag)
+        static float CalcDamageAndReturnEffective(SkillEffect skillInfo, PokemonInfo attackerInfo, PokemonInfo targetInfo, bool isCritical)
         {
             System.Random random = new System.Random();
 
@@ -240,14 +246,11 @@ namespace Server
 
             damage *= effectRatio;
 
-            if (effectRatio < 1f)
-                battleStateFlag |= BattleStateFlag.Ineffective;
-            else if (effectRatio > 1f)
-                battleStateFlag |= BattleStateFlag.Effective;
-
             damage *= Mode3;
 
             targetInfo.Hp = (int)damage >= targetInfo.Hp ? 0 : targetInfo.Hp - (int)damage;
+
+            return effectRatio;
         }
 
         static void CalcBuffType(PokemonData targetData, ApplyType skillType, int value, BattleStateFlag battleFlag)
@@ -258,7 +261,7 @@ namespace Server
             switch (skillType)
             {
                 case ApplyType.Recovery:
-                    targetInfo.Hp += stadardInfo.Hp / 3;
+                    targetInfo.Hp += (stadardInfo.Hp / 5) * value;
                     if (targetInfo.Hp > stadardInfo.Hp)
                         targetInfo.Hp = stadardInfo.Hp;
                     break;
@@ -279,7 +282,6 @@ namespace Server
                     break;
                 case ApplyType.Dot:
                     targetInfo.State.Dot = 3;
-                    battleFlag |= BattleStateFlag.DebuffDot;
                     break;
                 case ApplyType.DebuffAtk:
                     targetInfo.Atk = targetInfo.Atk - (stadardInfo.Atk / 5 * value);
@@ -297,10 +299,12 @@ namespace Server
                     targetInfo.Spe = targetInfo.Spe - (stadardInfo.Spe / 5 * value);
                     break;
                 case ApplyType.Sturn:
-                    targetInfo.State.Sturn = 3;
+                    if(targetInfo.State.Confusion == 0)
+                        targetInfo.State.Sturn = 3;
                     break;
                 case ApplyType.Confusion:
-                    targetInfo.State.Confusion = 3;
+                    if(targetInfo.State.Sturn == 0)
+                        targetInfo.State.Confusion = 3;
                     break;
             }
         }

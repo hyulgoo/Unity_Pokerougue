@@ -179,6 +179,6 @@ class PacketHandler
             Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
         }
 
-        room.Push(room.ChangeFalldownPokemon, changeFalldownPokemonPacket);
+        room.Push(room.ChangePokemon, changeFalldownPokemonPacket);
     }
 }

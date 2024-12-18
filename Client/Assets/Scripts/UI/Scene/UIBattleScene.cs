@@ -67,6 +67,9 @@ public class UIBattleScene : UICommonScene
         _hpbarSprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/overlay_hp");
 
         SetBattlePokemonInfo();
+        string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
+        Managers.Job.Push(()=> { SetAnnounce($"°¡¶ó! {currentPokemonName}!", true); });
+        Managers.Job.Excute();
         MyTurn();
     }
 
@@ -85,7 +88,7 @@ public class UIBattleScene : UICommonScene
         GetImage((int)Images.Enemy_FootHold).sprite = Managers.Resource.Load<Sprite>(enemyfoothold);
 
         if (GetImage((int)Images.BackGround).sprite == null)
-            Debug.Log($"{fieldName}");
+            Debug.Log($"Fail to Find Background Sprite ({fieldName})");
     }
 
     public void SetBattlePokemonInfo()
@@ -105,7 +108,6 @@ public class UIBattleScene : UICommonScene
 
         SetHPBar(targetRatio: 1f, targetType: TargetType.Oneself, false);
         SetHPBar(targetRatio: 1f, targetType: TargetType.Enemy, false);
-        SetAnnounce(string.Empty, true);
     }
 
     public void MyTurn()
@@ -124,7 +126,8 @@ public class UIBattleScene : UICommonScene
 
     public void ChangeFalldownPokemon()
     {
-        Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
+        UIBattlePokemonChangePopup battlePokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
+        battlePokemonChangePopup.BattleScene = this;
     }
 
     public void DualEnd(bool isWin)

@@ -79,6 +79,14 @@ partial class PacketHandler
             {
                 string announce = $"{toName}(은)는 혼란에 빠져 있다!";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+                if (turnInfo.LatingSkillId == confusionSkillId)
+                {
+                    string text = $"{toName}(은)는 영문도 모른 채 자신을 공격했다!";
+                    float hpRatio = Util.GetPokemonHPRatio(turnInfo.ToData);
+                    Managers.Job.Push(() => { battleScene.SetAnnounce(text, true); });
+                    Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                    isTurnOver = true;
+                }
             }
             else if ((turnInfo.StateFlag & BattleStateFlag.RecoveryConfusion) == BattleStateFlag.RecoveryConfusion)
             {
@@ -86,15 +94,7 @@ partial class PacketHandler
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
             }
 
-            if ((turnInfo.StateFlag & BattleStateFlag.DebuffConfusion) == BattleStateFlag.DebuffConfusion && turnInfo.LatingSkillId == confusionSkillId)
-            {
-                string text = $"{toName}(은)는 영문도 모른 채 자신을 공격했다!";
-                float hpRatio = Util.GetPokemonHPRatio(turnInfo.ToData);
-                Managers.Job.Push(() => { battleScene.SetAnnounce(text, true); });
-                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
-                isTurnOver = true;
-            }
-            else if ((turnInfo.StateFlag & BattleStateFlag.DebuffSturn) == BattleStateFlag.DebuffSturn)
+            if ((turnInfo.StateFlag & BattleStateFlag.DebuffSturn) == BattleStateFlag.DebuffSturn)
             {
                 string text = $"{toName}(은)는 풀이 죽어 기술을 쓸 수 없다!";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(text, true); });
@@ -131,6 +131,7 @@ partial class PacketHandler
             TargetType targetType = TargetType.End;
             string fromName = battleInfo.FromData.Name;
             string toName = battleInfo.ToData.Name;
+
             float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
 
             if (battleInfo.TargetType == TargetType.Oneself)
@@ -174,7 +175,13 @@ partial class PacketHandler
             {
                 string announce = GetNoneAttackBattleAnnounce(battleInfo);
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
+                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
             }
+
+            if (targetType == TargetType.Oneself)
+                Managers.Player.MyPlayer.SetCurPokemonData(battleInfo.ToData);
+            else
+                Managers.Player.Enemy.SetCurPokemonData(battleInfo.ToData);
         }
     }
 
@@ -303,7 +310,9 @@ partial class PacketHandler
             Managers.Player.MyPlayer.ChangePokemonOrderById(changePokemonPacket.ChangePokemonId);
         else
             Managers.Player.Enemy.ChangePokemonOrderById(changePokemonPacket.ChangePokemonId);
+
         battleScene.SetBattlePokemonInfo();
+        Managers.Job.Excute();
     }
 
     public static void S_DualEndHandler(PacketSession session, IMessage packet)

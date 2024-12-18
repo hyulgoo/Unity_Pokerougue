@@ -35,7 +35,7 @@ public abstract class UICommonBase : MonoBehaviour
 				objects[i] = Util.FindChild<T>(gameObject, names[i], true);
 
 			if (objects[i] == null)
-				Debug.Log($"Failed to bind({names[i]})");
+				Debug.Assert(false, $"Failed to bind({names[i]})");
 		}
 	}
 

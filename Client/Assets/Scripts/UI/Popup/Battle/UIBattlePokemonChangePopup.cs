@@ -68,8 +68,8 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         Slider_HPBar05,
     }
 
-    int _selectedChangePokemonId = Define.InValidNumber;
-    public int SelectedChangePokemonId { set { _selectedChangePokemonId = value; } }
+    public int SelectedChangePokemonId { get; set; }
+    public UIBattleScene BattleScene { get; set; }
 
     public override void Init()
     {
@@ -157,7 +157,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
     {
         if (string.IsNullOrEmpty(text))
         {
-            Debug.Assert(false, "BattlePokemonChangePopupAnnounce Text is Empty!!");
+            Debug.Assert(false, "BattlePokemonChangePopup AnnounceText is Empty!!");
         }
 
         GetText((int)Texts.Text_Announce).text = text;
@@ -165,22 +165,41 @@ public class UIBattlePokemonChangePopup : UICommonPopup
 
     public void ChangePokemon()
     {
-        if (_selectedChangePokemonId == Define.InValidNumber)
+        if (SelectedChangePokemonId == Define.InValidNumber)
         {
             Debug.Assert(false, "SelectedChangePokemonId is InValid!!");
         }
 
-        C_ChangeFalldownPokemon packet = new C_ChangeFalldownPokemon();
-        packet.PlayerId = Managers.Player.MyPlayer.Id;
-        packet.ChangePokemonId = _selectedChangePokemonId;
+        {
+            C_ChangeFalldownPokemon packet = new C_ChangeFalldownPokemon();
+            packet.PlayerId = Managers.Player.MyPlayer.Id;
+            packet.ChangePokemonId = SelectedChangePokemonId;
 
-        Managers.Network.Send(packet);
+            Managers.Network.Send(packet);
+        }
+
+        string selectedChangePokemonName = Managers.Data.PokeonDict[SelectedChangePokemonId].Name;
+        Managers.Job.Push(() => { BattleScene.SetAnnounce($"가라! {selectedChangePokemonName}!", true); });
 
         ClosePopupUI();
+
     }
 
     public void OnClickChangePokemonButton()
     {
+        PokemonInfo selectPokemonInfo = Managers.Player.MyPlayer.GetPokemonInfoById(SelectedChangePokemonId);
+        if (selectPokemonInfo == null)
+        {
+            Debug.Assert(false, $"Fail to Find SelectedPokemon By Id{SelectedChangePokemonId}");
+        }
+
+        if (selectPokemonInfo.Hp <= 0)
+        {
+            UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            announcePopup.SetAnnounceText("기절 상태의 포켓몬으로는 교체할 수 없습니다.");
+            return;
+        }
+
         UIBattleChangePokemonSelectedPopup changePokemonSelectedPopup = Managers.UI.ShowPopupUI<UIBattleChangePokemonSelectedPopup>();
         changePokemonSelectedPopup.ChangePokemonSelectedPopup = this;
     }

@@ -32,10 +32,24 @@ public class CommonPlayerController : MonoBehaviour
     public PokemonInfo GetPokemonInfo(int order) { return GetPokemonData(order).Info; }
 
     public string GetCurPokemonName() { return GetPokemonName(0); }
-    public string GetPokemonName(int order) { return _pokemonDataList[order].Name; }    
+    public string GetPokemonName(int order) { return _pokemonDataList[order].Name; }
+
+    public void SetCurPokemonData(PokemonData data) { _pokemonDataList[0] = data; }
 
     public PokemonData GetCurPokemonData() { return _pokemonDataList[0]; }
     public PokemonData GetPokemonData(int order) { return _pokemonDataList[order]; }
+
+    public PokemonInfo GetPokemonInfoById(int id)
+    {
+        foreach (PokemonData pokemonData in _pokemonDataList)
+        {
+            if (pokemonData.Id == id)
+                return pokemonData.Info;
+        }
+
+        Debug.Assert(false, $"Fail to Find PokemonData By Id{id}");
+        return null;
+    }
 
     public PokemonInfo[] GetAllPokemoninfo()
     {
@@ -80,7 +94,7 @@ public class CommonPlayerController : MonoBehaviour
             return;
         }
 
-        Debug.Assert(false, "Cannot Found ChangePokemon!!");
+        Debug.Assert(false, "Fail to Find ChangePokemon!!");
     }
 
     public bool isRemainPokemonExist()

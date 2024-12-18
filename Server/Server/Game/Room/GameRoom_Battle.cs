@@ -50,6 +50,7 @@ namespace Server.Game
             PokemonData standardInfo = DataManager.PokemonDict[player.Pokemon[0].Id];
             bool isSturnOrConfusionAttackOneself = false;
 
+
             if (myPokemonData.Info.State.Fire > 0)
             {
                 BattleInfo result = new BattleInfo();
@@ -57,8 +58,8 @@ namespace Server.Game
                 result.TargetType = TargetType.Oneself;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 20;
                 myPokemonData.Info.State.Fire--;
-                result.FromData= myPokemonData;
-                result.ToData = myPokemonData;
+                result.FromData= myPokemonData.Clone();
+                result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffFire;
 
                 battleInfoList.Add(result);
@@ -72,8 +73,8 @@ namespace Server.Game
                 result.LatingSkillId = packet.TurnInfo.SkillId;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 7;
                 myPokemonData.Info.State.Dot--;
-                result.FromData = enemyPokemonData;
-                result.ToData = myPokemonData;
+                result.FromData = enemyPokemonData.Clone();
+                result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffDot;
 
                 battleInfoList.Add(result);
@@ -86,8 +87,8 @@ namespace Server.Game
                 result.TargetType = TargetType.Oneself;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 20;
                 myPokemonData.Info.State.Poison--;
-                result.FromData = myPokemonData;
-                result.ToData = myPokemonData;
+                result.FromData = myPokemonData.Clone();
+                result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffPoison;
 
                 battleInfoList.Add(result);
@@ -98,8 +99,8 @@ namespace Server.Game
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Confusion;
                 result.TargetType = TargetType.Oneself;
-                result.FromData = myPokemonData;
-                result.ToData = myPokemonData;
+                result.FromData = myPokemonData.Clone();
+                result.ToData = myPokemonData.Clone();
 
                 bool recovery = random.Next(0, 100) > 60 ? true : false;
                 if (recovery == false)
@@ -108,7 +109,9 @@ namespace Server.Game
                     result.StateFlag |= BattleStateFlag.DebuffConfusion;
                     if (myPokemonData.Info.State.Confusion == 0)
                         result.StateFlag |= BattleStateFlag.RecoveryConfusion;
+
                     battleInfoList.Add(result);
+
                     if (random.Next(0, 100) < 40)
                     {
                         result.LatingSkillId = confusionSkillId;
@@ -128,7 +131,6 @@ namespace Server.Game
                     myPokemonData.Info.State.Confusion = 0;
                     battleInfoList.Add(result);
                 }
-
             }
 
             if (myPokemonData.Info.State.Sturn > 0)
@@ -136,8 +138,8 @@ namespace Server.Game
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.Sturn;
                 result.TargetType = TargetType.Oneself;
-                result.FromData = myPokemonData;
-                result.ToData = myPokemonData;
+                result.FromData = myPokemonData.Clone();
+                result.ToData = myPokemonData.Clone();
 
                 bool recovery = random.Next(0, 100) > 66 ? true : false;
                 myPokemonData.Info.State.Sturn = recovery ? 0 : myPokemonData.Info.State.Sturn - 1;
@@ -176,9 +178,7 @@ namespace Server.Game
 
         void Fight(C_Turn packet)
         {
-            S_TurnBattle[] BattlePacket = new S_TurnBattle[(int)TargetType.End];
-            BattlePacket[(int)TargetType.Oneself] = new S_TurnBattle();
-            BattlePacket[(int)TargetType.Enemy] = new S_TurnBattle();
+            S_TurnBattle battlePacket = new S_TurnBattle();
 
             int enemyId = FindEnemyIdByMyId(packet.PlayerId);
             Player player = PlayerManager.Instance.Find(RoomId, packet.PlayerId);
@@ -190,9 +190,8 @@ namespace Server.Game
             RepeatedField<BattleInfo> battleTurnResult = new RepeatedField<BattleInfo>();
             RepeatedField<BattleInfo> battleFightResult = new RepeatedField<BattleInfo>();
 
-            bool isSturnOrConfusionAttackOneself = DefaultTurn(packet.Clone(), ref battleTurnResult);
-
-            if (isSturnOrConfusionAttackOneself == false)
+            bool isSturn = DefaultTurn(packet, ref battleTurnResult);
+            if (isSturn == false)
             {
                 SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillId];
                 foreach (SkillEffect skillEffect in skillData.info.SkillEffect)
@@ -202,16 +201,38 @@ namespace Server.Game
                 }
             }
 
-            for (int index = 0; index < (int)TargetType.End; ++index)
+            battlePacket.PlayerId = packet.PlayerId;
+            battlePacket.SkillId = packet.TurnInfo.SkillId;
+            battlePacket.TurnInfo.AddRange(battleTurnResult);
+            battlePacket.Info.AddRange(battleFightResult);
+
+            Broadcast(battlePacket);
+
+            Dictionary<int, bool> playerDualResultArray = new Dictionary<int, bool>();
+            foreach (Player playerIter in _players.Values)
+                playerDualResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
+
+            bool isDualEnd = false;
+            foreach (bool isRemainPokemonExist in playerDualResultArray.Values)
             {
-                BattlePacket[index].PlayerId = packet.PlayerId;
-                BattlePacket[index].SkillId = packet.TurnInfo.SkillId;
-                BattlePacket[index].TurnInfo.AddRange(battleTurnResult);
-                BattlePacket[index].Info.AddRange(battleFightResult);
+                if (isRemainPokemonExist == false)
+                    isDualEnd = true;
             }
 
-            _players[packet.PlayerId].Session.Send(BattlePacket[(int)TargetType.Oneself]);
-            _players[enemyId].Session.Send(BattlePacket[(int)TargetType.Enemy]);
+            if (isDualEnd == false)
+                return;
+            
+            S_DualEnd dualEndPacket = new S_DualEnd();
+            foreach (var playerDualResult in playerDualResultArray)
+            {
+                DualResultInfo dualResultInfo = new DualResultInfo();
+                dualResultInfo.PlayerId = playerDualResult.Key;
+                dualResultInfo.IsWin = playerDualResult.Value;
+
+                dualEndPacket.DualResultInfo.Add(dualResultInfo);
+            }
+
+            Broadcast(dualEndPacket);            
         }
 
         void PokeBall(C_Turn packet)
@@ -247,64 +268,42 @@ namespace Server.Game
             if (readyPlayerCount != _playerReady.Count)
                 return;
 
-            CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
-
-            Dictionary<int, bool> playerDualResultArray = new Dictionary<int, bool>();
-            foreach (Player player in _players.Values)
-                playerDualResultArray.Add(player.Id, player.IsRemainPokemonExist());
-
-            bool isDualEnd = playerDualResultArray.Values.Contains(false);
-            if (isDualEnd)
+            CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId, false);
+                        
+            List<int> playerKeyArray = _players.Keys.ToList();
+            for (int index = 0; index < playerKeyArray.Count; ++index)
             {
-                S_DualEnd dualEndPacket = new S_DualEnd();
-                foreach (var playerDualResult in playerDualResultArray)
-                {
-                    DualResultInfo dualResultInfo = new DualResultInfo();
-                    dualResultInfo.PlayerId = playerDualResult.Key;
-                    dualResultInfo.IsWin = playerDualResult.Value;
+                int myId = playerKeyArray[index];
+                int enemyid = playerKeyArray[index + 1 == playerKeyArray.Count ? 0 : index + 1];
 
-                    dualEndPacket.DualResultInfo.Add(dualResultInfo);
-                }
+                S_Turn turnPacket = new S_Turn();
+                turnPacket.MyTurn = myId == CurrentTurnPlayerId;
 
-                Broadcast(dualEndPacket);
+                _playerReady[myId] = false;
+                _players[myId].Session.Send(turnPacket);
             }
-            else
-            {
-                List<int> playerKeyArray = _players.Keys.ToList();
-                for (int index = 0; index < playerKeyArray.Count; ++index)
-                {
-                    int myId = playerKeyArray[index];
-                    int enemyid = playerKeyArray[index + 1 == playerKeyArray.Count ? 0 : index + 1];
-
-                    S_Turn turnPacket = new S_Turn();
-                    turnPacket.MyTurn = myId == CurrentTurnPlayerId;
-
-                    _playerReady[myId] = false;
-                    _players[myId].Session.Send(turnPacket);
-                }
-            }
-
+            
             isWaitingPlayerTurnEnd = false;
         }
 
-        public void ChangeFalldownPokemon(C_ChangeFalldownPokemon packet)
+        public void ChangePokemon(C_ChangeFalldownPokemon packet)
         {
             S_ChangePokemon changePokemonPacket = new S_ChangePokemon();
             changePokemonPacket.PlayerId = packet.PlayerId;
             changePokemonPacket.ChangePokemonId = packet.ChangePokemonId;
-
+            
             List<PokemonData> pokemonDataList = _players[packet.PlayerId].Pokemon;
             for (int index = 0; index < pokemonDataList.Count; ++index)
             {
                 if (pokemonDataList[index].Id != packet.ChangePokemonId)
                     continue;
-                
+            
                 (pokemonDataList[0], pokemonDataList[index]) = (pokemonDataList[index], pokemonDataList[0]);
                 Broadcast(changePokemonPacket);
                 return;
             }
-
-            Debug.Assert(false, "Cannot Found ChangePokemon");
+            
+            Debug.Assert(false, "Cannot Found ChangePokemon");                      
         }
     }
 }
