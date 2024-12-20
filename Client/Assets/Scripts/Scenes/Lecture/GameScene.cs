@@ -11,11 +11,7 @@ public class GameScene : BaseScene
         base.Init();
 
         SceneType = Define.Scene.Game;
-
     }
 
-    public override void Clear()
-    {
-        
-    }
+    public override void Clear() {}
 }

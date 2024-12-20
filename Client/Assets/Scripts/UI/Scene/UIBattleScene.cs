@@ -130,7 +130,7 @@ public class UIBattleScene : UICommonScene
         battlePokemonChangePopup.BattleScene = this;
     }
 
-    public void DualEnd(bool isWin)
+    public void DuelEnd(bool isWin)
     {
         string text = isWin ? $"{Managers.Player.Enemy.Name}(¿Í)°úÀÇ ´ë°á¿¡¼­ ½Â¸®Çß´Ù!" : $"{Managers.Player.MyPlayer.Name}(Àº)´Â ´« ¾ÕÀÌ Ä¯Ä¯ÇØÁ³´Ù.";
         Managers.Job.Push(() => SetAnnounce(text, true));

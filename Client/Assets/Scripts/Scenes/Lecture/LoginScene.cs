@@ -19,8 +19,5 @@ public class LoginScene : BaseScene
         _sceneUI = Managers.UI.ShowSceneUI<UI_LoginScene>();
     }
 
-    public override void Clear()
-    {
-        
-    }
+    public override void Clear() {}
 }

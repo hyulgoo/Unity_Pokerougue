@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Server.Game
@@ -32,10 +33,10 @@ namespace Server.Game
                     PokeBall(packet);
                     break;
                 case ActionType.Change:
-                    Change(packet);
+                    ChangePokemon(packet.PlayerId, packet.TurnInfo.ChangePokemonId);
                     break;
                 case ActionType.Runaway:
-                    Runaway(packet);
+                    Runaway(packet.PlayerId);
                     break;
             }
         }
@@ -201,38 +202,33 @@ namespace Server.Game
                 }
             }
 
+            // 모든 포켓몬이 쓰러졌는 지(전투가 끝나는 지) 확인
+            Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
+            foreach (Player playerIter in _players.Values)
+                playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
+
+            if (playerDuelResultArray.Values.Contains(false))
+            {
+                BattleInfo battleInfo = new BattleInfo();
+                battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
+                foreach (var playerInfo in playerDuelResultArray)
+                {
+                    if (playerInfo.Value == false)
+                        continue;
+
+                    battleInfo.WinPlayerId = playerInfo.Key;
+                    break;
+                }
+
+                battleFightResult.Add(battleInfo);
+            }
+
             battlePacket.PlayerId = packet.PlayerId;
             battlePacket.SkillId = packet.TurnInfo.SkillId;
             battlePacket.TurnInfo.AddRange(battleTurnResult);
             battlePacket.Info.AddRange(battleFightResult);
 
             Broadcast(battlePacket);
-
-            Dictionary<int, bool> playerDualResultArray = new Dictionary<int, bool>();
-            foreach (Player playerIter in _players.Values)
-                playerDualResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
-
-            bool isDualEnd = false;
-            foreach (bool isRemainPokemonExist in playerDualResultArray.Values)
-            {
-                if (isRemainPokemonExist == false)
-                    isDualEnd = true;
-            }
-
-            if (isDualEnd == false)
-                return;
-            
-            S_DualEnd dualEndPacket = new S_DualEnd();
-            foreach (var playerDualResult in playerDualResultArray)
-            {
-                DualResultInfo dualResultInfo = new DualResultInfo();
-                dualResultInfo.PlayerId = playerDualResult.Key;
-                dualResultInfo.IsWin = playerDualResult.Value;
-
-                dualEndPacket.DualResultInfo.Add(dualResultInfo);
-            }
-
-            Broadcast(dualEndPacket);            
         }
 
         void PokeBall(C_Turn packet)
@@ -242,16 +238,15 @@ namespace Server.Game
             Broadcast(pokeballPacket);
         }
 
-        void Change(C_Turn packet)
+        public void Runaway(int PlayerId)
         {
-            S_TurnChange pokeballPacket = new S_TurnChange();            
-            Broadcast(pokeballPacket);
-        }
-
-        void Runaway(C_Turn packet)
-        {
-            S_TurnRunaway runawayPacket = new S_TurnRunaway();
-            Broadcast(runawayPacket);
+            foreach (var playerInfo in _players)
+            {
+                S_DuelEnd duelEndPacket = new S_DuelEnd();
+                duelEndPacket.IsWin = playerInfo.Key == PlayerId ? false : true;
+                playerInfo.Value.Session.Send(duelEndPacket);
+                playerInfo.Value.Session.HandleReEnterHandler(RoomId);
+            }
         }
 
         public void TurnEnd(int playerId)
@@ -286,24 +281,24 @@ namespace Server.Game
             isWaitingPlayerTurnEnd = false;
         }
 
-        public void ChangePokemon(C_ChangeFalldownPokemon packet)
+        public void ChangePokemon(int playerId, int changePokemonId)
         {
             S_ChangePokemon changePokemonPacket = new S_ChangePokemon();
-            changePokemonPacket.PlayerId = packet.PlayerId;
-            changePokemonPacket.ChangePokemonId = packet.ChangePokemonId;
-            
-            List<PokemonData> pokemonDataList = _players[packet.PlayerId].Pokemon;
+            changePokemonPacket.PlayerId = playerId;
+            changePokemonPacket.ChangePokemonId = changePokemonId;
+
+            List<PokemonData> pokemonDataList = _players[playerId].Pokemon;
             for (int index = 0; index < pokemonDataList.Count; ++index)
             {
-                if (pokemonDataList[index].Id != packet.ChangePokemonId)
+                if (pokemonDataList[index].Id != changePokemonId)
                     continue;
-            
+
                 (pokemonDataList[0], pokemonDataList[index]) = (pokemonDataList[index], pokemonDataList[0]);
                 Broadcast(changePokemonPacket);
                 return;
             }
-            
-            Debug.Assert(false, "Cannot Found ChangePokemon");                      
+
+            Debug.Assert(false, "Cannot Found ChangePokemon");
         }
     }
 }

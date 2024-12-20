@@ -39,9 +39,8 @@ partial class PacketHandler
 	{
 		S_Despawn despawnPacket = packet as S_Despawn;
 		foreach (int id in despawnPacket.ObjectIds)
-		{
 			Managers.Player.Remove(id);
-        }
+
         Managers.UI.SetLobbyPlayer();
 	}
 
@@ -68,10 +67,10 @@ partial class PacketHandler
 		}
 		else
 		{
-			for(int i = 0; i <  loginPacket.Players.Count; i++)
+			for(int index = 0; index <  loginPacket.Players.Count; index++)
             {
-                LobbyPlayerInfo info = loginPacket.Players[i];
-                if (i == 0)
+                LobbyPlayerInfo info = loginPacket.Players[index];
+                if (index == 0)
 				{
                     C_EnterGame enterGamePacket = new C_EnterGame();
                     enterGamePacket.Name = info.Name;
@@ -87,6 +86,7 @@ partial class PacketHandler
 				}
 			}
         }
+
         Managers.UI.SetLobbyPlayer();
     }
 
@@ -142,8 +142,6 @@ partial class PacketHandler
 	public static void S_ChangeStatHandler(PacketSession session, IMessage packet)
 	{
 		S_ChangeStat itemList = (S_ChangeStat)packet;
-
-		// TODO
 	}
 
 	public static void S_PingHandler(PacketSession session, IMessage packet)

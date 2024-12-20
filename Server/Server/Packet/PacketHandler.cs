@@ -162,9 +162,9 @@ class PacketHandler
         room.Push(room.TurnEnd, turnPacket.PlayerId);
     }
 
-    public static void C_ChangeFalldownPokemonHandler(PacketSession session, IMessage packet)
+    public static void C_ChangePokemonHandler(PacketSession session, IMessage packet)
     {
-        C_ChangeFalldownPokemon changeFalldownPokemonPacket = (C_ChangeFalldownPokemon)packet;
+        C_ChangePokemon changePokemonPacket = (C_ChangePokemon)packet;
         ClientSession clientSession = (ClientSession)session;
 
         Player player = clientSession.MyPlayer;
@@ -179,6 +179,46 @@ class PacketHandler
             Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
         }
 
-        room.Push(room.ChangePokemon, changeFalldownPokemonPacket);
+        room.Push(room.ChangePokemon, changePokemonPacket.PlayerId, changePokemonPacket.ChangePokemonId);
+    }
+
+    public static void C_RunAwayHandler(PacketSession session, IMessage packet)
+    {
+        C_RunAway runawayHandler = (C_RunAway)packet;
+        ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
+        }
+
+        GameRoom room = player.Room;
+        if (room == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
+        }
+
+        room.Push(room.Runaway, runawayHandler.PlayerId);
+    }
+
+    public static void C_DuelEndHandler(PacketSession session, IMessage packet)
+    {
+        C_DuelEnd duelEndHandler = (C_DuelEnd)packet;
+        ClientSession clientSession = (ClientSession)session;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
+        }
+
+        GameRoom room = player.Room;
+        if (room == null)
+        {
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
+        }
+
+        //room.Du
     }
 }

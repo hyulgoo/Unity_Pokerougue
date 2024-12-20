@@ -41,6 +41,7 @@ public class PlayerManager
 
 			MyPlayer = go.GetComponent<MyPlayerController>();
 			MyPlayer.Id = info.ObjectId;
+			MyPlayer.Name = info.Name;
 		}
 		else
 		{
@@ -50,8 +51,9 @@ public class PlayerManager
 
 			CommonPlayerController playerController = player.GetComponent<CommonPlayerController>();
 			playerController.Id = info.ObjectId;
+            playerController.Name = info.Name;
 
-			if(Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby)
+            if (Managers.Scene.CurrentScene.SceneType != Define.Scene.Lobby)
 				Enemy = playerController;
 		}		
 	}

@@ -176,5 +176,22 @@ namespace Server
 				}
 			}
 		}
-	}
+
+        public void HandleReEnterHandler(int roomId)
+        {
+            Player player = MyPlayer;
+            GameRoom room = player.Room;
+
+            ServerState = PlayerServerState.ServerStateGame;
+            room.Push(room.LeaveGame, player.Info.ObjectId);
+
+            MyPlayer = player;
+            room = GameLogic.Instance.Find(roomId);
+            ClientSession session = player.Session;
+
+            LobbyPlayerInfo info = session.LobbyPlayers.Find(p => p.Name == player.Info.Name);
+
+            room.Push(room.SetPlayerBySession, session, info);
+        }
+    }
 }

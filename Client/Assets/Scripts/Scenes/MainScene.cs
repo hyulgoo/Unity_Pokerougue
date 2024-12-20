@@ -18,8 +18,5 @@ public class MainScene : BaseScene
         Managers.UI.ShowSceneUI<UIMainScene>();
     }
 
-    public override void Clear()
-    {
-        
-    }
+    public override void Clear() {}
 }

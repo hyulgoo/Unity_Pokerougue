@@ -25,7 +25,6 @@ namespace Server.Game
 		{
 		}
 
-		// 누군가 주기적으로 호출해줘야 한다
 		public void Update()
 		{
 			Flush();
@@ -81,12 +80,21 @@ namespace Server.Game
 			S_Despawn despawnPacket = new S_Despawn();
 			despawnPacket.ObjectIds.Add(objectId);
 			Broadcast(despawnPacket);
-			
+
 
 			// 플레이어가 없으면서 룸이 로비로 사용하지 않는 경우 room을 삭제
-			if(_players.Count == 0 && RoomId != 1)
+			if (_players.Count == 0 && RoomId != 1)
+			{ 
 				GameLogic.Instance.Push(() => GameLogic.Instance.Remove(RoomId));
-		}
+			}
+			else if (_players.Count == 0 && RoomId == 1)
+			{
+				_players.Clear();
+				_playerReady.Clear();
+				isWaitingPlayerTurnEnd = false;
+				CurrentTurnPlayerId = 0;
+            }
+        }
 
 		public void RequestDuel(int playerId, int enemytId)
 		{
@@ -139,40 +147,40 @@ namespace Server.Game
 			foreach (bool ready in _playerReady.Values)
 				cnt = ready ? cnt + 1 : cnt;
 
-			if(cnt == _playerReady.Count)
-			{
-                foreach (var value in _playerReady.ToList())
-                    _playerReady[value.Key] = false;
+			if (cnt != _players.Count)
+				return;
 
-                int[] list = _players.Keys.ToArray();
+            foreach (var value in _playerReady.ToList())
+                _playerReady[value.Key] = false;
 
-                S_StartBattle packet = new S_StartBattle();
-                Random random = new Random();
-                packet.ArenaType = random.Next(0, (int)Arenas.End);
-				CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
-                for (int i = 0; i < (int)TargetType.End; ++i)
-                {
-                    int myid = list[i];
-					int enemyid = list[(int)TargetType.Enemy - i];
+            int[] list = _players.Keys.ToArray();
 
-                    packet.FromPokemon.Clear();
-                    packet.ToPokemon.Clear();
+            S_StartBattle packet = new S_StartBattle();
+            Random random = new Random();
+            packet.ArenaType = random.Next(0, (int)Arenas.End);
+			CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
+            for (int i = 0; i < (int)TargetType.End; ++i)
+            {
+                int myid = list[i];
+				int enemyid = list[(int)TargetType.Enemy - i];
 
-                    packet.MyInfo = _players[myid].Info;
-                    packet.EnemyInfo = _players[enemyid].Info;
+                packet.FromPokemon.Clear();
+                packet.ToPokemon.Clear();
 
-                    for (int j = 0; j < 3; ++j)
-					{
-						packet.FromPokemon.Add(_players[myid].Pokemon[j].Id);
-                        packet.ToPokemon.Add(_players[enemyid].Pokemon[j].Id);
-						_players[myid].Pokemon[j].Info.State = new ConditionAbnormality();
-                        _players[enemyid].Pokemon[j].Info.State = new ConditionAbnormality();
-                    }
-                    
-                    packet.IsMyTurn = myid == CurrentTurnPlayerId;
-                    _players[myid].Session.Send(packet);
+                packet.MyInfo = _players[myid].Info;
+                packet.EnemyInfo = _players[enemyid].Info;
+
+                for (int j = 0; j < 3; ++j)
+				{
+					packet.FromPokemon.Add(_players[myid].Pokemon[j].Id);
+                    packet.ToPokemon.Add(_players[enemyid].Pokemon[j].Id);
+					_players[myid].Pokemon[j].Info.State = new ConditionAbnormality();
+                    _players[enemyid].Pokemon[j].Info.State = new ConditionAbnormality();
                 }
-            }
+                
+                packet.IsMyTurn = myid == CurrentTurnPlayerId;
+                _players[myid].Session.Send(packet);
+            }            
 		}
 
 		public void SetPlayerBySession(ClientSession session, LobbyPlayerInfo info)
@@ -210,8 +218,8 @@ namespace Server.Game
 				
 		public void Broadcast(IMessage packet)
 		{
-			foreach (Player p in _players.Values)
-				p.Session.Send(packet);
+			foreach (Player player in _players.Values)
+				player.Session.Send(packet);
 		}
 	}
 }

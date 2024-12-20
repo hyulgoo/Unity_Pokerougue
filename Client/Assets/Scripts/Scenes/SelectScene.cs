@@ -4,12 +4,8 @@ using UnityEngine;
 
 public class SelectScene : BaseScene
 {
+    void Start() {}
 
-    void Start()
-    {
-
-
-    }
     protected override void Init()
     {
         base.Init();
@@ -19,11 +15,7 @@ public class SelectScene : BaseScene
         Managers.UI.ShowSceneUI<UISelectPokemonScene>();
     }
 
-    void Update()
-    {
+    void Update() {}
 
-    }
-    public override void Clear()
-    {
-    }
+    public override void Clear() {}
 }

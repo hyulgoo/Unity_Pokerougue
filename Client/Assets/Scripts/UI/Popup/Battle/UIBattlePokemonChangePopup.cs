@@ -13,6 +13,8 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         Btn_PokemonList03,
         Btn_PokemonList04,
         Btn_PokemonList05,
+
+        Btn_Cancle,
     }
 
     enum Images
@@ -79,10 +81,12 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         BindImage(typeof(Images));
         BindText(typeof(Texts));
         Bind<Slider>(typeof(Sliders));
-        SetPokemonBtnList();
+        SetPokemonButtonList();
+
+        GetButton((int)Buttons.Btn_Cancle).onClick.AddListener(OnClickCancleButton);
     }
 
-    private void SetPokemonBtnList()
+    private void SetPokemonButtonList()
     {
         PokemonData[] pokemonDataList = Managers.Player.MyPlayer.GetAllPokemonData();
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
@@ -171,7 +175,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         }
 
         {
-            C_ChangeFalldownPokemon packet = new C_ChangeFalldownPokemon();
+            C_ChangePokemon packet = new C_ChangePokemon();
             packet.PlayerId = Managers.Player.MyPlayer.Id;
             packet.ChangePokemonId = SelectedChangePokemonId;
 
@@ -182,7 +186,6 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         Managers.Job.Push(() => { BattleScene.SetAnnounce($"가라! {selectedChangePokemonName}!", true); });
 
         ClosePopupUI();
-
     }
 
     public void OnClickChangePokemonButton()
@@ -202,5 +205,19 @@ public class UIBattlePokemonChangePopup : UICommonPopup
 
         UIBattleChangePokemonSelectedPopup changePokemonSelectedPopup = Managers.UI.ShowPopupUI<UIBattleChangePokemonSelectedPopup>();
         changePokemonSelectedPopup.ChangePokemonSelectedPopup = this;
+    }
+
+    void OnClickCancleButton()
+    {
+        if (Managers.Player.MyPlayer.GetCurPokemonInfo().Hp <= 0)
+        {
+            UICommonAnnouncePopup anoouncePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            anoouncePopup.SetAnnounceText("포켓몬을 반드시 교체해야 합니다!");
+            return;
+        }
+
+        ClosePopupUI();
+
+        Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
     }
 }

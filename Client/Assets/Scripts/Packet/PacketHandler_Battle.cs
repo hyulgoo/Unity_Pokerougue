@@ -128,6 +128,12 @@ partial class PacketHandler
 
         foreach (BattleInfo battleInfo in battleInfoList)
         {
+            if ((battleInfo.StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd)
+            {
+                battleScene.DuelEnd(battleInfo.WinPlayerId == Managers.Player.MyPlayer.Id);
+                return;
+            }
+
             TargetType targetType = TargetType.End;
             string fromName = battleInfo.FromData.Name;
             string toName = battleInfo.ToData.Name;
@@ -275,11 +281,6 @@ partial class PacketHandler
         S_TurnChange change = (S_TurnChange)packet;
     }
 
-    public static void S_TurnRunawayHandler(PacketSession session, IMessage packet)
-    {
-        S_TurnRunaway runaway = (S_TurnRunaway)packet;
-    }
-
     public static void S_TurnPassHandler(PacketSession session, IMessage packet)
     {
         S_TurnPass turn = (S_TurnPass)packet;
@@ -288,7 +289,6 @@ partial class PacketHandler
     public static void S_TurnHandler(PacketSession session, IMessage packet)
     {
         S_Turn turn = (S_Turn)packet;
-
         Managers.Player.MyTurn = turn.MyTurn;
 
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
@@ -298,7 +298,7 @@ partial class PacketHandler
     public static void S_ChangePokemonHandler(PacketSession session, IMessage packet)
     {
         S_ChangePokemon changePokemonPacket = (S_ChangePokemon)packet;
-
+         
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
         if (battleScene == null)
         {
@@ -315,21 +315,23 @@ partial class PacketHandler
         Managers.Job.Excute();
     }
 
-    public static void S_DualEndHandler(PacketSession session, IMessage packet)
+    public static void S_DuelEndHandler(PacketSession session, IMessage packet)
     {
-        S_DualEnd dualEndPacket = new S_DualEnd();
-        foreach (DualResultInfo dualResultInfo in dualEndPacket.DualResultInfo)
+        S_DuelEnd dualEndPacket = (S_DuelEnd)packet;
+
+        UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+        if (battleScene == null)
         {
-            if (dualResultInfo.PlayerId != Managers.Player.MyPlayer.Id)
-                continue;
-
-            UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
-            if (battleScene == null)
-            {
-                Debug.Assert(false, "Cannot Found BattleScene!!");
-            }
-
-            battleScene.DualEnd(dualResultInfo.IsWin);
+            Debug.Assert(false, "Cannot Found BattleScene!!");
         }
+
+        battleScene.DuelEnd(dualEndPacket.IsWin);
+        Managers.Job.Push(() =>
+        { 
+            Managers.Scene.LoadScene(Define.Scene.Lobby);
+            C_EnterGame enterPacket = new C_EnterGame();
+            enterPacket.Name = Managers.Player.MyPlayer.Name;
+            Managers.Network.Send(enterPacket);
+        });
     }
 }

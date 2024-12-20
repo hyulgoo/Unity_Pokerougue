@@ -32,13 +32,14 @@ enum MsgId {
   S_TURN_BATTLE = 25;
   S_TURN_POKEBALL = 26;
   S_TURN_CHANGE = 27;
-  S_TURN_RUNAWAY = 28;
-  S_TURN_PASS = 29;
-  C_TURN_End = 30;
-  S_TURN = 31;
-  C_CHANGE_FALLDOWN_POKEMON = 32;
-  S_CHANGE_POKEMON = 33;
-  S_DUAL_END = 34;
+  S_TURN_PASS = 28;
+  C_TURN_End = 29;
+  S_TURN = 30;
+  C_CHANGE_POKEMON = 31;
+  S_CHANGE_POKEMON = 32;
+  S_DUEL_END = 33;
+  C_RUN_AWAY = 34;
+  C_DUEL_END = 35;
 }
 
 enum GameObjectType {
@@ -174,6 +175,8 @@ enum BattleStateFlag {
   DEBUFF_DOT = 256;
   RECOVERY_STURN = 512;
   RECOVERY_CONFUSION = 1024;
+  DUEL_END = 2048;
+  DUEL_WIN = 4096;
 }
 
 enum PokeballType {
@@ -309,9 +312,6 @@ message S_TurnChange {
   int32 changePokemon = 3;
 }
 
-message S_TurnRunaway {
-}
-
 message S_TurnPass {
   int32 playerId = 1;
   repeated BattleInfo turnInfo = 2;
@@ -321,7 +321,7 @@ message C_TurnEnd {
   int32 playerId = 1;
 }
 
-message C_ChangeFalldownPokemon {
+message C_ChangePokemon {
   int32 playerId = 1;
   int32 changePokemonId = 2;
 }
@@ -336,13 +336,16 @@ message S_ChangePokemon {
   int32 changePokemonId = 2;
 }
 
-message S_DualEnd {
-  repeated DualResultInfo dualResultInfo = 1;
+message S_DuelEnd {
+  bool isWin = 1;
 }
 
-message DualResultInfo {
+message C_RunAway {
   int32 playerId = 1;
-  bool isWin = 2;
+}
+
+message C_DuelEnd {
+  int32 playerId = 1;
 }
 
 message LobbyPlayerInfo {
@@ -372,6 +375,7 @@ message BattleInfo {
   BattleStateFlag stateFlag = 8;
   int32 skillValue = 9;
   int32 latingSkillId = 10;
+  int32 winPlayerId = 11;
 }
 
 message PokemonData

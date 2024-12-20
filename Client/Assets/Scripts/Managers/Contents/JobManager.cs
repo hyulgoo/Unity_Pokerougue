@@ -9,7 +9,10 @@ public class JobManager : JobSerializer
     public void Update()
     {
         Flush();
-    }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            Excute();
+    }    
 
     public void Excute()
     {

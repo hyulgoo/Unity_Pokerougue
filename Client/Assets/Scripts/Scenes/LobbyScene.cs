@@ -13,8 +13,5 @@ public class LobbyScene : BaseScene
         Managers.UI.ShowSceneUI<UILobbyScene>();
     }
 
-    public override void Clear()
-    {
-
-    }
+    public override void Clear() {}
 }
