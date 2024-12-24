@@ -36,7 +36,7 @@ namespace Server.Game
                     ChangePokemon(packet.PlayerId, packet.TurnInfo.ChangePokemonId);
                     break;
                 case ActionType.Runaway:
-                    Runaway(packet.PlayerId);
+                    DuelEnd(packet.PlayerId, true);
                     break;
             }
         }
@@ -51,17 +51,34 @@ namespace Server.Game
             PokemonData standardInfo = DataManager.PokemonDict[player.Pokemon[0].Id];
             bool isSturnOrConfusionAttackOneself = false;
 
-
             if (myPokemonData.Info.State.Fire > 0)
             {
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 20;
+                myPokemonData.Info.Hp = myPokemonData.Info.Hp < 0 ? 0 : myPokemonData.Info.Hp;
                 myPokemonData.Info.State.Fire--;
                 result.FromData= myPokemonData.Clone();
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffFire;
+
+                Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
+                foreach (Player playerIter in _players.Values)
+                    playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
+
+                if (playerDuelResultArray.Values.Contains(false))
+                {
+                    result.StateFlag |= BattleStateFlag.DuelEnd;
+                    foreach (var playerInfo in playerDuelResultArray)
+                    {
+                        if (playerInfo.Value == false)
+                            continue;
+
+                        result.WinPlayerId = playerInfo.Key;
+                        break;
+                    }
+                }
 
                 battleInfoList.Add(result);
             }
@@ -73,10 +90,28 @@ namespace Server.Game
                 result.TargetType = TargetType.Oneself;
                 result.LatingSkillId = packet.TurnInfo.SkillId;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 7;
+                myPokemonData.Info.Hp = myPokemonData.Info.Hp < 0 ? 0 : myPokemonData.Info.Hp;
                 myPokemonData.Info.State.Dot--;
                 result.FromData = enemyPokemonData.Clone();
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffDot;
+
+                Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
+                foreach (Player playerIter in _players.Values)
+                    playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
+
+                if (playerDuelResultArray.Values.Contains(false))
+                {
+                    result.StateFlag |= BattleStateFlag.DuelEnd;
+                    foreach (var playerInfo in playerDuelResultArray)
+                    {
+                        if (playerInfo.Value == false)
+                            continue;
+
+                        result.WinPlayerId = playerInfo.Key;
+                        break;
+                    }
+                }
 
                 battleInfoList.Add(result);
             }
@@ -87,10 +122,30 @@ namespace Server.Game
                 result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 20;
+                myPokemonData.Info.Hp = myPokemonData.Info.Hp < 0 ? 0 : myPokemonData.Info.Hp;
                 myPokemonData.Info.State.Poison--;
                 result.FromData = myPokemonData.Clone();
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffPoison;
+
+                Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
+                foreach (Player playerIter in _players.Values)
+                    playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
+
+                if (playerDuelResultArray.Values.Contains(false))
+                {
+                    isWaitingPlayerTurnEnd = false;
+
+                    result.StateFlag |= BattleStateFlag.DuelEnd;
+                    foreach (var playerInfo in playerDuelResultArray)
+                    {
+                        if (playerInfo.Value == false)
+                            continue;
+
+                        result.WinPlayerId = playerInfo.Key;
+                        break;
+                    }
+                }
 
                 battleInfoList.Add(result);
             }
@@ -163,6 +218,28 @@ namespace Server.Game
             }
 
             return isSturnOrConfusionAttackOneself;
+        }
+
+        void DefaultTurnIsRemainPokemonExist(BattleInfo battleInfo)
+        {
+            Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
+            foreach (Player playerIter in _players.Values)
+                playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
+
+            if (playerDuelResultArray.Values.Contains(false))
+            {
+                isWaitingPlayerTurnEnd = false;
+
+                battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
+                foreach (var playerInfo in playerDuelResultArray)
+                {
+                    if (playerInfo.Value == false)
+                        continue;
+
+                    battleInfo.WinPlayerId = playerInfo.Key;
+                    break;
+                }
+            }            
         }
 
         void Pass(C_Turn packet)
@@ -238,14 +315,15 @@ namespace Server.Game
             Broadcast(pokeballPacket);
         }
 
-        public void Runaway(int PlayerId)
+        public void DuelEnd(int PlayerId, bool isRunaway)
         {
             foreach (var playerInfo in _players)
             {
                 S_DuelEnd duelEndPacket = new S_DuelEnd();
                 duelEndPacket.IsWin = playerInfo.Key == PlayerId ? false : true;
+                duelEndPacket.IsRunaway = isRunaway;
                 playerInfo.Value.Session.Send(duelEndPacket);
-                playerInfo.Value.Session.HandleReEnterHandler(RoomId);
+                playerInfo.Value.Session.HandleReEnterHandler(playerInfo.Value.Room.RoomId);
             }
         }
 

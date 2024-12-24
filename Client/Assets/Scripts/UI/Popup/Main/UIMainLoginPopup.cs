@@ -78,7 +78,6 @@ public class UIMainLoginPopup : UICommonPopup
                 Managers.Network.Name = account;
 
                 Managers.Network.ConnectToGame(res.ServerList[0]);
-                Managers.Scene.LoadScene(Define.Scene.Lobby);
             }
         });
     }

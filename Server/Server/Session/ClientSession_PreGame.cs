@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Server
 {
-    public partial class ClientSession : PacketSession
+	public partial class ClientSession : PacketSession
 	{
 		public int AccountDbId { get; private set; }
 		public List<LobbyPlayerInfo> LobbyPlayers { get; set; } = new List<LobbyPlayerInfo>();
@@ -75,7 +75,7 @@ namespace Server
 				}
 			}
 		}
-		
+
 		public void HandleEnterGame(C_EnterGame enterGamePacket)
 		{
 			if (ServerState != PlayerServerState.ServerStateLobby)
@@ -177,21 +177,15 @@ namespace Server
 			}
 		}
 
-        public void HandleReEnterHandler(int roomId)
-        {
-            Player player = MyPlayer;
-            GameRoom room = player.Room;
+		public void HandleReEnterHandler(int roomId)
+		{
+            S_Login loginOk = new S_Login() { LoginOk = 1 };
+            foreach (LobbyPlayerInfo lobbyPlayer in LobbyPlayers)
+                loginOk.Players.Add(lobbyPlayer);
 
-            ServerState = PlayerServerState.ServerStateGame;
-            room.Push(room.LeaveGame, player.Info.ObjectId);
+            Send(loginOk);
 
-            MyPlayer = player;
-            room = GameLogic.Instance.Find(roomId);
-            ClientSession session = player.Session;
-
-            LobbyPlayerInfo info = session.LobbyPlayers.Find(p => p.Name == player.Info.Name);
-
-            room.Push(room.SetPlayerBySession, session, info);
+            ServerState = PlayerServerState.ServerStateLobby;
         }
-    }
+	}
 }

@@ -28,9 +28,7 @@ partial class PacketHandler
 	{
 		S_Spawn spawnPacket = packet as S_Spawn;
 		foreach (ObjectInfo obj in spawnPacket.Objects)
-		{
 			Managers.Player.Add(obj, myPlayer: false);
-        }
 
         Managers.UI.SetLobbyPlayer();
     }
@@ -56,38 +54,44 @@ partial class PacketHandler
 	// 로그인 OK + 캐릭터 목록
 	public static void S_LoginHandler(PacketSession session, IMessage packet)
 	{
-		S_Login loginPacket = (S_Login)packet;
+		Managers.Job.Push(() => 
+		{
+			Managers.Scene.LoadScene(Define.Scene.Lobby);
+            S_Login loginPacket = (S_Login)packet;
 
-		// TODO : 로비 UI에서 캐릭터 보여주고, 선택할 수 있도록
-		if (loginPacket.Players == null || loginPacket.Players.Count == 0)
-		{
-			C_CreatePlayer createPacket = new C_CreatePlayer();
-			createPacket.Name = Managers.Network.Name;
-			Managers.Network.Send(createPacket);
-		}
-		else
-		{
-			for(int index = 0; index <  loginPacket.Players.Count; index++)
+            // TODO : 로비 UI에서 캐릭터 보여주고, 선택할 수 있도록
+            if (loginPacket.Players == null || loginPacket.Players.Count == 0)
             {
-                LobbyPlayerInfo info = loginPacket.Players[index];
-                if (index == 0)
-				{
-                    C_EnterGame enterGamePacket = new C_EnterGame();
-                    enterGamePacket.Name = info.Name;
-                    Managers.Network.Send(enterGamePacket);
-                }
-				else
+                C_CreatePlayer createPacket = new C_CreatePlayer();
+                createPacket.Name = Managers.Network.Name;
+                Managers.Network.Send(createPacket);
+            }
+            else
+            {
+                for (int index = 0; index < loginPacket.Players.Count; index++)
                 {
-					ObjectInfo playerinfo = new ObjectInfo();
-					playerinfo.ObjectId = info.PlayerDbId;
-					playerinfo.Name = info.Name;
+                    LobbyPlayerInfo info = loginPacket.Players[index];
+                    if (index == 0)
+                    {
+                        C_EnterGame enterGamePacket = new C_EnterGame();
+                        enterGamePacket.Name = info.Name;
+                        Managers.Network.Send(enterGamePacket);
+                    }
+                    else
+                    {
+                        ObjectInfo playerinfo = new ObjectInfo();
+                        playerinfo.ObjectId = info.PlayerDbId;
+                        playerinfo.Name = info.Name;
 
-					Managers.Player.Add(playerinfo, myPlayer: false);
-				}
-			}
-        }
+                        Managers.Player.Add(playerinfo, myPlayer: false);
+                    }
+                }
+            }
 
-        Managers.UI.SetLobbyPlayer();
+            Managers.UI.SetLobbyPlayer();
+        });
+
+		Managers.Job.Excute();       
     }
 
 	public static void S_ItemListHandler(PacketSession session, IMessage packet)

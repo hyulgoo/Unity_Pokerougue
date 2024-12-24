@@ -38,8 +38,7 @@ enum MsgId {
   C_CHANGE_POKEMON = 31;
   S_CHANGE_POKEMON = 32;
   S_DUEL_END = 33;
-  C_RUN_AWAY = 34;
-  C_DUEL_END = 35;
+  C_DUEL_END = 34;
 }
 
 enum GameObjectType {
@@ -168,15 +167,16 @@ enum BattleStateFlag {
   CRITICAL = 2;
   EFFECTIVE = 4;
   INEFFECTIVE = 8;
-  DEBUFF_STURN = 16;
-  DEBUFF_CONFUSION = 32;
-  DEBUFF_FIRE = 64;
-  DEBUFF_POISON = 128;
-  DEBUFF_DOT = 256;
-  RECOVERY_STURN = 512;
-  RECOVERY_CONFUSION = 1024;
-  DUEL_END = 2048;
-  DUEL_WIN = 4096;
+  NONEEFFECTIVE = 16;
+  DEBUFF_STURN = 32;
+  DEBUFF_CONFUSION = 64;
+  DEBUFF_FIRE = 128;
+  DEBUFF_POISON = 256;
+  DEBUFF_DOT = 512;
+  RECOVERY_STURN = 1024;
+  RECOVERY_CONFUSION = 2048;
+  DUEL_END = 4096;
+  DUEL_WIN = 8192;
 }
 
 enum PokeballType {
@@ -324,6 +324,7 @@ message C_TurnEnd {
 message C_ChangePokemon {
   int32 playerId = 1;
   int32 changePokemonId = 2;
+  bool changeByFallDown = 3;
 }
 
 message S_Turn {
@@ -338,10 +339,7 @@ message S_ChangePokemon {
 
 message S_DuelEnd {
   bool isWin = 1;
-}
-
-message C_RunAway {
-  int32 playerId = 1;
+  bool isRunaway = 2;
 }
 
 message C_DuelEnd {

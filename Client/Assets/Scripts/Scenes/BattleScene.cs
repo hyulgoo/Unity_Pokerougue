@@ -9,8 +9,8 @@ public class BattleScene : BaseScene
         base.Init();
 
         SceneType = Define.Scene.Battle;
-        UIBattleScene scene = Managers.UI.ShowSceneUI<UIBattleScene>();
+        Managers.UI.ShowSceneUI<UIBattleScene>();
     }
 
-    public override void Clear() {    }
+    public override void Clear() {}
 }

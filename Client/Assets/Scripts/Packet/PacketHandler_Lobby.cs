@@ -53,8 +53,10 @@ partial class PacketHandler
     {
         S_RequestDuel requestDuel = (S_RequestDuel)packet;
         UILobbyDualRespondPopup popup = Managers.UI.ShowPopupUI<UILobbyDualRespondPopup>("UICommonRespondPopup");
-		if(popup == null)
+		if (popup == null)
+		{
 			Console.WriteLine("( UICommonRespondPopup )을 찾을 수 없습니다.");
+		}
 
 		popup.SetDuelRequestAnnounce(requestDuel.FromId);
     }
@@ -64,7 +66,6 @@ partial class PacketHandler
         S_RespondDuel respenDuel = (S_RespondDuel)packet;
 
 		bool battleStart = respenDuel.DuelOK == 1 ? true : false;
-
 		if(battleStart)
         {
             Managers.UI.ClosePopupUI();

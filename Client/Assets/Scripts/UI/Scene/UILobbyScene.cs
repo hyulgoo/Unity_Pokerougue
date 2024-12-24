@@ -20,28 +20,28 @@ public class UILobbyScene : UICommonScene
     // 유저 수만큼의 버튼만 활성화
     public void SetUserName(int[] id, string[] names)
     {
-        for(int i = 0; i < _buttons.Length; ++i)
+        for(int index = 0; index < _buttons.Length; ++index)
         {
-            string newtext = "";
-            TextMeshProUGUI text = _buttons[i].gameObject.GetComponentInChildren<TextMeshProUGUI>();
-            if (i < names.Length)
+            string newtext = string.Empty;
+            TextMeshProUGUI text = _buttons[index].gameObject.GetComponentInChildren<TextMeshProUGUI>();
+            if (index < names.Length)
             {                
-                newtext = names[i];
+                newtext = names[index];
                 text.alignment = TextAlignmentOptions.Left;
-                _buttons[i].interactable = true;
-                UILobbyPlayerButton pc = _buttons[i].gameObject.GetOrAddComponent<UILobbyPlayerButton>();
-                pc.SetPlayerId(id[i]);
-                _buttons[i].onClick.AddListener(OnClickPlayerButton);
+                _buttons[index].interactable = true;
+                UILobbyPlayerButton pc = _buttons[index].gameObject.GetOrAddComponent<UILobbyPlayerButton>();
+                pc.SetPlayerId(id[index]);
+                _buttons[index].onClick.AddListener(OnClickPlayerButton);
             }
             else
             {
                 newtext = "빈 슬롯";
                 text.alignment = TextAlignmentOptions.Center;
-                _buttons[i].interactable = false;
+                _buttons[index].interactable = false;
             }
 
             text.text = newtext;
-                _buttons[i].Select();
+                _buttons[index].Select();
         }
     }
 

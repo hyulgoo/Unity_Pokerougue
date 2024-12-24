@@ -47,6 +47,7 @@ public class UIBattleBehaviorSelectPopup : UICommonPopup
 
         UIBattlePokemonChangePopup pokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
         pokemonChangePopup.BattleScene = battleSceene;
+        pokemonChangePopup.MustChange = false;
     }
 
     void OnClickBallButton()

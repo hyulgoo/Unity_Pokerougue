@@ -72,6 +72,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
 
     public int SelectedChangePokemonId { get; set; }
     public UIBattleScene BattleScene { get; set; }
+    public bool MustChange { get; set; }
 
     public override void Init()
     {
@@ -177,6 +178,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         {
             C_ChangePokemon packet = new C_ChangePokemon();
             packet.PlayerId = Managers.Player.MyPlayer.Id;
+            packet.ChangeByFallDown = MustChange;
             packet.ChangePokemonId = SelectedChangePokemonId;
 
             Managers.Network.Send(packet);
@@ -194,6 +196,13 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         if (selectPokemonInfo == null)
         {
             Debug.Assert(false, $"Fail to Find SelectedPokemon By Id{SelectedChangePokemonId}");
+        }
+
+        if (SelectedChangePokemonId == Managers.Player.MyPlayer.GetCurPokemonData().Id)
+        {
+            UICommonAnnouncePopup anoouncePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            anoouncePopup.SetAnnounceText("현재 출전 중인 포켓몬으로는 교체할 수 없습니다!");
+            return;
         }
 
         if (selectPokemonInfo.Hp <= 0)

@@ -11,7 +11,6 @@ public class SelectScene : BaseScene
         base.Init();
 
         SceneType = Define.Scene.Select;
-
         Managers.UI.ShowSceneUI<UISelectPokemonScene>();
     }
 

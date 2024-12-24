@@ -55,7 +55,7 @@ public class Util
               
     public static string GetTypeName(Type type)
     {
-        string typeName = "";
+        string typeName = string.Empty;
         switch (type)
         {
             case Type.Notype:
@@ -116,11 +116,21 @@ public class Util
                 typeName = "물";
                 break;
         }
+
         return typeName;
     }
 
     public static float GetPokemonHPRatio(PokemonData data)
     {
-        return (float)data.Info.Hp / (float)Managers.Data.PokeonDict[data.Id].Info.Hp; ;
+        int maxHp = Managers.Data.PokeonDict[data.Id].Info.Hp;
+        int curHp = data.Info.Hp;
+        float ratio = (float)curHp / (float)maxHp;
+
+        if (ratio > 1f)
+            ratio = 1f;
+        else if (ratio < 0f)
+            ratio = 0f;
+                
+        return ratio;
     }
 }

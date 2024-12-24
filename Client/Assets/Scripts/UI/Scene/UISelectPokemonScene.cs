@@ -10,7 +10,8 @@ using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class UISelectPokemonScene : UICommonScene
 {
-    const int MaxCount = 3;
+    int _maxPokemonCount = 1;
+    public int MaxCount { set { _maxPokemonCount = value; } }
     List<int> _pokemonList = new List<int>();
     public int CurOrder { get; set; } = 0;
 
@@ -97,7 +98,7 @@ public class UISelectPokemonScene : UICommonScene
 
     public bool PickPokemon(int pokemonNum)
     {
-        if (CurOrder >= MaxCount)
+        if (CurOrder >= _maxPokemonCount)
             return false;
 
         _pokemonList.Add(pokemonNum);
@@ -142,12 +143,12 @@ public class UISelectPokemonScene : UICommonScene
                 skillImage.type = Image.Type.Sliced;
                 skillImage.color = Color.white;
             }
-        }           
+        }
     }
 
     void OnClickReadyButton()
     {
-        if (_pokemonList.Count != MaxCount)
+        if (_pokemonList.Count != _maxPokemonCount)
         {
             UICommonAnnouncePopup Announcepopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             Announcepopup.SetAnnounceText("아직 포켓몬을 전부 선택하지 않았습니다!");

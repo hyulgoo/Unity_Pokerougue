@@ -15,6 +15,8 @@ namespace Server.Game
 {
 	public partial class GameRoom : JobSerializer
 	{
+
+		const int _maxPokemonCount = 1;
 		public int RoomId { get; set; }
 		public int CurrentTurnPlayerId { get; set; } = 0;
         private bool isWaitingPlayerTurnEnd = false;
@@ -68,6 +70,10 @@ namespace Server.Game
 				if (_players.Remove(objectId, out player) == false)
 					return;
 
+				bool ready = false;
+				if (_playerReady.Remove(objectId, out ready) == false)
+					return;
+
 				player.OnLeaveGame();
 				player.Room = null;
 
@@ -80,7 +86,6 @@ namespace Server.Game
 			S_Despawn despawnPacket = new S_Despawn();
 			despawnPacket.ObjectIds.Add(objectId);
 			Broadcast(despawnPacket);
-
 
 			// 플레이어가 없으면서 룸이 로비로 사용하지 않는 경우 room을 삭제
 			if (_players.Count == 0 && RoomId != 1)
@@ -159,10 +164,10 @@ namespace Server.Game
             Random random = new Random();
             packet.ArenaType = random.Next(0, (int)Arenas.End);
 			CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
-            for (int i = 0; i < (int)TargetType.End; ++i)
+            for (int targetIndex = 0; targetIndex < (int)TargetType.End; ++targetIndex)
             {
-                int myid = list[i];
-				int enemyid = list[(int)TargetType.Enemy - i];
+                int myid = list[targetIndex];
+				int enemyid = list[(int)TargetType.Enemy - targetIndex];
 
                 packet.FromPokemon.Clear();
                 packet.ToPokemon.Clear();
@@ -170,12 +175,12 @@ namespace Server.Game
                 packet.MyInfo = _players[myid].Info;
                 packet.EnemyInfo = _players[enemyid].Info;
 
-                for (int j = 0; j < 3; ++j)
+                for (int pokemonIndex = 0; pokemonIndex < _maxPokemonCount; ++pokemonIndex)
 				{
-					packet.FromPokemon.Add(_players[myid].Pokemon[j].Id);
-                    packet.ToPokemon.Add(_players[enemyid].Pokemon[j].Id);
-					_players[myid].Pokemon[j].Info.State = new ConditionAbnormality();
-                    _players[enemyid].Pokemon[j].Info.State = new ConditionAbnormality();
+					packet.FromPokemon.Add(_players[myid].Pokemon[pokemonIndex].Id);
+                    packet.ToPokemon.Add(_players[enemyid].Pokemon[pokemonIndex].Id);
+					_players[myid].Pokemon[pokemonIndex].Info.State = new ConditionAbnormality();
+                    _players[enemyid].Pokemon[pokemonIndex].Info.State = new ConditionAbnormality();
                 }
                 
                 packet.IsMyTurn = myid == CurrentTurnPlayerId;

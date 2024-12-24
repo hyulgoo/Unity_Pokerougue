@@ -72,11 +72,8 @@ public class UIBattleSkillSelectPopup : UICommonPopup
             SkillInfo info = Managers.Data.SkillDict[skillId].info;
             int currentSkillPP = Managers.Player.MyPlayer.SkillPP[currentPokemonId][skillId];
 
-            if (currentSkillPP == 0)
-            {
-                Button curSkillButton = GetButton(index);
-                curSkillButton.interactable = false;
-            }
+            Button curSkillButton = GetButton(index);
+            curSkillButton.interactable = currentSkillPP != 0;
 
             UIBattleSkillSelectButton skillButton = GetButton(index).gameObject.GetOrAddComponent<UIBattleSkillSelectButton>();
             skillButton.SkillSelectPopup = this;

@@ -10,7 +10,7 @@ public class MainScene : BaseScene
 
         SceneType = Define.Scene.Login;
 
-        Screen.SetResolution(800, 600, false);
+        //Screen.SetResolution(800, 600, false);
 
         GameObject player = Managers.Resource.Instantiate("Creature/MyPlayer");
         player.name = "Player";

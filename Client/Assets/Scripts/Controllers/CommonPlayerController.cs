@@ -67,19 +67,18 @@ public class CommonPlayerController : MonoBehaviour
 
     public void SetPokemonData(RepeatedField<int> list)
     {
-        for (int i = 0; i < list.Count(); ++i)
+        for (int index = 0; index < list.Count(); ++index)
         { 
             // 포켓몬 정보 추가
-            _pokemonDataList.Add(Managers.Data.PokeonDict[list[i]]);
+            _pokemonDataList.Add(Managers.Data.PokeonDict[list[index]]);
 
             // 스킬 pp 정보 추가
-            RepeatedField<int> skillIdList = Managers.Data.PokeonDict[list[i]].Info.SkillId;
+            RepeatedField<int> skillIdList = Managers.Data.PokeonDict[list[index]].Info.SkillId;
             Dictionary<int, int> skillppDict = new Dictionary<int, int>();
-            for(int j = 0; j < skillIdList.Count(); ++j)
-            {
-                skillppDict.Add(skillIdList[j], Managers.Data.SkillDict[skillIdList[j]].info.Pp);
-            }
-            SkillPP.Add(list[i], skillppDict);
+            for(int skillIndex = 0; skillIndex < skillIdList.Count(); ++skillIndex)
+                skillppDict.Add(skillIdList[skillIndex], Managers.Data.SkillDict[skillIdList[skillIndex]].info.Pp);
+
+            SkillPP.Add(list[index], skillppDict);
         }
     }
 

@@ -158,9 +158,13 @@ public class UIManager
             names[i] = nameidlist[i].Value.name;
         }
 
-        if (SceneUI == null) return;
+        if (SceneUI == null) 
+            return;
+
         UILobbyScene lc = SceneUI.gameObject.GetComponent<UILobbyScene>();
-        if (lc == null) return;
+        if (lc == null) 
+            return;
+
         lc.SetUserName(ids, names);
     }
 }

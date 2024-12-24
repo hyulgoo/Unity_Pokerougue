@@ -199,15 +199,19 @@ namespace Server
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
             if (effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa)
-            { 
+            {
                 float effectRatio = CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info, isCritical);
                 if (effectRatio < 1f)
                     battleInfo.StateFlag |= BattleStateFlag.Ineffective;
                 else if (effectRatio > 1f)
                     battleInfo.StateFlag |= BattleStateFlag.Effective;
+                else if (effectRatio == 0f)
+                    battleInfo.StateFlag |= BattleStateFlag.Noneeffective;
             }
             else
-                CalcBuffType(targetData, effect.ApplyType, effect.Value, battleInfo.StateFlag);
+            { 
+                CalcBuffType(targetData, effect.ApplyType, effect.Value, battleInfo.StateFlag); 
+            }
 
             if(isCritical)
                 battleInfo.StateFlag |= BattleStateFlag.Critical;
@@ -245,7 +249,6 @@ namespace Server
             }
 
             damage *= effectRatio;
-
             damage *= Mode3;
 
             targetInfo.Hp = (int)damage >= targetInfo.Hp ? 0 : targetInfo.Hp - (int)damage;

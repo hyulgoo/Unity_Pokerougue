@@ -128,11 +128,12 @@ public class UIBattleScene : UICommonScene
     {
         UIBattlePokemonChangePopup battlePokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
         battlePokemonChangePopup.BattleScene = this;
+        battlePokemonChangePopup.MustChange = true;
     }
 
-    public void DuelEnd(bool isWin)
+    public void DuelEnd(bool isWin, bool isRunaway)
     {
-        string text = isWin ? $"{Managers.Player.Enemy.Name}(¿Í)°úÀÇ ´ë°á¿¡¼­ ½Â¸®Çß´Ù!" : $"{Managers.Player.MyPlayer.Name}(Àº)´Â ´« ¾ÕÀÌ Ä¯Ä¯ÇØÁ³´Ù.";
+        string text = isWin ? (isRunaway ? $"{Managers.Player.Enemy.Name}(Àº)´Â µµ¸ÁÃÆ´Ù!" : $"{Managers.Player.Enemy.Name}(¿Í)°úÀÇ ´ë°á¿¡¼­ ½Â¸®Çß´Ù!") : (isRunaway ? "¹«»çÈ÷ µµ¸ÁÃÆ´Ù!" :$"{Managers.Player.MyPlayer.Name}(Àº)´Â ´« ¾ÕÀÌ Ä¯Ä¯ÇØÁ³´Ù.");
         Managers.Job.Push(() => SetAnnounce(text, true));
     }
 
@@ -155,7 +156,7 @@ public class UIBattleScene : UICommonScene
             Managers.Job.Excute(); 
     }
 
-    const float targetDiff = 0.05f;
+    const float targetDiff = 0.02f;
     const float magnification = 1.5f;
 
     public void SetHPBar(float targetRatio, TargetType targetType, bool setByHandler = true)
@@ -171,14 +172,19 @@ public class UIBattleScene : UICommonScene
 
         while (Mathf.Abs(targetRatio - curRatio) > Mathf.Abs(targetDiff))
         {
-            int hpstate = 2 - (int)(curRatio / 0.34f);
-            if (_HpbarSpriteNum[(int)targetType] != hpstate)
+            int hpState = 2 - (int)(curRatio / 0.34f);
+            if (hpState > 2)
+                hpState = 2;
+            else if (hpState < 0)
+                hpState = 0;
+
+            if (_HpbarSpriteNum[(int)targetType] != hpState)
             {
-                _HpbarSpriteNum[(int)targetType] = hpstate;
-                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpstate];
+                _HpbarSpriteNum[(int)targetType] = hpState;
+                fillObj.GetComponent<Image>().sprite = _hpbarSprites[hpState];
             }
 
-            curRatio = Mathf.Lerp(slider.value, targetRatio, Time.deltaTime * magnification);
+            curRatio = Mathf.Lerp(curRatio, targetRatio, Time.deltaTime * magnification);
             slider.value = curRatio;
 
             yield return null;

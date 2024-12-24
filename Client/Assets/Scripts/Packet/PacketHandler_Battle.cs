@@ -48,9 +48,16 @@ partial class PacketHandler
             Debug.Assert(false, "Fail to Found BattleScene!!");
         }
 
+        bool isDuelEnd = false;
+        if (turnInfoList.Count != 0)
+            isDuelEnd = (turnInfoList[turnInfoList.Count - 1].StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd;
+
         bool isTurnOver = false;
 		foreach (BattleInfo turnInfo in turnInfoList)
         {
+            if((turnInfo.StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd)
+                continue;
+
             string toName = turnInfo.ToData.Name;
             float targetHPRatio = Util.GetPokemonHPRatio(turnInfo.ToData);
             TargetType targetType = TargetType.End;
@@ -106,7 +113,7 @@ partial class PacketHandler
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
             }
 
-            if (ChechPokemonFallDown(battleScene, toName, targetHPRatio, true))
+            if (ChechPokemonFallDown(battleScene, toName, targetHPRatio, true, isDuelEnd))
                 return true;
         }
 
@@ -126,18 +133,11 @@ partial class PacketHandler
             Managers.Job.Push(() => { battleScene.SetAnnounce($"{fromName}의 {skillName}!", true); });
         }
 
+        bool isDuelEnd = (battleInfoList[battleInfoList.Count - 1].StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd;
+
         foreach (BattleInfo battleInfo in battleInfoList)
         {
-            if ((battleInfo.StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd)
-            {
-                battleScene.DuelEnd(battleInfo.WinPlayerId == Managers.Player.MyPlayer.Id);
-                return;
-            }
-
             TargetType targetType = TargetType.End;
-            string fromName = battleInfo.FromData.Name;
-            string toName = battleInfo.ToData.Name;
-
             float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
 
             if (battleInfo.TargetType == TargetType.Oneself)
@@ -147,6 +147,7 @@ partial class PacketHandler
 
             if ((battleInfo.StateFlag & BattleStateFlag.Miss) == BattleStateFlag.Miss)
             {
+                string fromName = battleInfo.FromData.Name;
                 string announce = $"{fromName}의 공격은 빗나갔다!";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 return;
@@ -154,13 +155,15 @@ partial class PacketHandler
 
             if (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
             {
+                string toName = battleInfo.ToData.Name;
+
                 if (battleInfo.TargetType == TargetType.Oneself)
                 {
                     string announce = $"{toName}은(는) 반동으로 인해 데미지를 입었다.";
                     Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
                     Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
 
-                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, true);
+                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, true, isDuelEnd);
                 }
                 else
                 {
@@ -171,10 +174,11 @@ partial class PacketHandler
 
                     bool isEffective = (battleInfo.StateFlag & BattleStateFlag.Effective) == BattleStateFlag.Effective;
                     bool isIneffective = (battleInfo.StateFlag & BattleStateFlag.Ineffective) == BattleStateFlag.Ineffective;
-                    if (isEffective || isIneffective)
-                        Managers.Job.Push(() => { battleScene.SetAnnounce(isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다.", true); });
+                    bool isNoneEffective = (battleInfo.StateFlag & BattleStateFlag.Noneeffective) == BattleStateFlag.Noneeffective;
+                    if (isEffective || isIneffective || isNoneEffective)
+                        Managers.Job.Push(() => { battleScene.SetAnnounce(isNoneEffective ? "효과가 없는 것 같다..." : isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다.", true); });
 
-                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, false);
+                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, false, isDuelEnd);
                 }
             }
             else
@@ -191,12 +195,18 @@ partial class PacketHandler
         }
     }
 
-    static bool ChechPokemonFallDown(UIBattleScene battleScene, string fallDownPokemonName, float hpRatio, bool isMyPokemon)
+    static bool ChechPokemonFallDown(UIBattleScene battleScene, string fallDownPokemonName, float hpRatio, bool isMyPokemon, bool isDuelEnd)
     {
         if (hpRatio > 0f)
             return false;
 
         Managers.Job.Push(() => { battleScene.SetAnnounce($"{fallDownPokemonName}은(는) 쓰려졌다.", true); });
+
+        if (isDuelEnd)
+        {
+            battleScene.DuelEnd(isMyPokemon ? false : true, false);
+            return true; 
+        }
 
         bool isShowChangePokemonPopup = (Managers.Player.MyTurn && isMyPokemon) || (Managers.Player.MyTurn == false && isMyPokemon == false);
         if (isShowChangePokemonPopup)
@@ -325,13 +335,6 @@ partial class PacketHandler
             Debug.Assert(false, "Cannot Found BattleScene!!");
         }
 
-        battleScene.DuelEnd(dualEndPacket.IsWin);
-        Managers.Job.Push(() =>
-        { 
-            Managers.Scene.LoadScene(Define.Scene.Lobby);
-            C_EnterGame enterPacket = new C_EnterGame();
-            enterPacket.Name = Managers.Player.MyPlayer.Name;
-            Managers.Network.Send(enterPacket);
-        });
+        battleScene.DuelEnd(dualEndPacket.IsWin, dualEndPacket.IsRunaway);
     }
 }

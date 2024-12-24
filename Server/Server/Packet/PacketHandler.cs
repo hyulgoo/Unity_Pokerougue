@@ -170,36 +170,16 @@ class PacketHandler
         Player player = clientSession.MyPlayer;
         if (player == null)
         {
-            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
+            Debug.Assert(false, "Fail To Found MyPlayer on C_ChangePokemonHandler");
         }
 
         GameRoom room = player.Room;
         if (room == null)
         {
-            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_ChangePokemonHandler");
         }
 
         room.Push(room.ChangePokemon, changePokemonPacket.PlayerId, changePokemonPacket.ChangePokemonId);
-    }
-
-    public static void C_RunAwayHandler(PacketSession session, IMessage packet)
-    {
-        C_RunAway runawayHandler = (C_RunAway)packet;
-        ClientSession clientSession = (ClientSession)session;
-
-        Player player = clientSession.MyPlayer;
-        if (player == null)
-        {
-            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
-        }
-
-        GameRoom room = player.Room;
-        if (room == null)
-        {
-            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
-        }
-
-        room.Push(room.Runaway, runawayHandler.PlayerId);
     }
 
     public static void C_DuelEndHandler(PacketSession session, IMessage packet)
@@ -210,15 +190,15 @@ class PacketHandler
         Player player = clientSession.MyPlayer;
         if (player == null)
         {
-            Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
+            Debug.Assert(false, "Fail To Found MyPlayer on C_DuelEndHandler");
         }
 
         GameRoom room = player.Room;
         if (room == null)
         {
-            Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
+            Debug.Assert(false, "Fail To Found MyPlayer Room on C_DuelEndHandler");
         }
 
-        //room.Du
-    }
+        room.Push(room.DuelEnd, duelEndHandler.PlayerId, false);
+    }    
 }
