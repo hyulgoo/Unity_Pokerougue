@@ -63,22 +63,7 @@ namespace Server.Game
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffFire;
 
-                Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
-                foreach (Player playerIter in _players.Values)
-                    playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
-
-                if (playerDuelResultArray.Values.Contains(false))
-                {
-                    result.StateFlag |= BattleStateFlag.DuelEnd;
-                    foreach (var playerInfo in playerDuelResultArray)
-                    {
-                        if (playerInfo.Value == false)
-                            continue;
-
-                        result.WinPlayerId = playerInfo.Key;
-                        break;
-                    }
-                }
+                DefaultTurnIsRemainPokemonExist(result);
 
                 battleInfoList.Add(result);
             }
@@ -96,22 +81,7 @@ namespace Server.Game
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffDot;
 
-                Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
-                foreach (Player playerIter in _players.Values)
-                    playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
-
-                if (playerDuelResultArray.Values.Contains(false))
-                {
-                    result.StateFlag |= BattleStateFlag.DuelEnd;
-                    foreach (var playerInfo in playerDuelResultArray)
-                    {
-                        if (playerInfo.Value == false)
-                            continue;
-
-                        result.WinPlayerId = playerInfo.Key;
-                        break;
-                    }
-                }
+                DefaultTurnIsRemainPokemonExist(result);
 
                 battleInfoList.Add(result);
             }
@@ -128,24 +98,7 @@ namespace Server.Game
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffPoison;
 
-                Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
-                foreach (Player playerIter in _players.Values)
-                    playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
-
-                if (playerDuelResultArray.Values.Contains(false))
-                {
-                    isWaitingPlayerTurnEnd = false;
-
-                    result.StateFlag |= BattleStateFlag.DuelEnd;
-                    foreach (var playerInfo in playerDuelResultArray)
-                    {
-                        if (playerInfo.Value == false)
-                            continue;
-
-                        result.WinPlayerId = playerInfo.Key;
-                        break;
-                    }
-                }
+                DefaultTurnIsRemainPokemonExist(result);
 
                 battleInfoList.Add(result);
             }
@@ -226,20 +179,20 @@ namespace Server.Game
             foreach (Player playerIter in _players.Values)
                 playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
 
-            if (playerDuelResultArray.Values.Contains(false))
+            if (playerDuelResultArray.Values.Contains(false) == false)
+                return;
+
+            isWaitingPlayerTurnEnd = false;
+
+            battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
+            foreach (var playerInfo in playerDuelResultArray)
             {
-                isWaitingPlayerTurnEnd = false;
+                if (playerInfo.Value == false)
+                    continue;
 
-                battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
-                foreach (var playerInfo in playerDuelResultArray)
-                {
-                    if (playerInfo.Value == false)
-                        continue;
-
-                    battleInfo.WinPlayerId = playerInfo.Key;
-                    break;
-                }
-            }            
+                battleInfo.WinPlayerId = playerInfo.Key;
+                break;
+            }                     
         }
 
         void Pass(C_Turn packet)
@@ -284,7 +237,9 @@ namespace Server.Game
             foreach (Player playerIter in _players.Values)
                 playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
 
-            if (playerDuelResultArray.Values.Contains(false))
+            bool isDuelEnd = playerDuelResultArray.Values.Contains(false);
+            int winPlayerId = -1;
+            if (isDuelEnd)
             {
                 BattleInfo battleInfo = new BattleInfo();
                 battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
@@ -294,6 +249,7 @@ namespace Server.Game
                         continue;
 
                     battleInfo.WinPlayerId = playerInfo.Key;
+                    winPlayerId = playerInfo.Key;
                     break;
                 }
 
@@ -306,6 +262,9 @@ namespace Server.Game
             battlePacket.Info.AddRange(battleFightResult);
 
             Broadcast(battlePacket);
+
+            if(isDuelEnd)
+                DuelEnd(winPlayerId, false);
         }
 
         void PokeBall(C_Turn packet)

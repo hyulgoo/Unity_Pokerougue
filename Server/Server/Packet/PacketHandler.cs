@@ -181,24 +181,4 @@ class PacketHandler
 
         room.Push(room.ChangePokemon, changePokemonPacket.PlayerId, changePokemonPacket.ChangePokemonId);
     }
-
-    public static void C_DuelEndHandler(PacketSession session, IMessage packet)
-    {
-        C_DuelEnd duelEndHandler = (C_DuelEnd)packet;
-        ClientSession clientSession = (ClientSession)session;
-
-        Player player = clientSession.MyPlayer;
-        if (player == null)
-        {
-            Debug.Assert(false, "Fail To Found MyPlayer on C_DuelEndHandler");
-        }
-
-        GameRoom room = player.Room;
-        if (room == null)
-        {
-            Debug.Assert(false, "Fail To Found MyPlayer Room on C_DuelEndHandler");
-        }
-
-        room.Push(room.DuelEnd, duelEndHandler.PlayerId, false);
-    }    
 }

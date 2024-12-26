@@ -38,7 +38,6 @@ enum MsgId {
   C_CHANGE_POKEMON = 31;
   S_CHANGE_POKEMON = 32;
   S_DUEL_END = 33;
-  C_DUEL_END = 34;
 }
 
 enum GameObjectType {
@@ -176,7 +175,6 @@ enum BattleStateFlag {
   RECOVERY_STURN = 1024;
   RECOVERY_CONFUSION = 2048;
   DUEL_END = 4096;
-  DUEL_WIN = 8192;
 }
 
 enum PokeballType {
@@ -340,10 +338,6 @@ message S_ChangePokemon {
 message S_DuelEnd {
   bool isWin = 1;
   bool isRunaway = 2;
-}
-
-message C_DuelEnd {
-  int32 playerId = 1;
 }
 
 message LobbyPlayerInfo {

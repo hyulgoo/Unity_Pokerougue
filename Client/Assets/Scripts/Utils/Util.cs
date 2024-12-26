@@ -122,6 +122,9 @@ public class Util
 
     public static float GetPokemonHPRatio(PokemonData data)
     {
+        if (data == null)
+            return 0f;
+
         int maxHp = Managers.Data.PokeonDict[data.Id].Info.Hp;
         int curHp = data.Info.Hp;
         float ratio = (float)curHp / (float)maxHp;

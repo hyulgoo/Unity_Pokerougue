@@ -133,10 +133,15 @@ partial class PacketHandler
             Managers.Job.Push(() => { battleScene.SetAnnounce($"{fromName}의 {skillName}!", true); });
         }
 
-        bool isDuelEnd = (battleInfoList[battleInfoList.Count - 1].StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd;
+        bool isDuelEnd = false;
+        if(battleInfoList.Count > 0)
+            isDuelEnd = (battleInfoList[battleInfoList.Count - 1].StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd;
 
         foreach (BattleInfo battleInfo in battleInfoList)
         {
+            if ((battleInfo.StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd)
+                continue;
+
             TargetType targetType = TargetType.End;
             float targetHPRatio = Util.GetPokemonHPRatio(battleInfo.ToData);
 
@@ -176,7 +181,7 @@ partial class PacketHandler
                     bool isIneffective = (battleInfo.StateFlag & BattleStateFlag.Ineffective) == BattleStateFlag.Ineffective;
                     bool isNoneEffective = (battleInfo.StateFlag & BattleStateFlag.Noneeffective) == BattleStateFlag.Noneeffective;
                     if (isEffective || isIneffective || isNoneEffective)
-                        Managers.Job.Push(() => { battleScene.SetAnnounce(isNoneEffective ? "효과가 없는 것 같다..." : isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다.", true); });
+                        Managers.Job.Push(() => { battleScene.SetAnnounce(isNoneEffective ? ("효과가 없는 것 같다...") : (isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다."), true); });
 
                     ChechPokemonFallDown(battleScene, toName, targetHPRatio, false, isDuelEnd);
                 }
@@ -202,15 +207,12 @@ partial class PacketHandler
 
         Managers.Job.Push(() => { battleScene.SetAnnounce($"{fallDownPokemonName}은(는) 쓰려졌다.", true); });
 
-        if (isDuelEnd)
+        if (isDuelEnd == false)
         {
-            battleScene.DuelEnd(isMyPokemon ? false : true, false);
-            return true; 
+            bool isShowChangePokemonPopup = (Managers.Player.MyTurn && isMyPokemon) || (Managers.Player.MyTurn == false && isMyPokemon == false);
+            if (isShowChangePokemonPopup)
+                Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(); });
         }
-
-        bool isShowChangePokemonPopup = (Managers.Player.MyTurn && isMyPokemon) || (Managers.Player.MyTurn == false && isMyPokemon == false);
-        if (isShowChangePokemonPopup)
-            Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(); });
 
         return true;
     }
@@ -278,7 +280,8 @@ partial class PacketHandler
                 break;
         }
 
-        return $"{battleInfo.ToData.Name}{valueTypeWord}{valueWord}{behaviorWord}.";
+        string resultString = $"{battleInfo.ToData.Name}{valueTypeWord}{valueWord}{behaviorWord}.";
+        return resultString;
     }
 
     public static void S_TurnPokeballHandler(PacketSession session, IMessage packet)

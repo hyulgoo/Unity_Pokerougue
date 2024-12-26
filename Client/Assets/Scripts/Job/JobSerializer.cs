@@ -64,5 +64,10 @@ namespace Server.Game
 
             return _jobQueue.Dequeue();
 		}
-	}
+
+        public void Clear()
+        {
+			_jobQueue.Clear();
+        }
+    }
 }

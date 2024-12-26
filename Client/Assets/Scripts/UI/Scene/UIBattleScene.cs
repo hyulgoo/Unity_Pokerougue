@@ -91,6 +91,17 @@ public class UIBattleScene : UICommonScene
             Debug.Log($"Fail to Find Background Sprite ({fieldName})");
     }
 
+    IEnumerator FootHoldMoveAtStart(GameObject footHoldObject, bool setByHandler)
+    {
+        if (footHoldObject == null)
+        {
+            Debug.Assert(false, "FootHold Object°¡ nullÀÔ´Ï´Ù.");
+        }
+
+        while()
+        return null;
+    }
+
     public void SetBattlePokemonInfo()
     {
         int _myPokemonId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
@@ -134,7 +145,8 @@ public class UIBattleScene : UICommonScene
     public void DuelEnd(bool isWin, bool isRunaway)
     {
         string text = isWin ? (isRunaway ? $"{Managers.Player.Enemy.Name}(Àº)´Â µµ¸ÁÃÆ´Ù!" : $"{Managers.Player.Enemy.Name}(¿Í)°úÀÇ ´ë°á¿¡¼­ ½Â¸®Çß´Ù!") : (isRunaway ? "¹«»çÈ÷ µµ¸ÁÃÆ´Ù!" :$"{Managers.Player.MyPlayer.Name}(Àº)´Â ´« ¾ÕÀÌ Ä¯Ä¯ÇØÁ³´Ù.");
-        Managers.Job.Push(() => SetAnnounce(text, true));
+        Managers.Job.Push(() => { SetAnnounce(text, true); });
+        Managers.Player.IsTurnProgressing = false;
     }
 
     public void SetAnnounce(string announce, bool setByHandler)

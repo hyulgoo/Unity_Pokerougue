@@ -44,9 +44,7 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.CTurnEnd, MakePacket<C_TurnEnd>);
 		_handler.Add((ushort)MsgId.CTurnEnd, PacketHandler.C_TurnEndHandler);		
 		_onRecv.Add((ushort)MsgId.CChangePokemon, MakePacket<C_ChangePokemon>);
-		_handler.Add((ushort)MsgId.CChangePokemon, PacketHandler.C_ChangePokemonHandler);		
-		_onRecv.Add((ushort)MsgId.CDuelEnd, MakePacket<C_DuelEnd>);
-		_handler.Add((ushort)MsgId.CDuelEnd, PacketHandler.C_DuelEndHandler);
+		_handler.Add((ushort)MsgId.CChangePokemon, PacketHandler.C_ChangePokemonHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
