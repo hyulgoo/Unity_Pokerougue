@@ -305,7 +305,7 @@ partial class PacketHandler
         Managers.Player.MyTurn = turn.MyTurn;
 
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
-		battleScene.MyTurn();
+		battleScene.NewTurn();
     }
 
     public static void S_ChangePokemonHandler(PacketSession session, IMessage packet)
