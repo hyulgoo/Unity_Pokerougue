@@ -72,14 +72,14 @@ partial class PacketHandler
                 string skillName = Managers.Data.SkillDict[turnInfo.LatingSkillId].name;
                 string announce = $"{toName}은(는) {skillName}에 의해 지속데미지를 받고있다.";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
-                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
             }
 
             if ((turnInfo.StateFlag & BattleStateFlag.DebuffFire) == BattleStateFlag.DebuffPoison)
             {
                 string announce = $"{toName}은(는) 지속데미지를 받고있다.";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
-                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
             }
 
             if ((turnInfo.StateFlag & BattleStateFlag.DebuffConfusion) == BattleStateFlag.DebuffConfusion)
@@ -91,7 +91,7 @@ partial class PacketHandler
                     string text = $"{toName}(은)는 영문도 모른 채 자신을 공격했다!";
                     float hpRatio = Util.GetPokemonHPRatio(turnInfo.ToData);
                     Managers.Job.Push(() => { battleScene.SetAnnounce(text, true); });
-                    Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                    Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
                     isTurnOver = true;
                 }
             }
@@ -165,14 +165,14 @@ partial class PacketHandler
                 if (battleInfo.TargetType == TargetType.Oneself)
                 {
                     string announce = $"{toName}은(는) 반동으로 인해 데미지를 입었다.";
-                    Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                    Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
                     Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
 
                     ChechPokemonFallDown(battleScene, toName, targetHPRatio, true, isDuelEnd);
                 }
                 else
                 {
-                    Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                    Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
 
                     if ((battleInfo.StateFlag & BattleStateFlag.Critical) == BattleStateFlag.Critical)
                         Managers.Job.Push(() => { battleScene.SetAnnounce("급소에 맞았다!", true); });
@@ -190,7 +190,7 @@ partial class PacketHandler
             {
                 string announce = GetNoneAttackBattleAnnounce(battleInfo);
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
-                Managers.Job.Push(() => { battleScene.SetHPBar(targetHPRatio, targetType, true); });
+                Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
             }
 
             if (targetType == TargetType.Oneself)
