@@ -3,22 +3,22 @@ using UnityEngine.UI;
 
 public class SpawnPokemonAnimationScript : StateMachineBehaviour
 {
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    Image _imageComponent = null;
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if (_imageComponent == null)
+        { 
+            _imageComponent = animator.GetComponent<Image>();
+            _imageComponent.color = Color.white;
+        }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
+    }
+
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (stateInfo.normalizedTime >= 1f)
         {
-            Image imageComponent = animator.GetComponent<Image>();
-            if (imageComponent != null)
-            {
-                imageComponent.color = Color.clear;
-            }
+            _imageComponent.color = Color.clear;
         }
     }
 

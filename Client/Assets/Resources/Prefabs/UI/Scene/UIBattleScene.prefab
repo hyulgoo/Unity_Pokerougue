@@ -1234,6 +1234,7 @@ GameObject:
   - component: {fileID: 3027910577257066853}
   - component: {fileID: 4900784972334133998}
   - component: {fileID: 318716070464180834}
+  - component: {fileID: 2652353743903120733}
   m_Layer: 5
   m_Name: Image_MyPokemon
   m_TagString: Untagged
@@ -1255,7 +1256,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4429216192134757070}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.25, y: -0.1}
+  m_AnchorMin: {x: 0.25, y: -0.2}
   m_AnchorMax: {x: 0.4, y: 0.25}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -1298,6 +1299,28 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &2652353743903120733
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4173570679272827065}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1c90862f87f665042ade31f30815408e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4918640356293182713
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,6 +1332,7 @@ GameObject:
   - component: {fileID: 5643377051073421186}
   - component: {fileID: 9109294707528041021}
   - component: {fileID: 4068814652763796317}
+  - component: {fileID: 3042003903845641963}
   m_Layer: 5
   m_Name: Image_EnemyPokemon
   m_TagString: Untagged
@@ -1373,6 +1397,28 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &3042003903845641963
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4918640356293182713}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4c035421f0db9cf45aa54178fbc742ca, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5147769346311698468
 GameObject:
   m_ObjectHideFlags: 0

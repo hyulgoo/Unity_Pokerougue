@@ -209,6 +209,8 @@ partial class PacketHandler
 
         if (isDuelEnd == false)
         {
+            // TODO POkEMON IDLE 애니메이션 재생
+
             bool isShowChangePokemonPopup = (Managers.Player.MyTurn && isMyPokemon) || (Managers.Player.MyTurn == false && isMyPokemon == false);
             if (isShowChangePokemonPopup)
                 Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(); });
@@ -324,7 +326,7 @@ partial class PacketHandler
         else
             Managers.Player.Enemy.ChangePokemonOrderById(changePokemonPacket.ChangePokemonId);
 
-        battleScene.SetBattlePokemonInfo();
+        battleScene.SetBattlePokemonInfo(isMyPokemon);
         Managers.Job.Excute();
     }
 

@@ -10,7 +10,7 @@ using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class UISelectPokemonScene : UICommonScene
 {
-    int _maxPokemonCount = 1;
+    int _maxPokemonCount = 2;
     public int MaxCount { set { _maxPokemonCount = value; } }
     List<int> _pokemonList = new List<int>();
     public int CurOrder { get; set; } = 0;

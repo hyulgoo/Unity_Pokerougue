@@ -16,7 +16,7 @@ namespace Server.Game
 	public partial class GameRoom : JobSerializer
 	{
 
-		const int _maxPokemonCount = 1;
+		const int _maxPokemonCount = 2;
 		public int RoomId { get; set; }
 		public int CurrentTurnPlayerId { get; set; } = 0;
         private bool isWaitingPlayerTurnEnd = false;
