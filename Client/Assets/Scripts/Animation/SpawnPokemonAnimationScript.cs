@@ -4,6 +4,9 @@ using UnityEngine.UI;
 public class SpawnPokemonAnimationScript : StateMachineBehaviour
 {
     Image _imageComponent = null;
+    [SerializeField] 
+    bool isMe = false;
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (_imageComponent == null)
@@ -12,20 +15,21 @@ public class SpawnPokemonAnimationScript : StateMachineBehaviour
             _imageComponent.color = Color.white;
         }
 
-    }
+        _imageComponent.color = Color.clear;
 
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        if (stateInfo.normalizedTime >= 1f)
+        UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+        if (battleScene != null)
         {
-            _imageComponent.color = Color.clear;
+            battleScene.SetBattlePokemonInfo(isMe, false);
         }
     }
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //}
+
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
-    //    
     //}
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

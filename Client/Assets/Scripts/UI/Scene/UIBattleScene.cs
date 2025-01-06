@@ -6,13 +6,23 @@ using UnityEngine.UI;
 
 public class UIBattleScene : UICommonScene
 {
+    float _screenWidth;
+
     private string _announceText = string.Empty;
 
+    // HPBar
     private int[] _HpbarSpriteNum = new int[(int)TargetType.End] { Define.InValidNumber, Define.InValidNumber };
     private Sprite[] _hpbarSprites;
     public Sprite[] HpSprites { get { return _hpbarSprites; } }
     private Sprite[] _numberSprites;
-    float _screenWidth;
+
+    // init Anim
+    const float FootHoldMoveTime = 1.5f;
+
+    const float TrainerMoveTimeAtSpawnPokemon = 1.3f;
+
+    const float targetHPSliderDiff = 0.02f;
+    const float hpSliderSpeedMagnification = 1.5f;
 
     enum GameObjects
     {
@@ -75,29 +85,6 @@ public class UIBattleScene : UICommonScene
         SetPlayerInfo();
     }
 
-    public void SetPlayerInfo()
-    {
-        GetText((int)Texts.Text_MyPokemonName).text = string.Empty;
-        Sprite myTrainerImage = Managers.Resource.Load<Sprite>($"Sprite/character/trainer_f_back"); ;
-        SetTrainerOrPokemonImage(myTrainerImage, true, true);
-
-        GetText((int)Texts.Text_EnemyPokemonName).text = string.Empty;
-        Sprite enemyTrainerImage = Managers.Resource.Load<Sprite>($"Sprite/character/rival_f 1");
-        SetTrainerOrPokemonImage(enemyTrainerImage, false, true);
-
-        string enemyName = Managers.Player.Enemy.Name;
-        Managers.Job.Push(() => { SetAnnounce($"{enemyName}가 승부를 걸어왔다!", true); });
-
-        string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
-        Managers.Job.Push(() =>
-        {
-            MoveTrainerAtSpawnPokemon();
-            SetAnnounce($"가라! {currentPokemonName}!", true);
-        });
-
-        NewTurn();
-    }
-
     public void SetField(int type)
     {
         Arenas arenatype = (Arenas)type;
@@ -115,20 +102,61 @@ public class UIBattleScene : UICommonScene
         if (GetImage((int)Images.Image_BackGround).sprite == null)
             Debug.Log($"Fail to Find Background Sprite ({fieldName})");
 
-        FootHoldMoveAtStart();
+        FootHoldMoveAtDuelStart();
     }
 
-    const float FootHoldMoveTime = 1.5f;
-
-    void FootHoldMoveAtStart()
+    public void SetPlayerInfo()
     {
-        StartCoroutine(ImageHorizonMoveCoroutine(Images.Image_My_FootHold, Images.Image_Enemy_FootHold, FootHoldMoveTime, _screenWidth, true, true));
+        GetText((int)Texts.Text_MyPokemonName).text = string.Empty;
+        Sprite myTrainerImage = Managers.Resource.Load<Sprite>($"Sprite/character/trainer_f_back"); ;
+        SetTrainerOrPokemonImage(myTrainerImage, true, true);
+
+        GetText((int)Texts.Text_EnemyPokemonName).text = string.Empty;
+        Sprite enemyTrainerImage = Managers.Resource.Load<Sprite>($"Sprite/character/rival_f 1");
+        SetTrainerOrPokemonImage(enemyTrainerImage, false, true);
+
+        string enemyName = Managers.Player.Enemy.Name;
+        Managers.Job.Push(() => { SetAnnounce($"{enemyName}가 승부를 걸어왔다!", true); });
+
+        string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
+        Managers.Job.Push(() =>
+        {
+            MoveTrainerAtDuelStart();
+            SetAnnounce($"가라! {currentPokemonName}!", true);
+        });
+
+        NewTurn();
     }
 
-    IEnumerator ImageHorizonMoveCoroutine(Images myImage, Images enemyImage, float moveTime, float moveDistance, bool isReturn, bool setByHandler)
+    void FootHoldMoveAtDuelStart()
     {
-        Transform myTransform = GetImage((int)myImage).transform;
-        Transform enemyTransform = GetImage((int)enemyImage).transform;
+        StartCoroutine(ImageHorizonMoveCoroutine(false, FootHoldMoveTime, _screenWidth, true));
+    }
+
+    void MoveTrainerAtDuelStart()
+    {
+        StartCoroutine(ImageHorizonMoveCoroutine(true, TrainerMoveTimeAtSpawnPokemon, _screenWidth * 0.7f, false));
+    }
+
+    IEnumerator ImageHorizonMoveCoroutine(bool isTrainer, float moveTime, float moveDistance, bool setByHandler)
+    {
+        Image myImage = null;
+        Image enemyImage = null;
+
+        if (isTrainer)
+        {
+            myImage = GetImage((int)Images.Image_MyTrainer);
+            enemyImage = GetImage((int)Images.Image_EnemyTrainer);
+        }
+        else
+        {
+            myImage = GetImage((int)Images.Image_My_FootHold);
+            enemyImage = GetImage((int)Images.Image_Enemy_FootHold);
+
+        }
+
+        Transform myTransform = myImage.transform;
+        Transform enemyTransform = enemyImage.transform;
 
         if (myTransform == null || enemyTransform == null)
         {
@@ -140,7 +168,7 @@ public class UIBattleScene : UICommonScene
         Vector3 myTransformOriginPosition = myTransform.position;
         Vector3 enemyTransformOriginPosition = enemyTransform.position;
 
-        if (isReturn)
+        if (isTrainer == false)
         {
             myTransform.position = myTransformOriginPosition + new Vector3(moveDistance, 0f, 0f);
             enemyTransform.position = enemyTransformOriginPosition - new Vector3(moveDistance, 0f, 0f);
@@ -161,12 +189,12 @@ public class UIBattleScene : UICommonScene
             newPosition.x = newPosition.x + diffX;
             enemyTransform.position = newPosition;
 
-            if (accumulatedTime >= ThrowPokeballTime && throwPokeball == false || isReturn)
+            if (isTrainer && throwPokeball == false)
             {
+                throwPokeball = true;
+
                 ThrowPokeball(true, false);
                 ThrowPokeball(false, false);
-
-                throwPokeball = true;
             }
 
             yield return null;
@@ -175,20 +203,12 @@ public class UIBattleScene : UICommonScene
         myTransform.position = myTransformOriginPosition;
         enemyTransform.position = enemyTransformOriginPosition;
 
-        if(setByHandler)
+        if (setByHandler)
             Managers.Job.Excute();
     }
 
-    IEnumerator ThrowPokeballCoroutine(float spawnTime, bool isMe, bool setByHandler)
+    public void ThrowPokeball(bool isMe, bool setByHandler)
     {
-        float accumulatedTime = 0f;
-
-        while (accumulatedTime < spawnTime)
-        {
-            accumulatedTime += Time.deltaTime;
-            yield return null;
-        }
-
         Image targetImage = isMe ? GetImage((int)Images.Image_MyPokeball) : GetImage((int)Images.Image_EnemyPokeball);
         targetImage.color = Color.white;
 
@@ -199,29 +219,10 @@ public class UIBattleScene : UICommonScene
             Debug.Assert(false, "Pokeball Animator를 찾을 수 없습니다.");
         }
 
-        string statName = isMe ? "ThrowPokeball" : "SpawnPokemon_0";
-        targetAnimator.Play(statName);
-
-        SetBattlePokemonInfo(isMe);
-
-        if (setByHandler)
-            Managers.Job.Excute();
+        targetAnimator.Play("SpawnPokemon");
     }
 
-    const float TrainerMoveTimeAtSpawnPokemon = 1f;
-    const float ThrowPokeballTime = 0.3f;
-
-    void MoveTrainerAtSpawnPokemon()
-    {
-        StartCoroutine(ImageHorizonMoveCoroutine(Images.Image_MyTrainer, Images.Image_EnemyTrainer, TrainerMoveTimeAtSpawnPokemon, _screenWidth * 0.7f, false, false));
-    }
-
-    public void ThrowPokeball(bool isMe, bool setByHandler)
-    {
-        StartCoroutine(ThrowPokeballCoroutine(ThrowPokeballTime, isMe, setByHandler));
-    }
-
-    public void SetBattlePokemonInfo(bool isMe)
+    public void SetBattlePokemonInfo(bool isMe, bool setByHandler)
     {
         TargetType targetType = isMe ? TargetType.Oneself : TargetType.Enemy;
         PokemonData targetPokemonData = isMe ? Managers.Player.MyPlayer.GetCurPokemonData() : Managers.Player.Enemy.GetCurPokemonData();
@@ -236,7 +237,8 @@ public class UIBattleScene : UICommonScene
         SetPokemonHPBar(1f, targetType, false);
         SetPokemonLevel(isMe, targetPokemonData.Info.Level);
 
-        Managers.Job.Excute();
+        if (setByHandler)
+            Managers.Job.Excute();
     }
 
     void SetPokemonLevel(bool isMe, int level)
@@ -277,6 +279,12 @@ public class UIBattleScene : UICommonScene
         Transform imageTransform = image.transform;
         float accumulatedTime = 0f;
 
+        string pokemonId = isMe ? Managers.Player.MyPlayer.GetCurPokemonData().Id.ToString() + "_back" : Managers.Player.Enemy.GetCurPokemonData().Id.ToString();
+        Animator animator = image.GetComponent<Animator>();
+
+        if (animator != null)
+            animator.Play(pokemonId);
+
         while (accumulatedTime < 1f)
         {
             accumulatedTime += Time.deltaTime * 3;
@@ -312,11 +320,29 @@ public class UIBattleScene : UICommonScene
         battlePokemonChangePopup.MustChange = true;
     }
 
+    public IEnumerator FallDownEffect(bool isMe, bool isShowChangePopup)
+    {
+        float accumulateTime = 0f;
+        Image targetImage = isMe ? GetImage((int)Images.Image_MyPokemon) : GetImage((int)Images.Image_EnemyPokemon);
+        while (accumulateTime < 1f)
+        {
+            accumulateTime += Time.deltaTime;
+
+            targetImage.material.mainTextureOffset = new Vector2(0f, accumulateTime);
+            yield return null;
+        }
+
+        if(isShowChangePopup)
+            ChangeFalldownPokemon();
+
+        targetImage.material.mainTextureOffset = Vector2.zero;
+    }
+
     public void DuelEnd(bool isWin, bool isRunaway)
     {
         string text = isWin ? (isRunaway ? $"{Managers.Player.Enemy.Name}(은)는 도망쳤다!" : $"{Managers.Player.Enemy.Name}(와)과의 대결에서 승리했다!") 
             : (isRunaway ? "무사히 도망쳤다!" :$"{Managers.Player.MyPlayer.Name}(은)는 눈 앞이 캄캄해졌다.");
-        Managers.Job.Push(() => { SetAnnounce(text, true); });
+        Managers.Job.Push(() => SetAnnounce(text, true) );
         Managers.Player.IsTurnProgressing = false;
     }
 
@@ -340,10 +366,7 @@ public class UIBattleScene : UICommonScene
         if (setByHandler)
             Managers.Job.Excute(); 
     }
-
-    const float targetHPSliderDiff = 0.02f;
-    const float hpSliderSpeedMagnification = 1.5f;
-
+    
     public void SetPokemonHPBar(float targetRatio, TargetType targetType, bool setByHandler = true)
     {
         StartCoroutine(SetHPbarCoroutine(targetRatio, targetType, setByHandler));

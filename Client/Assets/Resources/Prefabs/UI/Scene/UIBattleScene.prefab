@@ -312,6 +312,7 @@ GameObject:
   - component: {fileID: 1143664287552371428}
   - component: {fileID: 3061152677752527120}
   - component: {fileID: 4566675746080347831}
+  - component: {fileID: 363448445270390492}
   m_Layer: 5
   m_Name: Image_MyTrainer
   m_TagString: Untagged
@@ -377,6 +378,28 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &363448445270390492
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202867209929146340}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfa57a6b1f79ad041b6a8e2c2b7278de, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1471400384239087076
 GameObject:
   m_ObjectHideFlags: 0
