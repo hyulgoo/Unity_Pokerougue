@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static UIBattleScene;
 
 public class AttackAnimationScript : StateMachineBehaviour
 {
@@ -17,14 +18,10 @@ public class AttackAnimationScript : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //상대 포켓몬의 피격 애니메이션 재생
-        if (isMe)
+        UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+        if (battleScene != null)
         {
-
-        }
-        else
-        {
-
+            battleScene.PlayHitAnimation(isMe);
         }
     }
 

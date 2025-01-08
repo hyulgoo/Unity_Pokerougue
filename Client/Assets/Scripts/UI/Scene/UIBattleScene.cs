@@ -407,4 +407,15 @@ public class UIBattleScene : UICommonScene
         if(setByHandler)
             Managers.Job.Excute();
     }
+
+    public void PlayHitAnimation(bool isMe)
+    {
+        Images targetImages = isMe ? Images.Image_MyPokemon : Images.Image_EnemyPokemon;
+        Image targetImage = GetImage((int)targetImages);
+        if (targetImage != null)
+        {
+            Animator animator = targetImage.GetComponent<Animator>();
+            animator.Play("Hit");
+        }
+    }
 }
