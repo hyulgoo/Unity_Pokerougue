@@ -187,11 +187,11 @@ namespace Server.Game
             battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
             foreach (var playerInfo in playerDuelResultArray)
             {
-                if (playerInfo.Value == false)
-                    continue;
-
-                battleInfo.WinPlayerId = playerInfo.Key;
-                break;
+                if (playerInfo.Value)
+                {
+                    battleInfo.WinPlayerId = playerInfo.Key;
+                    break;
+                }
             }                     
         }
 

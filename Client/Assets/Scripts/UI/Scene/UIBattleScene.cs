@@ -102,6 +102,9 @@ public class UIBattleScene : UICommonScene
         if (GetImage((int)Images.Image_BackGround).sprite == null)
             Debug.Log($"Fail to Find Background Sprite ({fieldName})");
 
+        string enemyName = Managers.Player.Enemy.Name;
+        Managers.Job.Push(() => { SetAnnounce($"{enemyName}가 승부를 걸어왔다!", true); });
+        
         FootHoldMoveAtDuelStart();
     }
 
@@ -115,17 +118,10 @@ public class UIBattleScene : UICommonScene
         Sprite enemyTrainerImage = Managers.Resource.Load<Sprite>($"Sprite/character/rival_f 1");
         SetTrainerOrPokemonImage(enemyTrainerImage, false, true);
 
-        string enemyName = Managers.Player.Enemy.Name;
-        Managers.Job.Push(() => { SetAnnounce($"{enemyName}가 승부를 걸어왔다!", true); });
-
         string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
-        Managers.Job.Push(() =>
-        {
-            MoveTrainerAtDuelStart();
-            SetAnnounce($"가라! {currentPokemonName}!", true);
-        });
+        Managers.Job.Push(() => { SetAnnounce($"가라! {currentPokemonName}!", true); });
 
-        NewTurn();
+        Managers.Job.Push(() => { MoveTrainerAtDuelStart(); });
     }
 
     void FootHoldMoveAtDuelStart()
@@ -135,7 +131,7 @@ public class UIBattleScene : UICommonScene
 
     void MoveTrainerAtDuelStart()
     {
-        StartCoroutine(ImageHorizonMoveCoroutine(true, TrainerMoveTimeAtSpawnPokemon, _screenWidth * 0.7f, false));
+        StartCoroutine(ImageHorizonMoveCoroutine(true, TrainerMoveTimeAtSpawnPokemon, _screenWidth * 0.7f, true));
     }
 
     IEnumerator ImageHorizonMoveCoroutine(bool isTrainer, float moveTime, float moveDistance, bool setByHandler)
@@ -195,6 +191,7 @@ public class UIBattleScene : UICommonScene
 
                 ThrowPokeball(true, false);
                 ThrowPokeball(false, false);
+                NewTurn();
             }
 
             yield return null;
@@ -207,8 +204,14 @@ public class UIBattleScene : UICommonScene
             Managers.Job.Excute();
     }
 
-    public void ThrowPokeball(bool isMe, bool setByHandler)
+    public void ThrowPokeball(bool isMe, bool isChange)
     {
+        if (isChange && isMe)
+        {
+            string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
+            Managers.Job.Push(() => { SetAnnounce($"가라! {currentPokemonName}!", true); });
+        }
+
         Image targetImage = isMe ? GetImage((int)Images.Image_MyPokeball) : GetImage((int)Images.Image_EnemyPokeball);
         targetImage.color = Color.white;
 
@@ -220,9 +223,12 @@ public class UIBattleScene : UICommonScene
         }
 
         targetAnimator.Play("SpawnPokemon");
+
+        if (isChange)
+            Managers.Job.Excute();
     }
 
-    public void SetBattlePokemonInfo(bool isMe, bool setByHandler)
+    public void SetBattlePokemonInfo(bool isMe)
     {
         TargetType targetType = isMe ? TargetType.Oneself : TargetType.Enemy;
         PokemonData targetPokemonData = isMe ? Managers.Player.MyPlayer.GetCurPokemonData() : Managers.Player.Enemy.GetCurPokemonData();
@@ -236,9 +242,6 @@ public class UIBattleScene : UICommonScene
 
         SetPokemonHPBar(1f, targetType, false);
         SetPokemonLevel(isMe, targetPokemonData.Info.Level);
-
-        if (setByHandler)
-            Managers.Job.Excute();
     }
 
     void SetPokemonLevel(bool isMe, int level)
@@ -266,6 +269,7 @@ public class UIBattleScene : UICommonScene
         Image relativeImage = isMe ? (isTrainer ? GetImage((int)Images.Image_MyPokemon) : GetImage((int)Images.Image_MyTrainer)) 
                                     : (isTrainer ? GetImage((int)Images.Image_EnemyPokemon) : GetImage((int)Images.Image_EnemyTrainer));
 
+        targetImage.material.mainTextureOffset = Vector2.zero;
         targetImage.sprite = sprite;
         targetImage.color = Color.white;
         relativeImage.color = Color.clear;
@@ -313,29 +317,30 @@ public class UIBattleScene : UICommonScene
         Managers.Job.Push(() => SetAnnounce(anounceText, true));         
     }
 
-    public void ChangeFalldownPokemon()
+    public void ChangeFalldownPokemon(bool isMe)
     {
-        UIBattlePokemonChangePopup battlePokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
-        battlePokemonChangePopup.BattleScene = this;
-        battlePokemonChangePopup.MustChange = true;
+        StartCoroutine(FallDownEffect(isMe));
     }
 
-    public IEnumerator FallDownEffect(bool isMe, bool isShowChangePopup)
+    public IEnumerator FallDownEffect(bool isMe)
     {
         float accumulateTime = 0f;
         Image targetImage = isMe ? GetImage((int)Images.Image_MyPokemon) : GetImage((int)Images.Image_EnemyPokemon);
+
         while (accumulateTime < 1f)
         {
             accumulateTime += Time.deltaTime;
-
             targetImage.material.mainTextureOffset = new Vector2(0f, accumulateTime);
+
             yield return null;
         }
 
-        if(isShowChangePopup)
-            ChangeFalldownPokemon();
-
-        targetImage.material.mainTextureOffset = Vector2.zero;
+        if (isMe)
+        {
+            UIBattlePokemonChangePopup battlePokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
+            battlePokemonChangePopup.BattleScene = this;
+            battlePokemonChangePopup.MustChange = true;
+        }
     }
 
     public void DuelEnd(bool isWin, bool isRunaway)

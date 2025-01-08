@@ -168,7 +168,8 @@ partial class PacketHandler
                     Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
                     Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
 
-                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, true, isDuelEnd);
+                    bool isMe = Managers.Player.MyTurn ? true : false;
+                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, isMe, isDuelEnd);
                 }
                 else
                 {
@@ -183,7 +184,8 @@ partial class PacketHandler
                     if (isEffective || isIneffective || isNoneEffective)
                         Managers.Job.Push(() => { battleScene.SetAnnounce(isNoneEffective ? ("효과가 없는 것 같다...") : (isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다."), true); });
 
-                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, false, isDuelEnd);
+                    bool isMe = Managers.Player.MyTurn ? false : true;
+                    ChechPokemonFallDown(battleScene, toName, targetHPRatio, isMe, isDuelEnd);
                 }
             }
             else
@@ -209,10 +211,7 @@ partial class PacketHandler
 
         if (isDuelEnd == false)
         {
-            // TODO POkEMON IDLE 애니메이션 재생
-
-            bool isShowChangePokemonPopup = (Managers.Player.MyTurn && isMyPokemon) || (Managers.Player.MyTurn == false && isMyPokemon == false);
-            Managers.Job.Push(() => { battleScene.StartCoroutine(battleScene.FallDownEffect(isMyPokemon, isShowChangePokemonPopup)); });
+            Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(isMyPokemon); });
         }
 
         return true;
@@ -325,7 +324,7 @@ partial class PacketHandler
         else
             Managers.Player.Enemy.ChangePokemonOrderById(changePokemonPacket.ChangePokemonId);
 
-        battleScene.SetBattlePokemonInfo(isMyPokemon, true);
+        battleScene.ThrowPokeball(isMyPokemon, true);
     }
 
     public static void S_DuelEndHandler(PacketSession session, IMessage packet)
