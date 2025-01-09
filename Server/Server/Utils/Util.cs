@@ -191,8 +191,9 @@ namespace Server
             battleInfo.TargetType = effect.Target;
             battleInfo.StateFlag = BattleStateFlag.Default;
 
-            if (isMiss)
+            if (isMiss && effect.Target == TargetType.Enemy)
             {
+                battleInfo.ToData = myData.Clone();
                 battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.Miss;
                 return battleInfo;
             }

@@ -108,6 +108,7 @@ public class UISelectPokemonScene : UICommonScene
         Image iconImg = GetObject(order).GetComponent<Image>();
         Sprite curMstSprite = Managers.Resource.Load<Sprite>($"Sprite/pokemon/icons/{pokemonNum}");
         iconImg.sprite = curMstSprite;
+
         return true;
     }
 
@@ -124,10 +125,10 @@ public class UISelectPokemonScene : UICommonScene
         GetText((int)Texts.Text_MstNumber).text = $"{pokemonNumber}";
         GetText((int)Texts.Text_MstName).text = data.Name;
         sprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/type_bgs");
-        for (int i = 0; i < data.Info.SkillId.Count; ++i)
+        for (int index = 0; index < data.Info.SkillId.Count; ++index)
         {
-            SkillData skilldata = Managers.Data.SkillDict[data.Info.SkillId[i]];
-            Image skillImage = GetText(i).gameObject.GetComponentInParent<Image>();
+            SkillData skilldata = Managers.Data.SkillDict[data.Info.SkillId[index]];
+            Image skillImage = GetText(index).gameObject.GetComponentInParent<Image>();
             if (skilldata == null)
             {
                 skillImage.color = Color.clear;
@@ -135,7 +136,7 @@ public class UISelectPokemonScene : UICommonScene
             }
             else
             {
-                GetText(i).text = skilldata.name;
+                GetText(index).text = skilldata.name;
                 int type = (int)skilldata.info.SkillEffect[0].Type;
                 string spriteName = "type_bgs_" + type.ToString();
                 Sprite typesprite = System.Array.Find(sprites, sprite => sprite.name == spriteName);

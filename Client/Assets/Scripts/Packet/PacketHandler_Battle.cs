@@ -150,6 +150,10 @@ partial class PacketHandler
             else
                 targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
 
+            if (battleInfo.TargetType == TargetType.Enemy 
+                && (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot))
+                battleScene.PlayPokemonAnimation(Managers.Player.MyTurn, "Attack");
+
             if ((battleInfo.StateFlag & BattleStateFlag.Miss) == BattleStateFlag.Miss)
             {
                 string fromName = battleInfo.FromData.Name;
