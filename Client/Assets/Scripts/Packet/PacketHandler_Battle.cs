@@ -52,7 +52,6 @@ partial class PacketHandler
         if (turnInfoList.Count != 0)
             isDuelEnd = (turnInfoList[turnInfoList.Count - 1].StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd;
 
-        bool isTurnOver = false;
 		foreach (BattleInfo turnInfo in turnInfoList)
         {
             if((turnInfo.StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd)
@@ -92,7 +91,7 @@ partial class PacketHandler
                     float hpRatio = Util.GetPokemonHPRatio(turnInfo.ToData);
                     Managers.Job.Push(() => { battleScene.SetAnnounce(text, true); });
                     Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
-                    isTurnOver = true;
+                    return true;
                 }
             }
             else if ((turnInfo.StateFlag & BattleStateFlag.RecoveryConfusion) == BattleStateFlag.RecoveryConfusion)
@@ -105,7 +104,7 @@ partial class PacketHandler
             {
                 string text = $"{toName}(은)는 풀이 죽어 기술을 쓸 수 없다!";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(text, true); });
-                isTurnOver = true;
+                return true;
             }
             else if ((turnInfo.StateFlag & BattleStateFlag.RecoverySturn) == BattleStateFlag.RecoverySturn)
             {
@@ -117,7 +116,7 @@ partial class PacketHandler
                 return true;
         }
 
-        return isTurnOver;
+        return false;
     }
 
 	static void BattleTurnInfo(RepeatedField<BattleInfo> battleInfoList, int skillId)
@@ -150,16 +149,17 @@ partial class PacketHandler
             else
                 targetType = Managers.Player.MyTurn ? TargetType.Enemy : TargetType.Oneself;
 
-            if (battleInfo.TargetType == TargetType.Enemy 
-                && (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot))
-                battleScene.PlayPokemonAnimation(Managers.Player.MyTurn, "Attack");
-
             if ((battleInfo.StateFlag & BattleStateFlag.Miss) == BattleStateFlag.Miss)
             {
                 string fromName = battleInfo.FromData.Name;
                 string announce = $"{fromName}의 공격은 빗나갔다!";
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 return;
+            }
+            else if (battleInfo.TargetType == TargetType.Enemy
+                && (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot))
+            {
+                battleScene.PlayPokemonAnimation(Managers.Player.MyTurn, "Attack");
             }
 
             if (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
@@ -214,9 +214,7 @@ partial class PacketHandler
         Managers.Job.Push(() => { battleScene.SetAnnounce($"{fallDownPokemonName}은(는) 쓰려졌다.", true); });
 
         if (isDuelEnd == false)
-        {
             Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(isMyPokemon); });
-        }
 
         return true;
     }
@@ -318,9 +316,7 @@ partial class PacketHandler
          
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
         if (battleScene == null)
-        {
             Debug.Assert(false, "Cannot Found BattleScene!!");
-        }
 
         bool isMyPokemon = changePokemonPacket.PlayerId == Managers.Player.MyPlayer.Id;
         if (isMyPokemon)
@@ -337,9 +333,7 @@ partial class PacketHandler
 
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
         if (battleScene == null)
-        {
             Debug.Assert(false, "Cannot Found BattleScene!!");
-        }
 
         battleScene.DuelEnd(dualEndPacket.IsWin, dualEndPacket.IsRunaway);
     }

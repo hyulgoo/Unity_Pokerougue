@@ -201,17 +201,9 @@ public class UIBattleScene : UICommonScene
     {
         if (isChange)
         {
-            string announce = string.Empty;
-            if (isMe)
-            {
-                string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
-                announce = $"가라! {currentPokemonName}!";
-            }
-            else
-            {
-                string enemyPokemonName = Managers.Player.Enemy.GetCurPokemonName();
-                announce = $"상대는 {enemyPokemonName}(을)를 내보냈다!";
-            }
+            CommonPlayerController targetPlayer = isMe ? Managers.Player.MyPlayer : Managers.Player.Enemy;
+            string pokemonName = targetPlayer.GetCurPokemonName();
+            string announce = isMe ? $"가라! {pokemonName}!" : $"상대는 {pokemonName}(을)를 내보냈다!";
 
             Managers.Job.Push(() => { SetAnnounce(announce, true); });
             Managers.Job.Excute();
@@ -396,8 +388,7 @@ public class UIBattleScene : UICommonScene
 
         while (Mathf.Abs(targetRatio - curRatio) > Mathf.Abs(targetHPSliderDiff))
         {
-            int hpState = 2 - (int)(curRatio / 0.34f);
-            
+            int hpState = 2 - (int)(curRatio / 0.34f);            
             if (hpState < 0 || hpState > 2)
                 hpState = 0;
 
