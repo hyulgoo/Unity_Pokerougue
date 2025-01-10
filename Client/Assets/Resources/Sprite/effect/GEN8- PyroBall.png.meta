@@ -1,0 +1,905 @@
+fileFormatVersion: 2
+guid: 0400e2ec25a40494aac3a1a25460ee03
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5443495843199996282
+    second: GEN8- PyroBall_0
+  - first:
+      213: 4825135650313613133
+    second: GEN8- PyroBall_1
+  - first:
+      213: -10270873924261554
+    second: GEN8- PyroBall_2
+  - first:
+      213: 3871882850162055094
+    second: GEN8- PyroBall_3
+  - first:
+      213: -7152323484307841309
+    second: GEN8- PyroBall_4
+  - first:
+      213: 6886394325636398247
+    second: GEN8- PyroBall_5
+  - first:
+      213: -678813617522880902
+    second: GEN8- PyroBall_6
+  - first:
+      213: 3570939436772398947
+    second: GEN8- PyroBall_7
+  - first:
+      213: -5884312564841118818
+    second: GEN8- PyroBall_8
+  - first:
+      213: -9143838749117402293
+    second: GEN8- PyroBall_9
+  - first:
+      213: -5351070230026224105
+    second: GEN8- PyroBall_10
+  - first:
+      213: 436550333398723290
+    second: GEN8- PyroBall_11
+  - first:
+      213: 3289782828828588804
+    second: GEN8- PyroBall_12
+  - first:
+      213: -3864679549739582504
+    second: GEN8- PyroBall_13
+  - first:
+      213: -362842956463605596
+    second: GEN8- PyroBall_14
+  - first:
+      213: 5552465037388209573
+    second: GEN8- PyroBall_15
+  - first:
+      213: 7478326171344303171
+    second: GEN8- PyroBall_16
+  - first:
+      213: 7062823977310548796
+    second: GEN8- PyroBall_17
+  - first:
+      213: 8880013610147312701
+    second: GEN8- PyroBall_18
+  - first:
+      213: 3771239344793711772
+    second: GEN8- PyroBall_19
+  - first:
+      213: -8323400149725769922
+    second: GEN8- PyroBall_20
+  - first:
+      213: -2789554769384635755
+    second: GEN8- PyroBall_21
+  - first:
+      213: 2550843093252970253
+    second: GEN8- PyroBall_22
+  - first:
+      213: -4488197220161972789
+    second: GEN8- PyroBall_23
+  - first:
+      213: -2569798873787102297
+    second: GEN8- PyroBall_24
+  - first:
+      213: -3980051226212729457
+    second: GEN8- PyroBall_25
+  - first:
+      213: 997707682871755265
+    second: GEN8- PyroBall_26
+  - first:
+      213: -5391178405050659866
+    second: GEN8- PyroBall_27
+  - first:
+      213: -2428957682123434463
+    second: GEN8- PyroBall_28
+  - first:
+      213: -3233164304816618377
+    second: GEN8- PyroBall_29
+  - first:
+      213: 6102862349666035108
+    second: GEN8- PyroBall_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GEN8- PyroBall_0
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 331
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a715046e0ae2b8b40800000000000000
+      internalID: 5443495843199996282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_1
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 331
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4f240e2f4356f240800000000000000
+      internalID: 4825135650313613133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_2
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 327
+        width: 20
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e492630d1b28bdff0800000000000000
+      internalID: -10270873924261554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_3
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 323
+        width: 28
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b716d720f0bbb530800000000000000
+      internalID: 3871882850162055094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_4
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 321
+        width: 28
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ee95278fa7ddbc90800000000000000
+      internalID: -7152323484307841309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_5
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 264
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7acb2da4723619f50800000000000000
+      internalID: 6886394325636398247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_6
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 224
+        width: 29
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7ec9d28c9e5496f0800000000000000
+      internalID: -678813617522880902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_7
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 222
+        width: 53
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36790438f768e8130800000000000000
+      internalID: 3570939436772398947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_8
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 273
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e93074116e8b65ea0800000000000000
+      internalID: -5884312564841118818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_9
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 222
+        width: 55
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b43b7639a1f8a1180800000000000000
+      internalID: -9143838749117402293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_10
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 222
+        width: 53
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71e7e1b1afd2db5b0800000000000000
+      internalID: -5351070230026224105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_11
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 224
+        width: 26
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ada2fcc1730fe0600800000000000000
+      internalID: 436550333398723290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_12
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 125
+        width: 48
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40bf1848d08a7ad20800000000000000
+      internalID: 3289782828828588804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_13
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 184
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db3e0bec66ed5ac0800000000000000
+      internalID: -3864679549739582504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_14
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 128
+        width: 39
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a8fbb6e04ce6faf0800000000000000
+      internalID: -362842956463605596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_15
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 122
+        width: 41
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5addc4588815e0d40800000000000000
+      internalID: 5552465037388209573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_16
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 124
+        width: 57
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 344fb7de70a58c760800000000000000
+      internalID: 7478326171344303171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_17
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 172
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c33f4b6acf0340260800000000000000
+      internalID: 7062823977310548796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_18
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 121
+        width: 46
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d34f67184552c3b70800000000000000
+      internalID: 8880013610147312701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_19
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 0
+        width: 83
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c94f7650432265430800000000000000
+      internalID: 3771239344793711772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_20
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 84
+        width: 16
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3f8920c9a75d7c80800000000000000
+      internalID: -8323400149725769922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_21
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 82
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 592055987b28949d0800000000000000
+      internalID: -2789554769384635755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_22
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 63
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d071a13474a666320800000000000000
+      internalID: 2550843093252970253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_23
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 71
+        width: 14
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc599526868b6b1c0800000000000000
+      internalID: -4488197220161972789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_24
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 62
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ab88b72a8d365cd0800000000000000
+      internalID: -2569798873787102297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_25
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 18
+        width: 58
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8d7bb93f7404c8c0800000000000000
+      internalID: -3980051226212729457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_26
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 35
+        width: 15
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 102cf3bf9d198dd00800000000000000
+      internalID: 997707682871755265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_27
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 39
+        width: 15
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ebc236edcfae25b0800000000000000
+      internalID: -5391178405050659866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_28
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 9
+        width: 14
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12693967bdb9a4ed0800000000000000
+      internalID: -2428957682123434463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_29
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 1
+        width: 15
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 774ceeed13e7123d0800000000000000
+      internalID: -3233164304816618377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GEN8- PyroBall_30
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 9
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a523f009f8b1b450800000000000000
+      internalID: 6102862349666035108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable: {}
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
