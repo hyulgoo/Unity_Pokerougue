@@ -91,7 +91,7 @@ public class UIManager
 
         // 새로 생성하면 선택된 패널로 만들어줌.
         Managers.Select.CurPanel = go;
-
+        
 		return popup;
     }
 

@@ -30,7 +30,11 @@ public class AttackAnimationScript : StateMachineBehaviour
 
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
         if (battleScene != null)
-            battleScene.PlayPokemonAnimation(!_isMe, "Hit");
+        {
+            UIBattleScene.Images targetImage = Managers.Player.MyTurn ? UIBattleScene.Images.Image_EnemyPokemon : UIBattleScene.Images.Image_MyPokemon; 
+            battleScene.PlayAnimationInBattleScene(targetImage, "Hit");
+            Managers.Sound.Play("effect/hit");
+        }
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

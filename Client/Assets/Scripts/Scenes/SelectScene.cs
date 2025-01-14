@@ -12,6 +12,7 @@ public class SelectScene : BaseScene
 
         SceneType = Define.Scene.Select;
         Managers.UI.ShowSceneUI<UISelectPokemonScene>();
+        Managers.Sound.Play("bgm/menu", Define.Sound.Bgm);
     }
 
     void Update() {}

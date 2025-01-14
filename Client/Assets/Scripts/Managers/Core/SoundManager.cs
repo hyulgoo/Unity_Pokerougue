@@ -76,7 +76,6 @@ public class SoundManager
 			path = $"Sounds/{path}";
 
 		AudioClip audioClip = null;
-
 		if (type == Define.Sound.Bgm)
 		{
 			audioClip = Managers.Resource.Load<AudioClip>(path);

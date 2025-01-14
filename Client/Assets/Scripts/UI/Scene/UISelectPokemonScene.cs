@@ -21,8 +21,8 @@ public class UISelectPokemonScene : UICommonScene
         Text_SkillName_1,
         Text_SkillName_2,
         Text_SkillName_3,
-        Text_MstName,
-        Text_MstNumber,
+        Text_PokemonName,
+        Text_PokemonNumber,
     }
 
     enum GameObjects
@@ -32,19 +32,19 @@ public class UISelectPokemonScene : UICommonScene
         Content,
 
         // 현재 보고있는 몬스터의 스킬 및 이미지
-        Image_Mst,
+        Image_Pokemon,
         Image_Skill_0,
         Image_Skill_1,
         Image_Skill_2,
         Image_Skill_3,
 
         // 선택된 몬스터 6마리
-        Image_SelectedMst_0,
-        Image_SelectedMst_1,
-        Image_SelectedMst_2,
-        Image_SelectedMst_3,
-        Image_SelectedMst_4,
-        Image_SelectedMst_5,
+        Image_SelectedPokemon_0,
+        Image_SelectedPokemon_1,
+        Image_SelectedPokemon_2,
+        Image_SelectedPokemon_3,
+        Image_SelectedPokemon_4,
+        Image_SelectedPokemon_5,
     }
 
     enum Buttons
@@ -68,11 +68,10 @@ public class UISelectPokemonScene : UICommonScene
 
         SetPokemonList();
     }
-
+    
     void SetPokemonList()
     {
         bool isFirst = false;
-
         foreach (int id in Managers.Data.PokeonDict.Keys)
         {
             GameObject pokemonButtonObject = Managers.Resource.Instantiate("Add/Pokemon");
@@ -102,7 +101,7 @@ public class UISelectPokemonScene : UICommonScene
             return false;
 
         _pokemonList.Add(pokemonNum);
-        int order = (int)GameObjects.Image_SelectedMst_0 + CurOrder;
+        int order = (int)GameObjects.Image_SelectedPokemon_0 + CurOrder;
         CurOrder++;
 
         Image iconImg = GetObject(order).GetComponent<Image>();
@@ -114,7 +113,8 @@ public class UISelectPokemonScene : UICommonScene
 
     public void SetCurrentSelectPokemonInfo(int pokemonNumber)
     {
-        Image curMstAnimator= GetObject((int)GameObjects.Image_Mst).GetOrAddComponent<Image>();
+        Managers.Sound.Play("system/select");
+        Image curMstAnimator= GetObject((int)GameObjects.Image_Pokemon).GetOrAddComponent<Image>();
 
         // TODO : 현재 포켓몬의 애니메이션을 틀어줌
         Sprite[] sprites = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
@@ -122,8 +122,8 @@ public class UISelectPokemonScene : UICommonScene
 
         // 현재 포켓몬의 정보를 나타냄
         PokemonData data = Managers.Data.PokeonDict[pokemonNumber];
-        GetText((int)Texts.Text_MstNumber).text = $"{pokemonNumber}";
-        GetText((int)Texts.Text_MstName).text = data.Name;
+        GetText((int)Texts.Text_PokemonNumber).text = $"{pokemonNumber}";
+        GetText((int)Texts.Text_PokemonName).text = data.Name;
         sprites = Managers.Resource.LoadAll<Sprite>("Sprite/ui/type_bgs");
         for (int index = 0; index < data.Info.SkillId.Count; ++index)
         {
@@ -134,22 +134,20 @@ public class UISelectPokemonScene : UICommonScene
                 skillImage.color = Color.clear;
                 break;
             }
-            else
-            {
-                GetText(index).text = skilldata.name;
-                int type = (int)skilldata.info.SkillEffect[0].Type;
-                string spriteName = "type_bgs_" + type.ToString();
-                Sprite typesprite = System.Array.Find(sprites, sprite => sprite.name == spriteName);
-                skillImage.sprite = typesprite;
-                skillImage.type = Image.Type.Sliced;
-                skillImage.color = Color.white;
-            }
+                     
+            GetText(index).text = skilldata.name;
+            int type = (int)skilldata.info.SkillEffect[0].Type;
+            string spriteName = "type_bgs_" + type.ToString();
+            Sprite typesprite = System.Array.Find(sprites, sprite => sprite.name == spriteName);
+            skillImage.sprite = typesprite;
+            skillImage.type = Image.Type.Sliced;
+            skillImage.color = Color.white;         
         }
     }
 
     void OnClickReadyButton()
     {
-        if (_pokemonList.Count != _maxPokemonCount)
+        if (_pokemonList.Count < _maxPokemonCount)
         {
             UICommonAnnouncePopup Announcepopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             Announcepopup.SetAnnounceText("아직 포켓몬을 전부 선택하지 않았습니다!");

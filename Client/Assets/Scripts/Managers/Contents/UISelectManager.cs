@@ -25,25 +25,36 @@ public class UISelectManager
         if (panel == null) return;
 
         _totButtoninPanel = panel.GetComponentsInChildren<Button>();
-        if (_totButtoninPanel.Length > 0)
+        if (_totButtoninPanel.Length <= 0)
         {
-            UICommonBase bc = panel.GetComponent<UICommonBase>();
-            if (bc == null) return;
-
-            if(bc._lastSelected != null)
-            {
-                _curSelectButton = bc._lastSelected;
-            }
-            else
-            {
-                _curSelectButton = _totButtoninPanel[0];
-            }
-            _curSelectButton.Select();
-            bc.SetPointerPos(_curSelectButton.transform);
-        }
-        else
-        { 
             _curSelectButton = null;
+            return;
+        }
+
+        UICommonBase commmonBase = panel.GetComponent<UICommonBase>();
+        if (commmonBase == null) return;
+
+        if(commmonBase._lastSelected != null)
+            _curSelectButton = commmonBase._lastSelected;
+        else
+            _curSelectButton = _totButtoninPanel[0];
+
+        _curSelectButton.Select();
+        commmonBase.SetPointerPos(_curSelectButton.transform);
+
+        switch (commmonBase.InitSound)
+        {
+            case UICommonBase.InitSounds.None:
+            break;
+            case UICommonBase.InitSounds.Popup:
+                Managers.Sound.Play("system/menu_open");
+            break;
+            case UICommonBase.InitSounds.Select:
+                Managers.Sound.Play("system/select");
+            break;
+            case UICommonBase.InitSounds.Error:
+                Managers.Sound.Play("system/error");
+            break;
         }
     }
 }

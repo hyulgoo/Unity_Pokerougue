@@ -25,13 +25,14 @@ public class UILobbyScene : UICommonScene
             string newtext = string.Empty;
             TextMeshProUGUI text = _buttons[index].gameObject.GetComponentInChildren<TextMeshProUGUI>();
             if (index < names.Length)
-            {                
+            {
                 newtext = names[index];
                 text.alignment = TextAlignmentOptions.Left;
                 _buttons[index].interactable = true;
                 UILobbyPlayerButton pc = _buttons[index].gameObject.GetOrAddComponent<UILobbyPlayerButton>();
                 pc.SetPlayerId(id[index]);
                 _buttons[index].onClick.AddListener(OnClickPlayerButton);
+                _buttons[index].Select();
             }
             else
             {
@@ -41,13 +42,20 @@ public class UILobbyScene : UICommonScene
             }
 
             text.text = newtext;
-                _buttons[index].Select();
         }
     }
 
     public void OnClickPlayerButton()
     {
+        if (_selectbuttonid == Managers.Player.MyPlayer.Id)
+        {
+            UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            announcePopup.SetAnnounceText("자신에게는 신청할 수 없습니다!");
+            return;
+        }
+
         UILobbyPlayerSelectPopup popup = Managers.UI.ShowPopupUI<UILobbyPlayerSelectPopup>("UICommonRespondPopup");
         popup.SetEnemyPlayer(_selectbuttonid);
+        popup.InitSound = InitSounds.Select;
     }
 }

@@ -92,9 +92,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         PokemonData[] pokemonDataList = Managers.Player.MyPlayer.GetAllPokemonData();
         UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
         if (battleScene == null)
-        {
             Debug.Assert(false, "BattleScene Not Found");
-        }
 
         for (int pokemonIndex = 0; pokemonIndex < Define.PokemonMaxCount; pokemonIndex++)
         {
@@ -114,9 +112,8 @@ public class UIBattlePokemonChangePopup : UICommonPopup
 
                 UIBattlePokemonChangeSelectButton pokemonChangeSelectButton = pokemonButton.gameObject.GetOrAddComponent<UIBattlePokemonChangeSelectButton>();
                 if (pokemonChangeSelectButton == null)
-                {
                     Debug.Assert(false, $"Connot Found UIBattlePokemonChangeSelectButton");
-                }
+
                 pokemonChangeSelectButton.PokemonChangePopup = this;
                 pokemonChangeSelectButton.SelectedChangePokemonId = pokemonDataList[pokemonIndex].Id;
 
@@ -124,9 +121,8 @@ public class UIBattlePokemonChangePopup : UICommonPopup
                 string curPokemonSpritePath = $"Sprite/pokemon/icons/{pokemonDataList[pokemonIndex].Id}";
                 Sprite curPokemonSprite = Managers.Resource.Load<Sprite>(curPokemonSpritePath);
                 if (curPokemonSprite == null)
-                {
                     Debug.Assert(false, $"Connot Found {curPokemonSpritePath}");
-                }
+
                 pokemonImage.sprite = curPokemonSprite;
                 pokemonImage.color = Color.white;
 
@@ -161,9 +157,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
     public void SetAnnounceText(string text)
     {
         if (string.IsNullOrEmpty(text))
-        {
             Debug.Assert(false, "BattlePokemonChangePopup AnnounceText is Empty!!");
-        }
 
         GetText((int)Texts.Text_Announce).text = text;
     }
@@ -171,9 +165,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
     public void ChangePokemon()
     {
         if (SelectedChangePokemonId == Define.InValidNumber)
-        {
             Debug.Assert(false, "SelectedChangePokemonId is InValid!!");
-        }
 
         {
             C_ChangePokemon packet = new C_ChangePokemon();
@@ -194,34 +186,36 @@ public class UIBattlePokemonChangePopup : UICommonPopup
     {
         PokemonInfo selectPokemonInfo = Managers.Player.MyPlayer.GetPokemonInfoById(SelectedChangePokemonId);
         if (selectPokemonInfo == null)
-        {
             Debug.Assert(false, $"Fail to Find SelectedPokemon By Id{SelectedChangePokemonId}");
-        }
 
         if (SelectedChangePokemonId == Managers.Player.MyPlayer.GetCurPokemonData().Id)
         {
-            UICommonAnnouncePopup anoouncePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
-            anoouncePopup.SetAnnounceText("현재 출전 중인 포켓몬으로는 교체할 수 없습니다!");
+            UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            announcePopup.InitSound = InitSounds.Error;
+            announcePopup.SetAnnounceText("현재 출전 중인 포켓몬으로는 교체할 수 없습니다!");
             return;
         }
 
         if (selectPokemonInfo.Hp <= 0)
         {
             UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            announcePopup.InitSound = InitSounds.Error;
             announcePopup.SetAnnounceText("기절 상태의 포켓몬으로는 교체할 수 없습니다.");
             return;
         }
 
         UIBattleChangePokemonSelectedPopup changePokemonSelectedPopup = Managers.UI.ShowPopupUI<UIBattleChangePokemonSelectedPopup>();
         changePokemonSelectedPopup.ChangePokemonSelectedPopup = this;
+        changePokemonSelectedPopup.InitSound = InitSounds.Select;
     }
 
     void OnClickCancleButton()
     {
         if (Managers.Player.MyPlayer.GetCurPokemonInfo().Hp <= 0)
         {
-            UICommonAnnouncePopup anoouncePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
-            anoouncePopup.SetAnnounceText("포켓몬을 반드시 교체해야 합니다!");
+            UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            announcePopup.InitSound = InitSounds.Error;
+            announcePopup.SetAnnounceText("포켓몬을 반드시 교체해야 합니다!");
             return;
         }
 

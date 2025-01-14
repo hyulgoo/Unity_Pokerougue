@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 2673035349074754396}
   - component: {fileID: 7701041737514287804}
   m_Layer: 5
-  m_Name: Text_MstNumber
+  m_Name: Text_PokemonNumber
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -854,7 +854,7 @@ GameObject:
   - component: {fileID: 2825778317822407410}
   - component: {fileID: 2464181986639750765}
   m_Layer: 5
-  m_Name: Image_SelectedMst_4
+  m_Name: Image_SelectedPokemon_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -929,7 +929,7 @@ GameObject:
   - component: {fileID: 7010655133092008761}
   - component: {fileID: 5444605558608632990}
   m_Layer: 5
-  m_Name: Image_SelectedMst_2
+  m_Name: Image_SelectedPokemon_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1217,7 +1217,7 @@ GameObject:
   - component: {fileID: 9101554459259898776}
   - component: {fileID: 401376561856246756}
   m_Layer: 5
-  m_Name: Image_SelectedMst_5
+  m_Name: Image_SelectedPokemon_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1292,7 +1292,7 @@ GameObject:
   - component: {fileID: 7389675864298527952}
   - component: {fileID: 6747768202222053656}
   m_Layer: 5
-  m_Name: Image_Mst
+  m_Name: Image_Pokemon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1367,7 +1367,7 @@ GameObject:
   - component: {fileID: 1484829277827484422}
   - component: {fileID: 5731733084817078024}
   m_Layer: 5
-  m_Name: Image_SelectedMst_3
+  m_Name: Image_SelectedPokemon_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1770,7 +1770,7 @@ GameObject:
   - component: {fileID: 8782538583838177309}
   - component: {fileID: 169333928136733894}
   m_Layer: 5
-  m_Name: Image_SelectedMst_0
+  m_Name: Image_SelectedPokemon_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1845,7 +1845,7 @@ GameObject:
   - component: {fileID: 8780305562036185365}
   - component: {fileID: 7771938725293445378}
   m_Layer: 5
-  m_Name: Image_SelectedMst_1
+  m_Name: Image_SelectedPokemon_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2121,7 +2121,7 @@ GameObject:
   - component: {fileID: 2212158395765276363}
   - component: {fileID: 7735988282594018144}
   m_Layer: 5
-  m_Name: Text_MstName
+  m_Name: Text_PokemonName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

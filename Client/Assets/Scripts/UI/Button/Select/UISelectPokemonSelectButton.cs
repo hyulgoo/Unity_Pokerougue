@@ -27,8 +27,8 @@ public class UISelectPokemonSelectButton : UICommonBase, ISelectHandler
     public override void Init()
     {
         Bind<GameObject>(typeof(GameObjects));
-        Button btn = GetComponent<Button>();
-        btn.onClick.AddListener(OnClickButton);
+        Button button = GetComponent<Button>();
+        button.onClick.AddListener(OnClickButton);
     }
 
     void OnClickButton()
@@ -40,18 +40,18 @@ public class UISelectPokemonSelectButton : UICommonBase, ISelectHandler
 
     public void SetIconImage()
     {
-        Image iconImg = GetObject((int)GameObjects.Icon).GetComponent<Image>();
+        Image iconImage = GetObject((int)GameObjects.Icon).GetComponent<Image>();
         Sprite curPokemonSprite = Managers.Resource.Load<Sprite>($"Sprite/pokemon/icons/{Id}");
-        iconImg.sprite = curPokemonSprite;
+        iconImage.sprite = curPokemonSprite;
     }
 
     public void OnSelect(BaseEventData eventData)
     {
-        GameObject go = Managers.Select.CurPanel;
-        if (go == null) 
+        GameObject gameObject = Managers.Select.CurPanel;
+        if (gameObject == null) 
             return;
 
-        UICommonBase uibase = go.GetComponent<UICommonBase>();
+        UICommonBase uibase = gameObject.GetComponent<UICommonBase>();
         if (uibase == null) 
             return;
 

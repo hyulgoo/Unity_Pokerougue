@@ -20,6 +20,6 @@ public class UICommonButton : MonoBehaviour, ISelectHandler
 
         uibase._lastSelected = eventData.selectedObject.GetComponent<Button>();
         uibase.SetPointerPos(eventData.selectedObject.transform);
-    }
-
+        Managers.Sound.Play("system/select");
+    }    
 }

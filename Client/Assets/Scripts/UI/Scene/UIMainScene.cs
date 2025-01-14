@@ -24,11 +24,13 @@ public class UIMainScene : UICommonScene
 
     public void OnClickStartButton()
     {
-        Managers.UI.ShowPopupUI<UIMainLoginPopup>();
+        UIMainLoginPopup mainLoginPopop = Managers.UI.ShowPopupUI<UIMainLoginPopup>();
+        mainLoginPopop.InitSound = InitSounds.Popup;
     }
 
     public void OnClickSettingButton()
     {
-        Managers.UI.ShowPopupUI<UISettingPopup>();
+        UISettingPopup settingPopup = Managers.UI.ShowPopupUI<UISettingPopup>();
+        settingPopup.InitSound = InitSounds.Popup;
     }
 }

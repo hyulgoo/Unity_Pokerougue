@@ -16,6 +16,7 @@ public class MainScene : BaseScene
         player.name = "Player";
 
         Managers.UI.ShowSceneUI<UIMainScene>();
+        Managers.Sound.Play("bgm/title", Define.Sound.Bgm);
     }
 
     public override void Clear() {}

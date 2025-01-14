@@ -156,10 +156,17 @@ partial class PacketHandler
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 return;
             }
-            else if (battleInfo.TargetType == TargetType.Enemy
-                && (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot))
+            else if (battleInfo.TargetType == TargetType.Enemy 
+                && (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot) )
             {
-                battleScene.PlayPokemonAnimation(Managers.Player.MyTurn, "Attack");
+                UIBattleScene.Images targetImage = Managers.Player.MyTurn ? UIBattleScene.Images.Image_MyPokemon : UIBattleScene.Images.Image_EnemyPokemon;
+                battleScene.PlayAnimationInBattleScene(targetImage, "Attack");
+
+                if (battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
+                {
+                    UIBattleScene.Images spaImage = Managers.Player.MyTurn ? UIBattleScene.Images.Image_EnemyPokemon_Effect : UIBattleScene.Images.Image_MyPokemon_Effect;
+                    battleScene.PlayAnimationInBattleScene(spaImage, "Attack_Spa");
+                }
             }
 
             if (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
@@ -196,13 +203,15 @@ partial class PacketHandler
             {
                 string announce = GetNoneAttackBattleAnnounce(battleInfo);
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
-                Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
+                Managers.Job.Push(() => 
+                { 
+                    battleScene.SetPokemonHPBar(targetHPRatio, targetType, true);
+                    Managers.Sound.Play(battleInfo.ApplyType > ApplyType.Dot ? "effect/stat_up" : "effect/stat_down");
+                });
             }
 
-            if (targetType == TargetType.Oneself)
-                Managers.Player.MyPlayer.SetCurPokemonData(battleInfo.ToData);
-            else
-                Managers.Player.Enemy.SetCurPokemonData(battleInfo.ToData);
+            CommonPlayerController player = targetType == TargetType.Oneself ? Managers.Player.MyPlayer : Managers.Player.Enemy;
+            player.SetCurPokemonData(battleInfo.ToData);
         }
     }
 

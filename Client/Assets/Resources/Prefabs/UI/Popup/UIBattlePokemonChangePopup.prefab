@@ -1570,6 +1570,7 @@ GameObject:
   - component: {fileID: 4483712572397442897}
   - component: {fileID: 5789234063785825597}
   - component: {fileID: 5430778154304224092}
+  - component: {fileID: 1090264732570012386}
   m_Layer: 5
   m_Name: Btn_PokemonList03
   m_TagString: Untagged
@@ -1685,6 +1686,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1090264732570012386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2410471278317567054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb63502d8d7c6944acaa2a34b08e4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCurrentPokemonSelectButton: 0
 --- !u!1 &2414097213487045278
 GameObject:
   m_ObjectHideFlags: 0
@@ -2622,6 +2636,7 @@ GameObject:
   - component: {fileID: 8040624889616600079}
   - component: {fileID: 3253174462461676768}
   - component: {fileID: 2118612112629157735}
+  - component: {fileID: 2424733397479238340}
   m_Layer: 5
   m_Name: Btn_PokemonList02
   m_TagString: Untagged
@@ -2737,6 +2752,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2424733397479238340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3607741793303248782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb63502d8d7c6944acaa2a34b08e4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCurrentPokemonSelectButton: 0
 --- !u!1 &3729035408644014939
 GameObject:
   m_ObjectHideFlags: 0
@@ -3517,6 +3545,7 @@ GameObject:
   - component: {fileID: 2420908685332060938}
   - component: {fileID: 5881721197370384629}
   - component: {fileID: 3418970387629577747}
+  - component: {fileID: 8587497422799136750}
   m_Layer: 5
   m_Name: Btn_PokemonList01
   m_TagString: Untagged
@@ -3632,6 +3661,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8587497422799136750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4715527942974589765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb63502d8d7c6944acaa2a34b08e4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCurrentPokemonSelectButton: 0
 --- !u!1 &4887717397703486233
 GameObject:
   m_ObjectHideFlags: 0
@@ -5441,6 +5483,7 @@ GameObject:
   - component: {fileID: 5703376985863157762}
   - component: {fileID: 7433746524353016861}
   - component: {fileID: 4480537920177654777}
+  - component: {fileID: 6011714315230087428}
   m_Layer: 5
   m_Name: Btn_PokemonList05
   m_TagString: Untagged
@@ -5556,6 +5599,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6011714315230087428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6789212619370167203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb63502d8d7c6944acaa2a34b08e4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCurrentPokemonSelectButton: 0
 --- !u!1 &6917292450452099448
 GameObject:
   m_ObjectHideFlags: 0
@@ -6444,6 +6500,7 @@ GameObject:
   - component: {fileID: 4061517781059502096}
   - component: {fileID: 4132838094816131650}
   - component: {fileID: 5034133852775369862}
+  - component: {fileID: 1962775517082446543}
   m_Layer: 5
   m_Name: Btn_PokemonList00
   m_TagString: Untagged
@@ -6559,6 +6616,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1962775517082446543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7705744720913558054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb63502d8d7c6944acaa2a34b08e4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCurrentPokemonSelectButton: 1
 --- !u!1 &7726637722420360437
 GameObject:
   m_ObjectHideFlags: 0
@@ -6590,6 +6660,7 @@ RectTransform:
   m_Children:
   - {fileID: 6381787797931087113}
   - {fileID: 8953162471439092458}
+  - {fileID: 1590668110830148062}
   m_Father: {fileID: 1901842207954137428}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.51108, y: 0.532}
@@ -6785,6 +6856,81 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &8342482680038224742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1590668110830148062}
+  - component: {fileID: 6163968509151806631}
+  - component: {fileID: 9056009021822091835}
+  m_Layer: 5
+  m_Name: Pointer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1590668110830148062
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8342482680038224742}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 651776246189715489}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &6163968509151806631
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8342482680038224742}
+  m_CullTransparentMesh: 1
+--- !u!114 &9056009021822091835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8342482680038224742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &8439811333362269712
 GameObject:
   m_ObjectHideFlags: 0
@@ -6797,6 +6943,7 @@ GameObject:
   - component: {fileID: 7246723846396646733}
   - component: {fileID: 5207706365844004837}
   - component: {fileID: 3004902993473288236}
+  - component: {fileID: 9033510820715655135}
   m_Layer: 5
   m_Name: Btn_PokemonList04
   m_TagString: Untagged
@@ -6912,6 +7059,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9033510820715655135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8439811333362269712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb63502d8d7c6944acaa2a34b08e4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCurrentPokemonSelectButton: 0
 --- !u!1 &8467415861239143187
 GameObject:
   m_ObjectHideFlags: 0

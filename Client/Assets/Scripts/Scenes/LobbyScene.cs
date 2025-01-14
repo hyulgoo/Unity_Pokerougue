@@ -10,6 +10,7 @@ public class LobbyScene : BaseScene
 
         SceneType = Define.Scene.Lobby;
         Managers.UI.ShowSceneUI<UILobbyScene>();
+        Managers.Sound.Play("bgm/menu", Define.Sound.Bgm);
     }
 
     public override void Clear() {}

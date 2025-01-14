@@ -13,12 +13,24 @@ public abstract class UICommonBase : MonoBehaviour
 	public Button _lastSelected = null;
 	public Image _pointer = null;
 
+    public enum InitSounds
+    {
+		None,
+		Popup,
+		Select,
+		Error,
+    }
+
+    public InitSounds InitSound { get; set; } = InitSounds.None;
+
     public abstract void Init();
 
 	private void Awake()
 	{
 		Init();
-		_pointer = Util.FindChild<Image>(gameObject, "Pointer", true);
+
+		if(_pointer == null)
+			_pointer = Util.FindChild<Image>(gameObject, "Pointer", true);
     }
 
 	protected void Bind<T>(Type type) where T : UnityEngine.Object
@@ -27,15 +39,15 @@ public abstract class UICommonBase : MonoBehaviour
 		UnityEngine.Object[] objects = new UnityEngine.Object[names.Length];
 		_objects.Add(typeof(T), objects);
 
-		for (int i = 0; i < names.Length; i++)
+		for (int index = 0; index < names.Length; index++)
 		{
 			if (typeof(T) == typeof(GameObject))
-				objects[i] = Util.FindChild(gameObject, names[i], true);
+				objects[index] = Util.FindChild(gameObject, names[index], true);
 			else
-				objects[i] = Util.FindChild<T>(gameObject, names[i], true);
+				objects[index] = Util.FindChild<T>(gameObject, names[index], true);
 
-			if (objects[i] == null)
-				Debug.Assert(false, $"Failed to bind({names[i]})");
+			if (objects[index] == null)
+				Debug.Assert(false, $"Failed to bind({names[index]})");
 		}
 	}
 
@@ -72,11 +84,11 @@ public abstract class UICommonBase : MonoBehaviour
 			case Define.UIEvent.Click:
 				evt.OnClickHandler -= action;
 				evt.OnClickHandler += action;
-				break;
+			break;
 			case Define.UIEvent.Drag:
 				evt.OnDragHandler -= action;
 				evt.OnDragHandler += action;
-				break;
+			break;
 		}
 	}
 

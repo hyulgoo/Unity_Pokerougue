@@ -59,6 +59,7 @@ partial class PacketHandler
 		}
 
 		popup.SetDuelRequestAnnounce(requestDuel.FromId);
+		popup.InitSound = UICommonBase.InitSounds.Popup;
     }
 
     public static void S_RespondDuelHandler(PacketSession session, IMessage packet)

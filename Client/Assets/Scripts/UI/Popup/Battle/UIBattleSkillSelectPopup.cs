@@ -138,9 +138,7 @@ public class UIBattleSkillSelectPopup : UICommonPopup
     void OnClickSkillButton()
     {
         if (_selectedSkillId == Define.InValidNumber)
-        {
             Debug.Assert(false, "SelectedSkillId is InValid");
-        }
 
         C_Turn turnpacket = new C_Turn();
         turnpacket.PlayerId = Managers.Player.MyPlayer.Id;

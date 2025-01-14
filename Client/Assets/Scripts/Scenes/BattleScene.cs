@@ -10,6 +10,7 @@ public class BattleScene : BaseScene
 
         SceneType = Define.Scene.Battle;
         Managers.UI.ShowSceneUI<UIBattleScene>();
+        Managers.Sound.Play("bgm/battle_rival", Define.Sound.Bgm);
     }
 
     public override void Clear() {}

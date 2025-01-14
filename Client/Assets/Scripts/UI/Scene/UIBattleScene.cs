@@ -30,7 +30,7 @@ public class UIBattleScene : UICommonScene
         EnemyHpbar,
     }
 
-    enum Images
+    public enum Images
     {
         Image_EnemyLevel_0,
         Image_EnemyLevel_00,
@@ -45,9 +45,11 @@ public class UIBattleScene : UICommonScene
         Image_My_FootHold,
 
         Image_MyPokemon,
+        Image_MyPokemon_Effect,
         Image_MyTrainer,
         Image_MyPokeball,
         Image_EnemyPokemon,
+        Image_EnemyPokemon_Effect,
         Image_EnemyTrainer,
         Image_EnemyPokeball,
     }
@@ -57,13 +59,6 @@ public class UIBattleScene : UICommonScene
         Text_MyPokemonName,
         Text_EnemyPokemonName,
         Text_Announce
-    }
-
-    enum Animators
-    {
-        Image_MyPokemon,
-        Image_EnemyPokemon,
-        Image_MyTrainer,
     }
 
     public override void Init()
@@ -77,7 +72,6 @@ public class UIBattleScene : UICommonScene
         BindObject(typeof(GameObjects));
         BindImage(typeof(Images));
         BindText(typeof(Texts));
-        Bind<Animator>(typeof(Animators));
 
         // Field
         {
@@ -154,8 +148,9 @@ public class UIBattleScene : UICommonScene
 
         if (isTrainer)
         {
-            Animator animator = Get<Animator>((int)Animators.Image_MyTrainer);
-            animator.Play("Trainer_ThrowPokeball");
+            Animator animator = GetImage((int)Images.Image_MyTrainer).GetComponent<Animator>();
+            if(animator != null)
+                animator.Play("Trainer_ThrowPokeball");
         }
         else
         {
@@ -217,6 +212,8 @@ public class UIBattleScene : UICommonScene
             Debug.Assert(false, "Pokeball Animator를 찾을 수 없습니다.");
 
         targetAnimator.Play("SpawnPokemon");
+        if (isMe)
+            Managers.Sound.Play("effect/pb_throw");
     }
 
     public void SetBattlePokemonInfo(bool isMe)
@@ -299,6 +296,7 @@ public class UIBattleScene : UICommonScene
         }
 
         imageTransform.localScale = Vector3.one;
+        Managers.Sound.Play($"cry/{pokemonId}");
     }
 
     public void NewTurn()
@@ -325,9 +323,11 @@ public class UIBattleScene : UICommonScene
 
     public IEnumerator FallDownEffect(bool isMe)
     {
-        float accumulateTime = 0f;
         Image targetImage = isMe ? GetImage((int)Images.Image_MyPokemon) : GetImage((int)Images.Image_EnemyPokemon);
+        string curPokemonId = isMe ? Managers.Player.MyPlayer.GetCurPokemonData().Id.ToString() : Managers.Player.Enemy.GetCurPokemonData().Id.ToString();
+        Managers.Sound.Play($"cry/{curPokemonId}");
 
+        float accumulateTime = 0f;
         while (accumulateTime < 1f)
         {
             accumulateTime += Time.deltaTime;
@@ -410,11 +410,15 @@ public class UIBattleScene : UICommonScene
             Managers.Job.Excute();
     }
 
-    public void PlayPokemonAnimation(bool isMe, string stateName)
+    public void PlayAnimationInBattleScene(Images targetImage, string stateName)
     {
-        Images targetImages = isMe ? Images.Image_MyPokemon : Images.Image_EnemyPokemon;
-        Animator animator = GetImage((int)targetImages).GetComponent<Animator>();
-        if (animator != null)
-            animator.Play(stateName);
+        Animator animator = GetImage((int)targetImage).GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.Assert(false, $"해당 Image{targetImage}에 Animator Component가 없습니다!");
+            return;
+        }
+
+        animator.Play(stateName);
     }
 }

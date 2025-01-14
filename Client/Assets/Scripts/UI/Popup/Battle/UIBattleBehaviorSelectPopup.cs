@@ -32,7 +32,8 @@ public class UIBattleBehaviorSelectPopup : UICommonPopup
     {
         Managers.UI.ClosePopupUI();
 
-        Managers.UI.ShowPopupUI<UIBattleSkillSelectPopup>();
+        UIBattleSkillSelectPopup skillSelectPopup =  Managers.UI.ShowPopupUI<UIBattleSkillSelectPopup>();
+        skillSelectPopup.InitSound = InitSounds.Select;
     }
 
     void OnClickPokemonButton()
@@ -48,6 +49,7 @@ public class UIBattleBehaviorSelectPopup : UICommonPopup
         UIBattlePokemonChangePopup pokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
         pokemonChangePopup.BattleScene = battleSceene;
         pokemonChangePopup.MustChange = false;
+        pokemonChangePopup.InitSound = InitSounds.Popup;
     }
 
     void OnClickBallButton()

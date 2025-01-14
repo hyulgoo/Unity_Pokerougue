@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UICommonPopup : UICommonBase
 {
-    public bool InputMode { get; set; }
+    public bool InputMode { get; set; } = false;
     public override void Init()
     {
         Managers.UI.SetCanvas(gameObject, true);
