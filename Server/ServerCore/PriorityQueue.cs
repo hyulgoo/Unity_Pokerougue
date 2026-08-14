@@ -6,11 +6,11 @@ namespace ServerCore
 {
 	public class PriorityQueue<T> where T : IComparable<T>
 	{
-		List<T> _heap = new List<T>();
+        private readonly List<T> _heap = new List<T>();
 
-		public int Count { get { return _heap.Count; } }
+		public int Count => _heap.Count;
 
-		// O(logN)
+        // O(logN)
 		public void Push(T data)
 		{
 			// 힙의 맨 끝에 새로운 데이터를 삽입한다
@@ -26,11 +26,9 @@ namespace ServerCore
 					break; // 실패
 
 				// 두 값을 교체한다
-				T temp = _heap[now];
-				_heap[now] = _heap[next];
-				_heap[next] = temp;
+				(_heap[now], _heap[next]) = (_heap[next], _heap[now]);
 
-				// 검사 위치를 이동한다
+                // 검사 위치를 이동한다
 				now = next;
 			}
 		}
@@ -67,10 +65,8 @@ namespace ServerCore
 					break;
 
 				// 두 값을 교체한다
-				T temp = _heap[now];
-				_heap[now] = _heap[next];
-				_heap[next] = temp;
-				// 검사 위치를 이동한다
+				(_heap[now], _heap[next]) = (_heap[next], _heap[now]);
+                // 검사 위치를 이동한다
 				now = next;
 			}
 

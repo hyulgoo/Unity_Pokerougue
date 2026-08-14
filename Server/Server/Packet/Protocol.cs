@@ -5,6 +5,7 @@
 #pragma warning disable 1591, 0612, 3021
 #region Designer generated code
 
+using System;
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
@@ -358,6 +359,7 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("CONFUSION")] Confusion = 17,
   }
 
+  [Flags]
   public enum BattleStateFlag {
     [pbr::OriginalName("DEFAULT")] Default = 0,
     [pbr::OriginalName("MISS")] Miss = 1,

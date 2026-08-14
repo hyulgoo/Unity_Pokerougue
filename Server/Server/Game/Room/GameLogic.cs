@@ -1,50 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Server.Game
+namespace Server.Game.Room
 {
-	public class GameLogic : JobSerializer
-	{
-		public static GameLogic Instance { get; } = new GameLogic();
+    public class GameLogic : JobSerializer
+    {
+        private readonly Dictionary<int, Room.GameRoom> _rooms = new Dictionary<int, Room.GameRoom>();
+        private int _roomId = 1;
+        public static GameLogic Instance { get; } = new GameLogic();
 
-		Dictionary<int, GameRoom> _rooms = new Dictionary<int, GameRoom>();
-		int _roomId = 1;
+        public void Update()
+        {
+            Flush();
 
-		public void Update()
-		{
-			Flush();
+            foreach (Room.GameRoom room in _rooms.Values) room.Update();
+        }
 
-			foreach (GameRoom room in _rooms.Values)
-			{
-				room.Update();
-			}
-		}
+        public Room.GameRoom Add()
+        {
+            Room.GameRoom gameRoom = new Room.GameRoom();
+            gameRoom.Push(gameRoom.Init);
 
-		public GameRoom Add()
-		{
-			GameRoom gameRoom = new GameRoom();
-			gameRoom.Push(gameRoom.Init);
+            gameRoom.RoomId = _roomId;
+            _rooms.Add(_roomId, gameRoom);
+            _roomId++;
 
-			gameRoom.RoomId = _roomId;
-			_rooms.Add(_roomId, gameRoom);
-			_roomId++;
+            return gameRoom;
+        }
 
-			return gameRoom;
-		}
+        public bool Remove(int roomId)
+        {
+            return _rooms.Remove(roomId);
+        }
 
-		public bool Remove(int roomId)
-		{
-			return _rooms.Remove(roomId);
-		}
-
-		public GameRoom Find(int roomId)
-		{
-			GameRoom room = null;
-			if (_rooms.TryGetValue(roomId, out room))
-				return room;
-
-			return null;
-		}
-	}
+        public Room.GameRoom Find(int roomId)
+        {
+            return _rooms.GetValueOrDefault(roomId);
+        }
+    }
 }
