@@ -21,4 +21,8 @@
         <ProjectReference Include="..\SharedDB\SharedDB.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="config.json" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -16,8 +16,8 @@ public class UILobbyScene : UICommonScene
         _buttons = GetComponentsInChildren<Button>();
     }
 
-    // ÀüÃ¼ À¯ÀúÀÇ ÀÌ¸§ ¸ñ·ÏÀ» ¶ç¿ò.
-    // À¯Àú ¼ö¸¸Å­ÀÇ ¹öÆ°¸¸ È°¼ºÈ­
+    // ì „ì²´ ìœ ì €ì˜ ì´ë¦„ ëª©ë¡ì„ ë„ì›€.
+    // ìœ ì € ìˆ˜ë§Œí¼ì˜ ë²„íŠ¼ë§Œ í™œì„±í™”
     public void SetUserName(int[] id, string[] names)
     {
         for(int index = 0; index < _buttons.Length; ++index)
@@ -36,7 +36,7 @@ public class UILobbyScene : UICommonScene
             }
             else
             {
-                newtext = "ºó ½½·Ô";
+                newtext = "ë¹ˆ ìŠ¬ë¡¯";
                 text.alignment = TextAlignmentOptions.Center;
                 _buttons[index].interactable = false;
             }
@@ -50,7 +50,7 @@ public class UILobbyScene : UICommonScene
         if (_selectbuttonid == Managers.Player.MyPlayer.Id)
         {
             UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
-            announcePopup.SetAnnounceText("ÀÚ½Å¿¡°Ô´Â ½ÅÃ»ÇÒ ¼ö ¾ø½À´Ï´Ù!");
+            announcePopup.SetAnnounceText("ìì‹ ì—ê²ŒëŠ” ì‹ ì²­í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             return;
         }
 

@@ -1,4 +1,4 @@
-using Google.Protobuf.Protocol;
+О╩©using Google.Protobuf.Protocol;
 using UnityEngine;
 
 public class UIBattleChangePokemonSelectedPopup : UICommonPopup
@@ -41,17 +41,17 @@ public class UIBattleChangePokemonSelectedPopup : UICommonPopup
 
     void OnClickCheckStateButton()
     {
-        // TODO : ╪╠ец фВдо╦С ╫╨ехц╒ ╤Г©Л╠Б
+        // TODO : Л└═М┐² М▐╛Л╪⌠К╙╛ Л┼╓М┐╞Л╟╫ К²└Л ╟Й╦╟
     }
 
     void OnClickChangeNickNameButton()
     {
-        // TODO : ╪╠ец фВдо╦С ╢пЁвюс ╧ы╡ы╠Б(╬ф╦╤ ╬хгр╣М)
+        // TODO : Л└═М┐² М▐╛Л╪⌠К╙╛ К▀┴К└╓Л·└ К╟■Й╬╦Й╦╟(Л∙└К╖┬ Л∙┬М∙═К⌠╞)
     }
 
     void OnClickReleasePokemonButton()
     {
-        // TODO : ╪╠ец фВдо╦С ЁУ╬фаж╠Б(╬ф╦╤ ╬хгр╣М)
+        // TODO : Л└═М┐² М▐╛Л╪⌠К╙╛ К├⌠Л∙└Лё╪Й╦╟(Л∙└К╖┬ Л∙┬М∙═К⌠╞)
     }
 
     void OnClickCancleButton()

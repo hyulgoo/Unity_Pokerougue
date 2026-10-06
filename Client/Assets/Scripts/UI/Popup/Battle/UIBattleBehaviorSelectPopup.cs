@@ -1,4 +1,4 @@
-using Google.Protobuf.Protocol;
+ï»¿using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,14 +54,14 @@ public class UIBattleBehaviorSelectPopup : UICommonPopup
 
     void OnClickBallButton()
     {
-        // Æ÷È¹ ±â´É(±¸Çö°èÈ¹ ¾øÀ½)
+        // í¬íš ê¸°ëŠ¥(êµ¬í˜„ê³„íš ì—†ìŒ)
     }
 
     void OnClickRunAwayButton()
     {
         Managers.UI.ClosePopupUI();
 
-        // Ç×º¹ ÆĞÅ¶ º¸³»±â
+        // í•­ë³µ íŒ¨í‚· ë³´ë‚´ê¸°
         C_Turn turnPacket = new C_Turn();
         turnPacket.TurnInfo = new TurnInfo();
         turnPacket.TurnInfo.Action = ActionType.Runaway;

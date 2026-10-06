@@ -1,0 +1,9 @@
+<Project>
+
+  <!-- netcoreapp3.1은 지원이 끝나 런타임을 구하기 어렵다.
+       3.1 런타임이 없으면 설치된 상위 주 버전 런타임(.NET 8 등)으로 실행한다. -->
+  <PropertyGroup>
+    <RollForward>Major</RollForward>
+  </PropertyGroup>
+
+</Project>

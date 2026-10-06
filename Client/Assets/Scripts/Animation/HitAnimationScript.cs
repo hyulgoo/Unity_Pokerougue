@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
 public class HitAnimationScript : StateMachineBehaviour
@@ -12,12 +12,12 @@ public class HitAnimationScript : StateMachineBehaviour
     {
         _imageComponent = animator.GetComponent<Image>();
         if (_imageComponent == null)
-            Debug.Assert(false, "Image Component¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Assert(false, "Image Componentë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         
         string pokemonSpritePath = _isMe ? $"Sprite/pokemon/back/" + Managers.Player.MyPlayer.GetCurPokemonData().Id.ToString() : $"Sprite/pokemon/" + Managers.Player.Enemy.GetCurPokemonData().Id.ToString();
         Sprite pokemonSprite = Managers.Resource.LoadAll<Sprite>(pokemonSpritePath)[0];
         if (pokemonSprite == null)
-            Debug.Assert(false, $"Sprite({pokemonSpritePath})¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Assert(false, $"Sprite({pokemonSpritePath})ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         _imageComponent.sprite = pokemonSprite;
     }
 
