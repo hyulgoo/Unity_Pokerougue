@@ -63,8 +63,18 @@ namespace ServerCore
 				if (args.SocketError == SocketError.Success)
 				{
 					Session session = _sessionFactory.Invoke();
-					session.Start(args.AcceptSocket);
-					session.OnConnected(args.AcceptSocket.RemoteEndPoint);
+					if (session == null)
+					{
+						// 세션을 더 만들 수 없다(세션 수 상한). 받은 소켓을 닫는다.
+						args.AcceptSocket.Close();
+					}
+					else
+					{
+						// Start가 첫 수신을 처리하다 접속을 끊을 수 있어 주소를 먼저 읽어 둔다.
+						EndPoint remoteEndPoint = args.AcceptSocket.RemoteEndPoint;
+						session.Start(args.AcceptSocket);
+						session.OnConnected(remoteEndPoint);
+					}
 				}
 				else
 					Console.WriteLine(args.SocketError.ToString());

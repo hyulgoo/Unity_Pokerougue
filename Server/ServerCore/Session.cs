@@ -70,6 +70,8 @@ namespace ServerCore
             _socket = socket;
         }
 
+        protected bool IsDisconnected => _disconnected == 1;
+
         public abstract void OnConnected(EndPoint endPoint);
 		public abstract int  OnRecv(ArraySegment<byte> buffer);
 		public abstract void OnSend(int numOfBytes);

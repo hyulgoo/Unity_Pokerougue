@@ -9,6 +9,9 @@ namespace Server
         private readonly object _lock = new object();
         private readonly Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
 
+        // 동시 세션 수 상한. 넘으면 세션을 만들지 않고, Listener가 받은 소켓을 닫는다.
+        private const int MaxSessionCount = 1000;
+
         private int _sessionId;
         public static SessionManager Instance { get; } = new SessionManager();
 
@@ -40,6 +43,9 @@ namespace Server
         {
             lock (_lock)
             {
+                if (_sessions.Count >= MaxSessionCount)
+                    return null;
+
                 int sessionId = ++_sessionId;
 
                 ClientSession session = new ClientSession
