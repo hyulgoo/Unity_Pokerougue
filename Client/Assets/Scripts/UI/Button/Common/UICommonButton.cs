@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UICommonButton : MonoBehaviour, ISelectHandler
 {    
-    // ISelectHandler ¿Œ≈Õ∆‰¿ÃΩ∫
+    // ISelectHandler Ïù∏ÌÑ∞ÌéòÏù¥Ïä§
     public virtual void OnSelect(BaseEventData eventData)
     {
         GameObject go = Managers.Select.CurPanel;

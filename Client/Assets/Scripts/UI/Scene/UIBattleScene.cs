@@ -1,4 +1,4 @@
-using Google.Protobuf.Protocol;
+ï»¿using Google.Protobuf.Protocol;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -78,7 +78,7 @@ public class UIBattleScene : UICommonScene
             SetField(Managers.Player.ArenaType);
 
             string enemyName = Managers.Player.Enemy.Name;
-            Managers.Job.Push(() => { SetAnnounce($"{enemyName}°¡ ½ÂºÎ¸¦ °É¾î¿Ô´Ù!", true); });
+            Managers.Job.Push(() => { SetAnnounce($"{enemyName}ê°€ ìŠ¹ë¶€ë¥¼ ê±¸ì–´ì™”ë‹¤!", true); });
 
             FootHoldMoveAtDuelStart();
         }
@@ -92,7 +92,7 @@ public class UIBattleScene : UICommonScene
                 myTrainerAnimtor.Play("Trainer_ThrowPokeball");
 
             string currentPokemonName = Managers.Player.MyPlayer.GetCurPokemonName();
-            Managers.Job.Push(() => { SetAnnounce($"°¡¶ó! {currentPokemonName}!", true); });
+            Managers.Job.Push(() => { SetAnnounce($"ê°€ë¼! {currentPokemonName}!", true); });
             Managers.Job.Push(() => { MoveTrainerAtDuelStart(); });
         }
     }
@@ -198,7 +198,7 @@ public class UIBattleScene : UICommonScene
         {
             CommonPlayerController targetPlayer = isMe ? Managers.Player.MyPlayer : Managers.Player.Enemy;
             string pokemonName = targetPlayer.GetCurPokemonName();
-            string announce = isMe ? $"°¡¶ó! {pokemonName}!" : $"»ó´ë´Â {pokemonName}(À»)¸¦ ³»º¸³Â´Ù!";
+            string announce = isMe ? $"ê°€ë¼! {pokemonName}!" : $"ìƒëŒ€ëŠ” {pokemonName}(ì„)ë¥¼ ë‚´ë³´ëƒˆë‹¤!";
 
             Managers.Job.Push(() => { SetAnnounce(announce, true); });
             Managers.Job.Excute();
@@ -209,7 +209,7 @@ public class UIBattleScene : UICommonScene
 
         Animator targetAnimator = targetImage.GetComponent<Animator>();
         if (targetAnimator == null)
-            Debug.Assert(false, "Pokeball Animator¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Assert(false, "Pokeball Animatorë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 
         targetAnimator.Play("SpawnPokemon");
         if (isMe)
@@ -306,11 +306,11 @@ public class UIBattleScene : UICommonScene
         {
             Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
             string myPokemonName = Managers.Data.PokeonDict[Managers.Player.MyPlayer.GetCurPokemonData().Id].Name;
-            anounceText = $"{myPokemonName}(Àº)´Â ¹«¾ùÀ» ÇÒ±î?";
+            anounceText = $"{myPokemonName}(ì€)ëŠ” ë¬´ì—‡ì„ í• ê¹Œ?";
         }
         else
         {
-            anounceText = "»ó´ë Â÷·Ê¸¦ ±â´Ù¸®´Â Áß";
+            anounceText = "ìƒëŒ€ ì°¨ë¡€ë¥¼ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘";
         }
 
         Managers.Job.Push(() => SetAnnounce(anounceText, true));         
@@ -348,8 +348,8 @@ public class UIBattleScene : UICommonScene
 
     public void DuelEnd(bool isWin, bool isRunaway)
     {
-        string text = isWin ? (isRunaway ? $"{Managers.Player.Enemy.Name}(Àº)´Â µµ¸ÁÃÆ´Ù!" : $"{Managers.Player.Enemy.Name}(¿Í)°úÀÇ ´ë°á¿¡¼­ ½Â¸®Çß´Ù!") 
-            : (isRunaway ? "¹«»çÈ÷ µµ¸ÁÃÆ´Ù!" :$"{Managers.Player.MyPlayer.Name}(Àº)´Â ´« ¾ÕÀÌ Ä¯Ä¯ÇØÁ³´Ù.");
+        string text = isWin ? (isRunaway ? $"{Managers.Player.Enemy.Name}(ì€)ëŠ” ë„ë§ì³¤ë‹¤!" : $"{Managers.Player.Enemy.Name}(ì™€)ê³¼ì˜ ëŒ€ê²°ì—ì„œ ìŠ¹ë¦¬í–ˆë‹¤!") 
+            : (isRunaway ? "ë¬´ì‚¬íˆ ë„ë§ì³¤ë‹¤!" :$"{Managers.Player.MyPlayer.Name}(ì€)ëŠ” ëˆˆ ì•ì´ ìº„ìº„í•´ì¡Œë‹¤.");
         Managers.Job.Push(() => SetAnnounce(text, true) );
         Managers.Player.IsTurnProgressing = false;
     }
@@ -415,7 +415,7 @@ public class UIBattleScene : UICommonScene
         Animator animator = GetImage((int)targetImage).GetComponent<Animator>();
         if (animator == null)
         {
-            Debug.Assert(false, $"ÇØ´ç Image{targetImage}¿¡ Animator Component°¡ ¾ø½À´Ï´Ù!");
+            Debug.Assert(false, $"í•´ë‹¹ Image{targetImage}ì— Animator Componentê°€ ì—†ìŠµë‹ˆë‹¤!");
             return;
         }
 

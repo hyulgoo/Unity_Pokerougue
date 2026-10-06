@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -24,7 +24,7 @@ public class UIBattlePokemonChangeButton : UICommonButton, IDeselectHandler
         Image imageComponent = GetComponent<Image>();
         if (imageComponent == null)
         {
-            Debug.Assert(false, "Image Component¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.Assert(false, "Image Componentë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             return;
         }
 

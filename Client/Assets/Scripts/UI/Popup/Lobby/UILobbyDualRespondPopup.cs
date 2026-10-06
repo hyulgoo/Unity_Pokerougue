@@ -1,4 +1,4 @@
-using Google.Protobuf.Protocol;
+ï»¿using Google.Protobuf.Protocol;
 using TMPro;
 using UnityEngine;
 
@@ -10,49 +10,49 @@ public class UILobbyDualRespondPopup : UICommonReplyPopup
     {
         base.Init();
 
-        GetButton((int)Buttons.Btn_Apply).gameObject.GetComponentInChildren<TMP_Text>().text = "¼ö¶ô";
-        GetButton((int)Buttons.Btn_Deny).gameObject.GetComponentInChildren<TMP_Text>().text = "°ÅÀı";
+        GetButton((int)Buttons.Btn_Apply).gameObject.GetComponentInChildren<TMP_Text>().text = "ìˆ˜ë½";
+        GetButton((int)Buttons.Btn_Deny).gameObject.GetComponentInChildren<TMP_Text>().text = "ê±°ì ˆ";
     }
 
     public void SetDuelRequestAnnounce(int enemyId)
     {
-        // »ó´ë Id ÁöÁ¤
+        // ìƒëŒ€ Id ì§€ì •
         _enemyId = enemyId;
 
-        // »ó´ë¹æÀÇ nameÀ» ¾Ë¾Æ³»°í ~°¡ ´ë°áÀ» ½ÅÃ»Çß´Ù´Â Ã¢À» ¶ç¿ò
+        // ìƒëŒ€ë°©ì˜ nameì„ ì•Œì•„ë‚´ê³  ~ê°€ ëŒ€ê²°ì„ ì‹ ì²­í–ˆë‹¤ëŠ” ì°½ì„ ë„ì›€
         GameObject enemyPlayer = Managers.Player.FindById(enemyId);
         string announce = enemyPlayer.GetComponent<CommonPlayerController>().name;
-        announce += "´ÔÀÌ  \n ´ë°áÀ» ½ÅÃ»ÇÏ¿´½À´Ï´Ù";
+        announce += "ë‹˜ì´  \n ëŒ€ê²°ì„ ì‹ ì²­í•˜ì˜€ìŠµë‹ˆë‹¤";
         GetText((int)Texts.Announce).text = announce;
     }
 
     protected override void OnClickApplyButton()
     {
-        // ´ë°á ½ÅÃ»¿¡ ÀÀ´ä ÆĞÅ¶ Àü¼Û
+        // ëŒ€ê²° ì‹ ì²­ì— ì‘ë‹µ íŒ¨í‚· ì „ì†¡
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 1;
         respondDuelPacket.FromId = Managers.Player.MyPlayer.Id;
         respondDuelPacket.ToId = _enemyId;
         Managers.Network.Send(respondDuelPacket);
 
-        //´ë°á ½ÅÃ» Ã¢À» ´İÀ½
+        //ëŒ€ê²° ì‹ ì²­ ì°½ì„ ë‹«ìŒ
         ClosePopupUI();
             
-        // ¼­¹ö ÀÀ´ä ´ë±âÃ¢ »ı¼º
+        // ì„œë²„ ì‘ë‹µ ëŒ€ê¸°ì°½ ìƒì„±
         UICommonWaitPopup popup = Managers.UI.ShowPopupUI<UICommonWaitPopup>();
-        popup.Text = "¼­¹ö ÀÀ´ä ´ë±â Áß";
+        popup.Text = "ì„œë²„ ì‘ë‹µ ëŒ€ê¸° ì¤‘";
     }
 
     protected override void OnClickDenyButton()
     {
-        // ´ë°á ½ÅÃ»¿¡ ÀÀ´ä ÆĞÅ¶ Àü¼Û
+        // ëŒ€ê²° ì‹ ì²­ì— ì‘ë‹µ íŒ¨í‚· ì „ì†¡
         C_RespondDuel respondDuelPacket = new C_RespondDuel();
         respondDuelPacket.DuelOK = 0;
         respondDuelPacket.FromId = Managers.Player.MyPlayer.Id;
         respondDuelPacket.ToId = _enemyId;
         Managers.Network.Send(respondDuelPacket);
 
-        //´ë°á ½ÅÃ» Ã¢À» ´İÀ½
+        //ëŒ€ê²° ì‹ ì²­ ì°½ì„ ë‹«ìŒ
         ClosePopupUI();
     }
 }

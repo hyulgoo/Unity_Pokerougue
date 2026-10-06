@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using TMPro;
@@ -19,7 +19,7 @@ public class UICommonWaitPopup : UICommonPopup
          Announce
     }
 
-    // ´ë±â ÁßÀÏ ¶§´Â Ã¢À» ²ô°Å³ª ´Ù¸¥ Çàµ¿À» ÇÒ ¼ö ¾øÀ½.
+    // ëŒ€ê¸° ì¤‘ì¼ ë•ŒëŠ” ì°½ì„ ë„ê±°ë‚˜ ë‹¤ë¥¸ í–‰ë™ì„ í•  ìˆ˜ ì—†ìŒ.
     public override void Init()
     {
         base.Init();
@@ -31,7 +31,7 @@ public class UICommonWaitPopup : UICommonPopup
 
     IEnumerator SetWaitingText(float delay)
     {
-        // . -> .. -> ... -> . ¼ø¼­·Î _text µÚ¿¡ ºÙµµ·Ï ÇÔ
+        // . -> .. -> ... -> . ìˆœì„œë¡œ _text ë’¤ì— ë¶™ë„ë¡ í•¨
         _currentDotCount = _currentDotCount == _maxDotCount ? 1 : _currentDotCount + 1;
         string text = _text;
         for (int index = 0; index < _currentDotCount; index++)

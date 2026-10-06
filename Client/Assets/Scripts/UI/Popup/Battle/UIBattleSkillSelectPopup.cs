@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
@@ -85,7 +85,7 @@ public class UIBattleSkillSelectPopup : UICommonPopup
     {
         _selectedSkillId = skillId;
 
-        // ÀÌ¹ÌÁö ¼³Á¤
+        // ì´ë¯¸ì§€ ì„¤ì •
         Sprite[] spritesArray; 
         int skillType;
 
@@ -123,14 +123,14 @@ public class UIBattleSkillSelectPopup : UICommonPopup
 
         GetImage((int)Images.Image_SkillType).sprite = spritesArray[skillType];
 
-        // ¼¼ºÎ Á¤º¸
+        // ì„¸ë¶€ ì •ë³´
         int currentPokemonId = Managers.Player.MyPlayer.GetCurPokemonData().Id;
         SkillInfo info = Managers.Data.SkillDict[skillId].info;
         int currentSkillPP = Managers.Player.MyPlayer.SkillPP[currentPokemonId][skillId];
 
         GetText((int)Texts.Text_SkillPP).text = $"{currentSkillPP}/{info.Pp}";
 
-        // °ø°İ ½ºÅ³ÀÌ ¾Æ´Ò °æ¿ì¿¡´Â À§·ÂÀ» -À¸·Î ¼³Á¤ÇÔ
+        // ê³µê²© ìŠ¤í‚¬ì´ ì•„ë‹ ê²½ìš°ì—ëŠ” ìœ„ë ¥ì„ -ìœ¼ë¡œ ì„¤ì •í•¨
         GetText((int)Texts.Text_SkillPower).text = (applyType == ApplyType.Atk || applyType == ApplyType.Spa) ? $"{info.SkillEffect[0].Value}" : "-";
         GetText((int)Texts.Text_SkillAccuracy).text = $"{info.SkillEffect[0].Accuracy}";
     }

@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using Google.Protobuf.Collections;
 using Google.Protobuf.Protocol;
 using System.Collections;
@@ -69,10 +69,10 @@ public class CommonPlayerController : MonoBehaviour
     {
         for (int index = 0; index < list.Count(); ++index)
         { 
-            // Æ÷ÄÏ¸ó Á¤º¸ Ãß°¡
+            // í¬ì¼“ëª¬ ì •ë³´ ì¶”ê°€
             _pokemonDataList.Add(Managers.Data.PokeonDict[list[index]]);
 
-            // ½ºÅ³ pp Á¤º¸ Ãß°¡
+            // ìŠ¤í‚¬ pp ì •ë³´ ì¶”ê°€
             RepeatedField<int> skillIdList = Managers.Data.PokeonDict[list[index]].Info.SkillId;
             Dictionary<int, int> skillppDict = new Dictionary<int, int>();
             for(int skillIndex = 0; skillIndex < skillIdList.Count(); ++skillIndex)
