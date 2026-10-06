@@ -10,6 +10,11 @@ public class ServerSession : PacketSession
 {
 	public int DummyId { get; set; }
 
+	// 소켓은 접속이 끝난 뒤 Session.Start에서 넘겨받는다.
+	public ServerSession() : base(null)
+	{
+	}
+
 	public void Send(IMessage packet)
 	{
 		string msgName = packet.Descriptor.Name.Replace("_", string.Empty);
@@ -32,7 +37,7 @@ public class ServerSession : PacketSession
 		//Console.WriteLine($"OnDisconnected : {endPoint}");
 	}
 
-	public override void OnRecvPacket(ArraySegment<byte> buffer)
+	protected override void OnRecvPacket(ArraySegment<byte> buffer)
 	{
 		PacketManager.Instance.OnRecvPacket(this, buffer);
 	}

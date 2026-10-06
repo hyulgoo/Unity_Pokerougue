@@ -1,4 +1,4 @@
-using Data;
+ï»¿using Data;
 using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,18 +27,18 @@ public class UISelectPokemonScene : UICommonScene
 
     enum GameObjects
     {
-        // ÀüÃ¼ ¸ó½ºÅÍ ¸ñ·Ï
+        // ì „ì²´ ëª¬ìŠ¤í„° ëª©ë¡
         Scroll_Rect,
         Content,
 
-        // ÇöÀç º¸°íÀÖ´Â ¸ó½ºÅÍÀÇ ½ºÅ³ ¹× ÀÌ¹ÌÁö
+        // í˜„ì¬ ë³´ê³ ìˆëŠ” ëª¬ìŠ¤í„°ì˜ ìŠ¤í‚¬ ë° ì´ë¯¸ì§€
         Image_Pokemon,
         Image_Skill_0,
         Image_Skill_1,
         Image_Skill_2,
         Image_Skill_3,
 
-        // ¼±ÅÃµÈ ¸ó½ºÅÍ 6¸¶¸®
+        // ì„ íƒëœ ëª¬ìŠ¤í„° 6ë§ˆë¦¬
         Image_SelectedPokemon_0,
         Image_SelectedPokemon_1,
         Image_SelectedPokemon_2,
@@ -77,8 +77,8 @@ public class UISelectPokemonScene : UICommonScene
             GameObject pokemonButtonObject = Managers.Resource.Instantiate("Add/Pokemon");
             pokemonButtonObject.transform.SetParent(GetObject((int)GameObjects.Content).transform);
             
-            // ¿ØÁö ¸ğ¸£°Ú´Âµ¥ Grid Layout Group¿¡ µé¾î°¡¼­ ±×·±°¡ ½ºÄÉÀÏÀÌ 1.15±ÙÃ³·Î ¼³Á¤µÊ
-            // °­Á¦·Î 1·Î ¸ÂÃçÁÜ.
+            // ì™ ì§€ ëª¨ë¥´ê² ëŠ”ë° Grid Layout Groupì— ë“¤ì–´ê°€ì„œ ê·¸ëŸ°ê°€ ìŠ¤ì¼€ì¼ì´ 1.15ê·¼ì²˜ë¡œ ì„¤ì •ë¨
+            // ê°•ì œë¡œ 1ë¡œ ë§ì¶°ì¤Œ.
             RectTransform rt = pokemonButtonObject.GetComponent<RectTransform>();
             rt.localScale = new Vector2(1, 1);
 
@@ -116,11 +116,11 @@ public class UISelectPokemonScene : UICommonScene
         Managers.Sound.Play("system/select");
         Image curMstAnimator= GetObject((int)GameObjects.Image_Pokemon).GetOrAddComponent<Image>();
 
-        // TODO : ÇöÀç Æ÷ÄÏ¸óÀÇ ¾Ö´Ï¸ŞÀÌ¼ÇÀ» Æ²¾îÁÜ
+        // TODO : í˜„ì¬ í¬ì¼“ëª¬ì˜ ì• ë‹ˆë©”ì´ì…˜ì„ í‹€ì–´ì¤Œ
         Sprite[] sprites = Managers.Resource.LoadAll<Sprite>($"Sprite/pokemon/{pokemonNumber}");
         curMstAnimator.sprite = sprites[0];
 
-        // ÇöÀç Æ÷ÄÏ¸óÀÇ Á¤º¸¸¦ ³ªÅ¸³¿
+        // í˜„ì¬ í¬ì¼“ëª¬ì˜ ì •ë³´ë¥¼ ë‚˜íƒ€ëƒ„
         PokemonData data = Managers.Data.PokeonDict[pokemonNumber];
         GetText((int)Texts.Text_PokemonNumber).text = $"{pokemonNumber}";
         GetText((int)Texts.Text_PokemonName).text = data.Name;
@@ -150,11 +150,11 @@ public class UISelectPokemonScene : UICommonScene
         if (_pokemonList.Count < _maxPokemonCount)
         {
             UICommonAnnouncePopup Announcepopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
-            Announcepopup.SetAnnounceText("¾ÆÁ÷ Æ÷ÄÏ¸óÀ» ÀüºÎ ¼±ÅÃÇÏÁö ¾Ê¾Ò½À´Ï´Ù!");
+            Announcepopup.SetAnnounceText("ì•„ì§ í¬ì¼“ëª¬ì„ ì „ë¶€ ì„ íƒí•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
             return;
         }
 
-        // ¼­¹ö·Î ³»°¡ °í¸¥ list¸¦ º¸³»ÁÜ.
+        // ì„œë²„ë¡œ ë‚´ê°€ ê³ ë¥¸ listë¥¼ ë³´ë‚´ì¤Œ.
         C_SelectPokemon packet = new C_SelectPokemon();
         packet.PlayerId = Managers.Player.MyPlayer.Id;
 
@@ -164,6 +164,6 @@ public class UISelectPokemonScene : UICommonScene
         Managers.Network.Send(packet);
 
         UICommonWaitPopup popup = Managers.UI.ShowPopupUI<UICommonWaitPopup>();
-        popup.Text = "»ó´ë¹æÀ» ±â´Ù¸®´Â Áß";
+        popup.Text = "ìƒëŒ€ë°©ì„ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘";
     }    
 }

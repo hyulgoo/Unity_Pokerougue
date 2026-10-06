@@ -1,4 +1,4 @@
-using Google.Protobuf.Protocol;
+ï»¿using Google.Protobuf.Protocol;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -177,7 +177,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         }
 
         string selectedChangePokemonName = Managers.Data.PokeonDict[SelectedChangePokemonId].Name;
-        Managers.Job.Push(() => { BattleScene.SetAnnounce($"°¡¶ó! {selectedChangePokemonName}!", true); });
+        Managers.Job.Push(() => { BattleScene.SetAnnounce($"ê°€ë¼! {selectedChangePokemonName}!", true); });
 
         ClosePopupUI();
     }
@@ -192,7 +192,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         {
             UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             announcePopup.InitSound = InitSounds.Error;
-            announcePopup.SetAnnounceText("ÇöÀç ÃâÀü ÁßÀÎ Æ÷ÄÏ¸óÀ¸·Î´Â ±³Ã¼ÇÒ ¼ö ¾ø½À´Ï´Ù!");
+            announcePopup.SetAnnounceText("í˜„ì¬ ì¶œì „ ì¤‘ì¸ í¬ì¼“ëª¬ìœ¼ë¡œëŠ” êµì²´í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             return;
         }
 
@@ -200,7 +200,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         {
             UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             announcePopup.InitSound = InitSounds.Error;
-            announcePopup.SetAnnounceText("±âÀı »óÅÂÀÇ Æ÷ÄÏ¸óÀ¸·Î´Â ±³Ã¼ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            announcePopup.SetAnnounceText("ê¸°ì ˆ ìƒíƒœì˜ í¬ì¼“ëª¬ìœ¼ë¡œëŠ” êµì²´í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -215,7 +215,7 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         {
             UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
             announcePopup.InitSound = InitSounds.Error;
-            announcePopup.SetAnnounceText("Æ÷ÄÏ¸óÀ» ¹İµå½Ã ±³Ã¼ÇØ¾ß ÇÕ´Ï´Ù!");
+            announcePopup.SetAnnounceText("í¬ì¼“ëª¬ì„ ë°˜ë“œì‹œ êµì²´í•´ì•¼ í•©ë‹ˆë‹¤!");
             return;
         }
 

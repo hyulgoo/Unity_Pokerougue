@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,7 +35,7 @@ public class UISelectSelectionPopup : UICommonPopup
         if(!SelectScene.PickPokemon(Id))
         {
             UICommonAnnouncePopup popup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
-            popup.SetAnnounceText("´õÀÌ»ó °í¸¦ ¼ö ¾ø½À´Ï´Ù");
+            popup.SetAnnounceText("ë”ì´ìƒ ê³ ë¥¼ ìˆ˜ ì—†ìŠµë‹ˆë‹¤");
         }
         ClosePopupUI();
     }

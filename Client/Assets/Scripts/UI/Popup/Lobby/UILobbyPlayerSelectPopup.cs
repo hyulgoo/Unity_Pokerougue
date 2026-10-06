@@ -1,4 +1,4 @@
-using Google.Protobuf.Protocol;
+Ôªøusing Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
@@ -13,15 +13,15 @@ public class UILobbyPlayerSelectPopup : UICommonReplyPopup
     {
         base.Init();
 
-        GetButton((int)Buttons.Btn_Apply).gameObject.GetComponentInChildren<TMP_Text>().text = "Ω≈√ª";
-        GetButton((int)Buttons.Btn_Deny).gameObject.GetComponentInChildren<TMP_Text>().text = "√Îº“";
+        GetButton((int)Buttons.Btn_Apply).gameObject.GetComponentInChildren<TMP_Text>().text = "Ïã†Ï≤≠";
+        GetButton((int)Buttons.Btn_Deny).gameObject.GetComponentInChildren<TMP_Text>().text = "Ï∑®ÏÜå";
     }
 
     public void SetEnemyPlayer(int playerid)
     {
         _enemyId = playerid;
         string playerName = Managers.Player.GetPlayerName(playerid);
-        playerName += "¥‘ø°∞‘ \n ¥Î∞· Ω≈√ª?";
+        playerName += "ÎãòÏóêÍ≤å \n ÎåÄÍ≤∞ Ïã†Ï≤≠?";
 
         TMP_Text textbtn = GetText((int)Texts.Announce);
         textbtn.text = playerName;
@@ -37,7 +37,7 @@ public class UILobbyPlayerSelectPopup : UICommonReplyPopup
         ClosePopupUI();
 
         UICommonWaitPopup popup = Managers.UI.ShowPopupUI<UICommonWaitPopup>();
-        popup.Text = "º≠πˆ ¿¿¥‰ ¥Î±‚ ¡ﬂ";
+        popup.Text = "ÏÑúÎ≤Ñ ÏùëÎãµ ÎåÄÍ∏∞ Ï§ë";
     }
 
     protected override void OnClickDenyButton()
