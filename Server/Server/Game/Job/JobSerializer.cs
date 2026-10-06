@@ -74,7 +74,15 @@ namespace Server.Game
                 if (job == null)
                     return;
 
-                job.Execute();
+                // 이 스레드는 서버의 메인 스레드다. 잡 하나의 예외가 프로세스를 끝내지 않게 여기서 막는다.
+                try
+                {
+                    job.Execute();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Job Failed {e}");
+                }
             }
         }
 

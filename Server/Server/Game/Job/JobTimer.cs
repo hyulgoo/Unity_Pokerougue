@@ -51,7 +51,14 @@ namespace Server.Game
                     _pq.Pop();
                 }
 
-                jobElement.job.Execute();
+                try
+                {
+                    jobElement.job.Execute();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Job Failed {e}");
+                }
             }
         }
     }
