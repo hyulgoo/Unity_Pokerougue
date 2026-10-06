@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
-using Server.Data;
 using Server.Game;
 using ServerCore;
 using GameRoom = Server.Game.Room.GameRoom;
@@ -10,6 +8,15 @@ namespace Server.Packet
 {
     internal abstract class PacketHandler
     {
+        // 세션 → 플레이어 → 방. 로그인 전이거나 방을 옮기는 중이면 실패한다.
+        // 행위자는 항상 여기서 얻은 플레이어다. 패킷에 실린 플레이어 ID는 믿지 않는다.
+        private static bool TryGetPlayerRoom(PacketSession session, out Player player, out GameRoom room)
+        {
+            player = (session as ClientSession)?.MyPlayer;
+            room = player?.Room;
+            return room != null;
+        }
+
         public static void C_LoginHandler(PacketSession session, IMessage packet)
         {
             C_Login loginPacket = packet as C_Login;
@@ -33,13 +40,8 @@ namespace Server.Packet
         public static void C_EquipItemHandler(PacketSession session, IMessage packet)
         {
             C_EquipItem equipPacket = (C_EquipItem)packet;
-            ClientSession clientSession = (ClientSession)session;
-
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_EquipItemHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_EquipItemHandler");
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
             room.Push(room.HandleEquipItem, player, equipPacket);
         }
@@ -53,88 +55,55 @@ namespace Server.Packet
         public static void C_RequestDuelHandler(PacketSession session, IMessage packet)
         {
             C_RequestDuel requestDuelPaceket = (C_RequestDuel)packet;
-            ClientSession clientSession = (ClientSession)session;
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_RequestDuelHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_RequestDuelHandler");
-
-            room.Push(room.RequestDuel, requestDuelPaceket.FromId, requestDuelPaceket.ToId);
+            room.Push(room.RequestDuel, player.Id, requestDuelPaceket.ToId);
         }
 
         public static void C_RespondDuelHandler(PacketSession session, IMessage packet)
         {
             C_RespondDuel respondDuelPacket = (C_RespondDuel)packet;
-            ClientSession clientSession = (ClientSession)session;
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_RespondDuelHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_RespondDuelHandler");
-
-            room.Push(room.RespondDuel, respondDuelPacket);
+            room.Push(room.RespondDuel, player.Id, respondDuelPacket);
         }
 
         public static void C_SelectPokemonHandler(PacketSession session, IMessage packet)
         {
             C_SelectPokemon selectPokemonPacket = (C_SelectPokemon)packet;
-            ClientSession clientSession = (ClientSession)session;
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_SelectPokemonHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_SelectPokemonHandler");
-
-            for (int i = 0; i < selectPokemonPacket.PokemonList.Count; ++i)
-                player.Pokemon.Add(DataManager.PokemonDict[selectPokemonPacket.PokemonList[i]]);
-
-            room.Push(room.SelectPokemon, selectPokemonPacket.PlayerId);
+            // 선택 목록의 검증과 반영은 방의 잡 안에서 한다.
+            room.Push(room.SelectPokemon, player.Id, selectPokemonPacket);
         }
 
         public static void C_TurnHandler(PacketSession session, IMessage packet)
         {
             C_Turn turnPacket = (C_Turn)packet;
-            ClientSession clientSession = (ClientSession)session;
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_TurnHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnHandler");
-
-            room.Push(room.Turn, turnPacket);
+            room.Push(room.Turn, player.Id, turnPacket);
         }
 
         public static void C_TurnEndHandler(PacketSession session, IMessage packet)
         {
-            C_TurnEnd turnPacket = (C_TurnEnd)packet;
-            ClientSession clientSession = (ClientSession)session;
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_TurnEndHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_TurnEndHandler");
-
-            room.Push(room.TurnEnd, turnPacket.PlayerId);
+            room.Push(room.TurnEnd, player.Id);
         }
 
         public static void C_ChangePokemonHandler(PacketSession session, IMessage packet)
         {
             C_ChangePokemon changePokemonPacket = (C_ChangePokemon)packet;
-            ClientSession clientSession = (ClientSession)session;
+            if (!TryGetPlayerRoom(session, out Player player, out GameRoom room))
+                return;
 
-            Player player = clientSession.MyPlayer;
-            if (player == null) Debug.Assert(false, "Fail To Found MyPlayer on C_ChangePokemonHandler");
-
-            GameRoom room = player.Room;
-            if (room == null) Debug.Assert(false, "Fail To Found MyPlayer Room on C_ChangePokemonHandler");
-
-            room.Push(room.ChangePokemon, changePokemonPacket.PlayerId, changePokemonPacket.ChangePokemonId);
+            room.Push(room.ChangePokemon, player.Id, changePokemonPacket.ChangePokemonId);
         }
     }
 }

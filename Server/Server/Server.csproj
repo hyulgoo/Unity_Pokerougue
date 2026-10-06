@@ -25,4 +25,8 @@
         <None Update="config.json" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Server.Tests"/>
+    </ItemGroup>
+
 </Project>

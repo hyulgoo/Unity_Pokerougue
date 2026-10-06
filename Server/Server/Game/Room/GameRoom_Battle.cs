@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Google.Protobuf.Collections;
 using Google.Protobuf.Protocol;
@@ -12,8 +11,22 @@ namespace Server.Game.Room
     {
         private const int confusionSkillId = 999;
 
-        public void Turn(C_Turn packet)
+        // playerId는 세션에서 얻은 행위자다.
+        public void Turn(int playerId, C_Turn packet)
         {
+            // 전투 중이고, 자기 턴이고, 이번 턴의 행동을 아직 받지 않았을 때만 처리한다.
+            if (!_battleStarted || isWaitingPlayerTurnEnd || playerId != CurrentTurnPlayerId)
+                return;
+
+            if (packet.TurnInfo == null || _players.Count != (int)TargetType.End)
+                return;
+
+            if (packet.TurnInfo.Action == ActionType.Fight && !CanUseSkill(playerId, packet.TurnInfo.SkillId))
+                return;
+
+            // 아래 판정 코드가 읽는 PlayerId를 세션의 플레이어로 고정한다.
+            packet.PlayerId = playerId;
+
             isWaitingPlayerTurnEnd = true;
 
             switch (packet.TurnInfo.Action)
@@ -34,6 +47,15 @@ namespace Server.Game.Room
                     DuelEnd(packet.PlayerId, true);
                     break;
             }
+        }
+
+        // 스킬이 데이터에 있고, 지금 나와 있는 포켓몬이 가진 스킬이어야 한다.
+        private bool CanUseSkill(int playerId, int skillId)
+        {
+            return DataManager.SkillDict.ContainsKey(skillId)
+                   && _players.TryGetValue(playerId, out Player player)
+                   && player.Pokemon.Count > 0
+                   && player.Pokemon[0].Info.SkillId.Contains(skillId);
         }
 
         private bool DefaultTurn(C_Turn packet, ref RepeatedField<BattleInfo> battleInfoList)
@@ -271,6 +293,9 @@ namespace Server.Game.Room
 
         public void DuelEnd(int PlayerId, bool isRunaway)
         {
+            // 끝난 전투에는 턴·교체 패킷을 더 받지 않는다.
+            _battleStarted = false;
+
             foreach (KeyValuePair<int, Player> playerInfo in _players)
             {
                 S_DuelEnd duelEndPacket = new S_DuelEnd();
@@ -284,6 +309,10 @@ namespace Server.Game.Room
         public void TurnEnd(int playerId)
         {
             if (!isWaitingPlayerTurnEnd)
+                return;
+
+            // 이 방에 없는 ID가 준비 목록에 새 항목으로 들어가지 않게 한다.
+            if (!_playerReady.ContainsKey(playerId))
                 return;
 
             _playerReady[playerId] = true;
@@ -314,13 +343,16 @@ namespace Server.Game.Room
 
         public void ChangePokemon(int playerId, int changePokemonId)
         {
+            if (!_battleStarted || !_players.TryGetValue(playerId, out Player player))
+                return;
+
             S_ChangePokemon changePokemonPacket = new S_ChangePokemon
             {
                 PlayerId = playerId,
                 ChangePokemonId = changePokemonId
             };
 
-            List<PokemonData> pokemonDataList = _players[playerId].Pokemon;
+            List<PokemonData> pokemonDataList = player.Pokemon;
             for (int index = 0; index < pokemonDataList.Count; ++index)
             {
                 if (pokemonDataList[index].Id != changePokemonId)
@@ -331,7 +363,7 @@ namespace Server.Game.Room
                 return;
             }
 
-            Debug.Assert(false, "Cannot Found ChangePokemon");
+            // 자기 목록에 없는 포켓몬으로의 교체 요청은 무시한다.
         }
     }
 }
