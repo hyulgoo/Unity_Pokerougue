@@ -48,6 +48,10 @@ partial class PacketHandler
 
 		string path = Managers.Network.Name;
 		loginPacket.UniqueId = path.GetHashCode().ToString();
+
+		// AccountServer 로그인 응답으로 받은 계정 ID와 토큰. 게임 서버가 SharedDB에서 대조한다.
+		loginPacket.AccountId = Managers.Network.AccountId;
+		loginPacket.Token = Managers.Network.Token;
 		Managers.Network.Send(loginPacket);
 	}
 

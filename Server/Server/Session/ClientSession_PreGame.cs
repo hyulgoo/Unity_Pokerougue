@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using Google.Protobuf.Protocol;
@@ -7,6 +8,7 @@ using Server.DB;
 using Server.Game;
 using Server.Game.Room;
 using ServerCore;
+using SharedDB;
 using GameRoom = Server.Game.Room.GameRoom;
 
 namespace Server
@@ -27,11 +29,32 @@ namespace Server
         private int AccountDbId { get; set; }
         private List<LobbyPlayerInfo> LobbyPlayers { get; } = new List<LobbyPlayerInfo>();
 
+        // 토큰이 발급돼 있고, 값이 같고, 만료 전이어야 한다.
+        internal static bool IsLoginTokenValid(TokenDb tokenDb, int token, DateTime utcNow)
+        {
+            return tokenDb != null && tokenDb.Token == token && tokenDb.Expired > utcNow;
+        }
+
+        // AccountServer가 로그인 때 SharedDB에 적어 둔 토큰과 대조한다.
+        private static bool VerifyLoginToken(int accountId, int token)
+        {
+            using SharedDbContext shared = new SharedDbContext();
+            TokenDb tokenDb = shared.Tokens.AsNoTracking().FirstOrDefault(t => t.AccountDbId == accountId);
+            return IsLoginTokenValid(tokenDb, token, DateTime.UtcNow);
+        }
+
         public void HandleLogin(C_Login loginPacket)
         {
             // TODO : 이런 저런 보안 체크
             if (ServerState != PlayerServerState.ServerStateLogin)
                 return;
+
+            // 토큰이 맞지 않으면 접속을 끊는다. 한 접속에서 로그인은 한 번만 시도할 수 있다.
+            if (!VerifyLoginToken(loginPacket.AccountId, loginPacket.Token))
+            {
+                Disconnect();
+                return;
+            }
 
             // TODO : 문제가 있긴 있다
             // - 동시에 다른 사람이 같은 UniqueId을 보낸다면?
@@ -40,9 +63,12 @@ namespace Server
 
             LobbyPlayers.Clear();
 
+            // 게임 계정은 검증된 계정 ID로 찾는다. 클라이언트가 보낸 UniqueId는 쓰지 않는다.
+            string accountName = loginPacket.AccountId.ToString();
+
             using AppDbContext db = new AppDbContext();
             AccountDb findAccount = db.Accounts
-                .Include(a => a.Players).FirstOrDefault(a => a.AccountName == loginPacket.UniqueId);
+                .Include(a => a.Players).FirstOrDefault(a => a.AccountName == accountName);
 
             if (findAccount != null)
             {
@@ -69,7 +95,7 @@ namespace Server
             }
             else
             {
-                AccountDb newAccount = new AccountDb { AccountName = loginPacket.UniqueId };
+                AccountDb newAccount = new AccountDb { AccountName = accountName };
                 db.Accounts.Add(newAccount);
                 bool success = db.SaveChangesEx();
                 if (!success)
