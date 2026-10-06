@@ -127,6 +127,35 @@ class PacketHandler
         S_StartBattle startBattle = (S_StartBattle)packet;
         ServerSession serverSession = (ServerSession)session;
     }
+
+	// 대전 패킷. 생성된 ClientPacketManager가 등록하므로 자리만 둔다.
+	public static void S_TurnBattleHandler(PacketSession session, IMessage packet)
+	{
+	}
+
+	public static void S_TurnPokeballHandler(PacketSession session, IMessage packet)
+	{
+	}
+
+	public static void S_TurnChangeHandler(PacketSession session, IMessage packet)
+	{
+	}
+
+	public static void S_TurnPassHandler(PacketSession session, IMessage packet)
+	{
+	}
+
+	public static void S_TurnHandler(PacketSession session, IMessage packet)
+	{
+	}
+
+	public static void S_ChangePokemonHandler(PacketSession session, IMessage packet)
+	{
+	}
+
+	public static void S_DuelEndHandler(PacketSession session, IMessage packet)
+	{
+	}
 }
 
 
