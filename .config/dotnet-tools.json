@@ -3,11 +3,11 @@
   "isRoot": true,
   "tools": {
     "dotnet-ef": {
-      "version": "3.1.32",
+      "version": "8.0.31",
       "commands": [
         "dotnet-ef"
       ],
-      "rollForward": true
+      "rollForward": false
     }
   }
 }

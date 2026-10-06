@@ -24,7 +24,7 @@
 ## 요구 사항
 
 - Windows
-- .NET SDK 8 이상. 대상 프레임워크는 `netcoreapp3.1`이지만 `Server/Directory.Build.props`의 `RollForward` 설정으로 .NET 8 런타임에서 실행된다.
+- .NET SDK 8 이상. 대상 프레임워크는 `net8.0`이다.
 - SQL Server Express LocalDB(`(localdb)\MSSQLLocalDB`). Visual Studio 설치 관리자의 "데이터 스토리지 및 처리" 워크로드나 SQL Server Express 설치 관리자로 설치한다.
 - Unity 6000.0.29f1
 
