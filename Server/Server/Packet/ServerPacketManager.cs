@@ -22,7 +22,7 @@ namespace Server.Packet
 
         private PacketManager()
         {
-            throw new NotImplementedException();
+            Register();
         }
 
         private Action<PacketSession, IMessage, ushort> CustomHandler { get; }
