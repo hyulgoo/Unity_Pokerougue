@@ -19,6 +19,7 @@
 | `Server/SharedDB/` | 두 서버가 함께 쓰는 DB 모델(로그인 토큰, 게임 서버 목록) |
 | `Server/PacketGenerator/` | `Protocol.proto`에서 패킷 매니저 코드를 생성한다 |
 | `Server/DummyClient/` | 콘솔 테스트 클라이언트 |
+| `Server/Server.Tests/` | 서버 단위 테스트(xunit) |
 | `Common/protoc-3.12.3-win64/bin/` | `Protocol.proto`와 생성 스크립트 `GenProto.bat` |
 
 ## 요구 사항
@@ -68,6 +69,14 @@ dotnet run --project Server/Server
 
 양쪽에서 계정을 만들고(Create) 로그인하면 로비로 들어간다. 한쪽이 상대를 골라 대전을 신청하고 다른 쪽이 수락하면, 포켓몬 선택을 거쳐 대전이 시작된다.
 
+## 테스트
+
+```
+dotnet test Server/Server.sln
+```
+
+DB와 Unity 없이 돈다. 패킷 수신 방어, 대전 신청·턴·스킬·포켓몬 선택의 검증, 로그인 토큰 판정, 계정 서버의 비밀번호 저장과 토큰 발급을 확인한다.
+
 ## 패킷 수정
 
 1. `Common/protoc-3.12.3-win64/bin/Protocol.proto`를 고친다.
@@ -78,6 +87,7 @@ dotnet run --project Server/Server
 
 리팩토링 중이다. 알려진 문제:
 
-- 게임 서버가 시작 직후 `Listener` 생성자 예외로 종료된다.
 - 게임 서버는 `Dns.GetHostEntry(...).AddressList[1]` 주소에서 수신하고 그 주소를 `SharedDB`에 등록한다. 네트워크 구성에 따라 클라이언트가 접속하지 못할 수 있다.
-- `Server/Server/Packet/ServerPacketManager.cs`는 생성 결과를 손으로 고친 상태라, `GenProto.bat`을 다시 실행하면 그 변경이 되돌아간다.
+- `Server/Server/Packet/ServerPacketManager.cs`는 생성 결과를 손으로 고친 상태라, `GenProto.bat`을 다시 실행하면 그 변경이 되돌아간다. `Server/Server/Packet/Protocol.cs`에 손으로 넣은 두 줄(`using System;`, `[Flags]`)도 같이 사라진다.
+- 게임 서버는 `AccountServer`가 발급한 토큰을 확인한다. `DummyClient`는 `AccountServer` 로그인을 거치지 않아 접속이 끊긴다.
+- 게임 계정은 `AccountServer`의 계정 ID로 찾는다. 그 전에 만든 `GameDB`의 계정은 계정명 해시로 저장돼 있어 더 이상 쓰이지 않는다.
