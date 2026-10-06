@@ -11,6 +11,9 @@ namespace ServerCore
 	{
         public const int HeaderSize = 2;
 
+        // size(2) + packetId(2). 이보다 작은 크기를 적은 패킷은 조립할 수 없다.
+        private const int MinPacketSize = 4;
+
         // [size(2)][packetId(2)][ ... ][size(2)][packetId(2)][ ... ]
         protected PacketSession(Socket socket) : base(socket)
         {
@@ -27,8 +30,12 @@ namespace ServerCore
 					break;
 
 				// 패킷이 완전체로 도착했는지 확인
-                if (buffer.Array == null) continue;
                 ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+
+                // 크기가 0이면 버퍼가 줄지 않아 이 루프가 끝나지 않는다. 음수를 돌려주면 호출한 쪽이 접속을 끊는다.
+                if (dataSize < MinPacketSize)
+                    return -1;
+
                 if (buffer.Count < dataSize)
                     break;
 
@@ -118,7 +125,16 @@ namespace ServerCore
 				return;
 
 			OnDisconnected(_socket.RemoteEndPoint);
-			_socket.Shutdown(SocketShutdown.Both);
+
+			// 상대가 먼저 끊은 소켓은 Shutdown이 예외를 던진다. 수신 완료 콜백에서 불리므로 밖으로 내보내지 않는다.
+			try
+			{
+				_socket.Shutdown(SocketShutdown.Both);
+			}
+			catch (SocketException)
+			{
+			}
+
 			_socket.Close();
 			Clear();
 		}
@@ -230,7 +246,9 @@ namespace ServerCore
 				}
 				catch (Exception e)
 				{
+					// 수신을 다시 걸지 않으면 이 세션은 패킷을 더 받지 못한 채 남는다. 끊어서 정리한다.
 					Console.WriteLine($"OnRecvCompleted Failed {e}");
+					Disconnect();
 				}
 			}
 			else
