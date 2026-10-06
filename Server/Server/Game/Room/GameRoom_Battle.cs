@@ -1,21 +1,16 @@
-﻿using Google.Protobuf;
-using Google.Protobuf.Collections;
-using Google.Protobuf.Protocol;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Server.Data;
-using Server.DB;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
-using System.Text;
+using Google.Protobuf.Collections;
+using Google.Protobuf.Protocol;
+using Server.Data;
 
-namespace Server.Game
+namespace Server.Game.Room
 {
-	public partial class GameRoom : JobSerializer
+    public partial class GameRoom : JobSerializer
     {
-        const int confusionSkillId = 999;
+        private const int confusionSkillId = 999;
 
         public void Turn(C_Turn packet)
         {
@@ -41,7 +36,7 @@ namespace Server.Game
             }
         }
 
-        bool DefaultTurn(C_Turn packet, ref RepeatedField<BattleInfo> battleInfoList)
+        private bool DefaultTurn(C_Turn packet, ref RepeatedField<BattleInfo> battleInfoList)
         {
             Random random = new Random();
             Player player = PlayerManager.Instance.Find(RoomId, packet.PlayerId);
@@ -59,7 +54,7 @@ namespace Server.Game
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 20;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp < 0 ? 0 : myPokemonData.Info.Hp;
                 myPokemonData.Info.State.Fire--;
-                result.FromData= myPokemonData.Clone();
+                result.FromData = myPokemonData.Clone();
                 result.ToData = myPokemonData.Clone();
                 result.StateFlag |= BattleStateFlag.DebuffFire;
 
@@ -91,7 +86,7 @@ namespace Server.Game
                 BattleInfo result = new BattleInfo();
                 result.ApplyType = ApplyType.StatusEffect;
                 result.TargetType = TargetType.Oneself;
-                myPokemonData.Info.Hp = myPokemonData.Info.Hp - standardInfo.Info.Hp / 20;
+                myPokemonData.Info.Hp -= standardInfo.Info.Hp / 20;
                 myPokemonData.Info.Hp = myPokemonData.Info.Hp < 0 ? 0 : myPokemonData.Info.Hp;
                 myPokemonData.Info.State.Poison--;
                 result.FromData = myPokemonData.Clone();
@@ -105,14 +100,16 @@ namespace Server.Game
 
             if (myPokemonData.Info.State.Confusion > 0)
             {
-                BattleInfo result = new BattleInfo();
-                result.ApplyType = ApplyType.Confusion;
-                result.TargetType = TargetType.Oneself;
-                result.FromData = myPokemonData.Clone();
-                result.ToData = myPokemonData.Clone();
+                BattleInfo result = new BattleInfo
+                {
+                    ApplyType = ApplyType.Confusion,
+                    TargetType = TargetType.Oneself,
+                    FromData = myPokemonData.Clone(),
+                    ToData = myPokemonData.Clone()
+                };
 
-                bool recovery = random.Next(0, 100) > 60 ? true : false;
-                if (recovery == false)
+                bool recovery = random.Next(0, 100) > 60;
+                if (!recovery)
                 {
                     myPokemonData.Info.State.Confusion -= 1;
                     result.StateFlag |= BattleStateFlag.DebuffConfusion;
@@ -150,14 +147,14 @@ namespace Server.Game
                 result.FromData = myPokemonData.Clone();
                 result.ToData = myPokemonData.Clone();
 
-                bool recovery = random.Next(0, 100) > 66 ? true : false;
+                bool recovery = random.Next(0, 100) > 66;
                 myPokemonData.Info.State.Sturn = recovery ? 0 : myPokemonData.Info.State.Sturn - 1;
 
-                if (recovery == false)
+                if (!recovery)
                 {
                     myPokemonData.Info.State.Sturn -= 1;
                     result.StateFlag |= BattleStateFlag.DebuffSturn;
-                    if(myPokemonData.Info.State.Sturn == 0)
+                    if (myPokemonData.Info.State.Sturn == 0)
                         result.StateFlag |= BattleStateFlag.RecoverySturn;
                     isSturnOrConfusionAttackOneself = true;
                 }
@@ -173,29 +170,27 @@ namespace Server.Game
             return isSturnOrConfusionAttackOneself;
         }
 
-        void DefaultTurnIsRemainPokemonExist(BattleInfo battleInfo)
+        private void DefaultTurnIsRemainPokemonExist(BattleInfo battleInfo)
         {
             Dictionary<int, bool> playerDuelResultArray = new Dictionary<int, bool>();
             foreach (Player playerIter in _players.Values)
                 playerDuelResultArray.Add(playerIter.Id, playerIter.IsRemainPokemonExist());
 
-            if (playerDuelResultArray.Values.Contains(false) == false)
+            if (!playerDuelResultArray.Values.Contains(false))
                 return;
 
             isWaitingPlayerTurnEnd = false;
 
             battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
-            foreach (var playerInfo in playerDuelResultArray)
-            {
+            foreach (KeyValuePair<int, bool> playerInfo in playerDuelResultArray)
                 if (playerInfo.Value)
                 {
                     battleInfo.WinPlayerId = playerInfo.Key;
                     break;
                 }
-            }                     
         }
 
-        void Pass(C_Turn packet)
+        private void Pass(C_Turn packet)
         {
             S_TurnPass passPacket = new S_TurnPass();
 
@@ -207,7 +202,7 @@ namespace Server.Game
             Broadcast(passPacket);
         }
 
-        void Fight(C_Turn packet)
+        private void Fight(C_Turn packet)
         {
             S_TurnBattle battlePacket = new S_TurnBattle();
 
@@ -222,7 +217,7 @@ namespace Server.Game
             RepeatedField<BattleInfo> battleFightResult = new RepeatedField<BattleInfo>();
 
             bool isSturn = DefaultTurn(packet, ref battleTurnResult);
-            if (isSturn == false)
+            if (!isSturn)
             {
                 SkillData skillData = DataManager.SkillDict[packet.TurnInfo.SkillId];
                 foreach (SkillEffect skillEffect in skillData.info.SkillEffect)
@@ -243,9 +238,9 @@ namespace Server.Game
             {
                 BattleInfo battleInfo = new BattleInfo();
                 battleInfo.StateFlag |= BattleStateFlag.DuelEnd;
-                foreach (var playerInfo in playerDuelResultArray)
+                foreach (KeyValuePair<int, bool> playerInfo in playerDuelResultArray)
                 {
-                    if (playerInfo.Value == false)
+                    if (!playerInfo.Value)
                         continue;
 
                     battleInfo.WinPlayerId = playerInfo.Key;
@@ -263,11 +258,11 @@ namespace Server.Game
 
             Broadcast(battlePacket);
 
-            if(isDuelEnd)
+            if (isDuelEnd)
                 DuelEnd(winPlayerId, false);
         }
 
-        void PokeBall(C_Turn packet)
+        private void PokeBall(C_Turn packet)
         {
             S_TurnPokeball pokeballPacket = new S_TurnPokeball();
             pokeballPacket.BallType = packet.TurnInfo.BallType;
@@ -276,7 +271,7 @@ namespace Server.Game
 
         public void DuelEnd(int PlayerId, bool isRunaway)
         {
-            foreach (var playerInfo in _players)
+            foreach (KeyValuePair<int, Player> playerInfo in _players)
             {
                 S_DuelEnd duelEndPacket = new S_DuelEnd();
                 duelEndPacket.IsWin = playerInfo.Key == PlayerId ? false : true;
@@ -288,7 +283,7 @@ namespace Server.Game
 
         public void TurnEnd(int playerId)
         {
-            if (isWaitingPlayerTurnEnd == false)
+            if (!isWaitingPlayerTurnEnd)
                 return;
 
             _playerReady[playerId] = true;
@@ -300,29 +295,30 @@ namespace Server.Game
             if (readyPlayerCount != _playerReady.Count)
                 return;
 
-            CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId, false);
-                        
-            List<int> playerKeyArray = _players.Keys.ToList();
-            for (int index = 0; index < playerKeyArray.Count; ++index)
-            {
-                int myId = playerKeyArray[index];
-                int enemyid = playerKeyArray[index + 1 == playerKeyArray.Count ? 0 : index + 1];
+            CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
 
-                S_Turn turnPacket = new S_Turn();
-                turnPacket.MyTurn = myId == CurrentTurnPlayerId;
+            List<int> playerKeyArray = _players.Keys.ToList<int>();
+            foreach (int myId in playerKeyArray)
+            {
+                S_Turn turnPacket = new S_Turn
+                {
+                    MyTurn = myId == CurrentTurnPlayerId
+                };
 
                 _playerReady[myId] = false;
                 _players[myId].Session.Send(turnPacket);
             }
-            
+
             isWaitingPlayerTurnEnd = false;
         }
 
         public void ChangePokemon(int playerId, int changePokemonId)
         {
-            S_ChangePokemon changePokemonPacket = new S_ChangePokemon();
-            changePokemonPacket.PlayerId = playerId;
-            changePokemonPacket.ChangePokemonId = changePokemonId;
+            S_ChangePokemon changePokemonPacket = new S_ChangePokemon
+            {
+                PlayerId = playerId,
+                ChangePokemonId = changePokemonId
+            };
 
             List<PokemonData> pokemonDataList = _players[playerId].Pokemon;
             for (int index = 0; index < pokemonDataList.Count; ++index)

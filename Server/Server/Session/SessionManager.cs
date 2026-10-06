@@ -1,76 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Server
 {
-	class SessionManager
-	{
-		static SessionManager _session = new SessionManager();
-		public static SessionManager Instance { get { return _session; } }
+    internal class SessionManager
+    {
+        private readonly object _lock = new object();
+        private readonly Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
 
-		int _sessionId = 0;
-		Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
-		object _lock = new object();
+        private int _sessionId;
+        public static SessionManager Instance { get; } = new SessionManager();
 
-		public int GetBusyScore()
-		{
-			int count = 0;
+        public int GetBusyScore()
+        {
+            int count = 0;
 
-			lock (_lock)
-			{
-				count = _sessions.Count;
-			}
+            lock (_lock)
+            {
+                count = _sessions.Count;
+            }
 
-			return count / 100;
-		}
+            return count / 100;
+        }
 
-		public List<ClientSession> GetSessions()
-		{
-			List<ClientSession> sessions = new List<ClientSession>();
+        public List<ClientSession> GetSessions()
+        {
+            List<ClientSession> sessions;
 
-			lock (_lock)
-			{
-				sessions = _sessions.Values.ToList();
-			}
+            lock (_lock)
+            {
+                sessions = _sessions.Values.ToList();
+            }
 
-			return sessions;
-		}
+            return sessions;
+        }
 
-		public ClientSession Generate()
-		{
-			lock (_lock)
-			{
-				int sessionId = ++_sessionId;
+        public ClientSession Generate()
+        {
+            lock (_lock)
+            {
+                int sessionId = ++_sessionId;
 
-				ClientSession session = new ClientSession();
-				session.SessionId = sessionId;
-				_sessions.Add(sessionId, session);
+                ClientSession session = new ClientSession
+                {
+                    SessionId = sessionId
+                };
+                _sessions.Add(sessionId, session);
 
-				Console.WriteLine($"Connected ({_sessions.Count}) Players");
+                Console.WriteLine($"Connected ({_sessions.Count}) Players");
 
-				return session;
-			}
-		}
+                return session;
+            }
+        }
 
-		public ClientSession Find(int id)
-		{
-			lock (_lock)
-			{
-				ClientSession session = null;
-				_sessions.TryGetValue(id, out session);
-				return session;
-			}
-		}
+        public ClientSession Find(int id)
+        {
+            lock (_lock)
+            {
+                _sessions.TryGetValue(id, out ClientSession session);
+                return session;
+            }
+        }
 
-		public void Remove(ClientSession session)
-		{
-			lock (_lock)
-			{
-				_sessions.Remove(session.SessionId);
-				Console.WriteLine($"Connected ({_sessions.Count}) Players");
-			}
-		}
-	}
+        public void Remove(ClientSession session)
+        {
+            lock (_lock)
+            {
+                _sessions.Remove(session.SessionId);
+                Console.WriteLine($"Connected ({_sessions.Count}) Players");
+            }
+        }
+    }
 }

@@ -1,185 +1,192 @@
-﻿using Google.Protobuf.Protocol;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Sockets;
+using Google.Protobuf.Protocol;
 using Microsoft.EntityFrameworkCore;
 using Server.DB;
 using Server.Game;
+using Server.Game.Room;
 using ServerCore;
-using System.Collections.Generic;
-using System.Linq;	
+using GameRoom = Server.Game.Room.GameRoom;
 
 namespace Server
 {
-	public partial class ClientSession : PacketSession
-	{
-		public int AccountDbId { get; private set; }
-		public List<LobbyPlayerInfo> LobbyPlayers { get; set; } = new List<LobbyPlayerInfo>();
+    public partial class ClientSession : PacketSession
+    {
+        public ClientSession(Socket socket, long lastSendTick, long pingpongTick, int reservedSendBytes, PlayerServerState serverState, Player myPlayer, int sessionId, int accountDbId) : base(socket)
+        {
+            _lastSendTick = lastSendTick;
+            _pingpongTick = pingpongTick;
+            _reservedSendBytes = reservedSendBytes;
+            ServerState = serverState;
+            MyPlayer = myPlayer;
+            SessionId = sessionId;
+            AccountDbId = accountDbId;
+        }
 
-		public void HandleLogin(C_Login loginPacket)
-		{
-			// TODO : 이런 저런 보안 체크
-			if (ServerState != PlayerServerState.ServerStateLogin)
-				return;
+        private int AccountDbId { get; set; }
+        private List<LobbyPlayerInfo> LobbyPlayers { get; } = new List<LobbyPlayerInfo>();
 
-			// TODO : 문제가 있긴 있다
-			// - 동시에 다른 사람이 같은 UniqueId을 보낸다면?
-			// - 악의적으로 여러번 보낸다면
-			// - 쌩뚱맞은 타이밍에 그냥 이 패킷을 보낸다면?
+        public void HandleLogin(C_Login loginPacket)
+        {
+            // TODO : 이런 저런 보안 체크
+            if (ServerState != PlayerServerState.ServerStateLogin)
+                return;
 
-			LobbyPlayers.Clear();
+            // TODO : 문제가 있긴 있다
+            // - 동시에 다른 사람이 같은 UniqueId을 보낸다면?
+            // - 악의적으로 여러번 보낸다면
+            // - 쌩뚱맞은 타이밍에 그냥 이 패킷을 보낸다면?
 
-			using (AppDbContext db = new AppDbContext())
-			{
-				AccountDb findAccount = db.Accounts
-					.Include(a => a.Players)
-					.Where(a => a.AccountName == loginPacket.UniqueId).FirstOrDefault();
+            LobbyPlayers.Clear();
 
-				if (findAccount != null)
-				{
-					// AccountDbId 메모리에 기억
-					AccountDbId = findAccount.AccountDbId;
+            using AppDbContext db = new AppDbContext();
+            AccountDb findAccount = db.Accounts
+                .Include(a => a.Players).FirstOrDefault(a => a.AccountName == loginPacket.UniqueId);
 
-					S_Login loginOk = new S_Login() { LoginOk = 1 };
-					foreach (PlayerDb playerDb in findAccount.Players)
-					{
-						LobbyPlayerInfo lobbyPlayer = new LobbyPlayerInfo()
-						{
-							PlayerDbId = playerDb.PlayerDbId,
-							Name = playerDb.PlayerName,
-						};
+            if (findAccount != null)
+            {
+                // AccountDbId 메모리에 기억
+                AccountDbId = findAccount.AccountDbId;
 
-						// 메모리에도 들고 있다
-						LobbyPlayers.Add(lobbyPlayer);
+                S_Login loginOk = new S_Login { LoginOk = 1 };
+                foreach (PlayerDb playerDb in findAccount.Players)
+                {
+                    LobbyPlayerInfo lobbyPlayer = new LobbyPlayerInfo
+                    {
+                        PlayerDbId = playerDb.PlayerDbId,
+                        Name = playerDb.PlayerName
+                    };
 
-						// 패킷에 넣어준다
-						loginOk.Players.Add(lobbyPlayer);
-					}
+                    // 메모리에도 들고 있다
+                    LobbyPlayers.Add(lobbyPlayer);
 
-					Send(loginOk);
-					// 로비로 이동
-					ServerState = PlayerServerState.ServerStateLobby;
-				}
-				else
-				{
-					AccountDb newAccount = new AccountDb() { AccountName = loginPacket.UniqueId };
-					db.Accounts.Add(newAccount);
-					bool success = db.SaveChangesEx();
-					if (success == false)
-						return;
+                    // 패킷에 넣어준다
+                    loginOk.Players.Add(lobbyPlayer);
+                }
 
-					// AccountDbId 메모리에 기억
-					AccountDbId = newAccount.AccountDbId;
+                Send(loginOk);
+            }
+            else
+            {
+                AccountDb newAccount = new AccountDb { AccountName = loginPacket.UniqueId };
+                db.Accounts.Add(newAccount);
+                bool success = db.SaveChangesEx();
+                if (!success)
+                    return;
 
-					S_Login loginOk = new S_Login() { LoginOk = 1 };
-					Send(loginOk);
-					// 로비로 이동
-					ServerState = PlayerServerState.ServerStateLobby;
-				}
-			}
-		}
+                // AccountDbId 메모리에 기억
+                AccountDbId = newAccount.AccountDbId;
 
-		public void HandleEnterGame(C_EnterGame enterGamePacket)
-		{
-			if (ServerState != PlayerServerState.ServerStateLobby)
-				return;
+                S_Login loginOk = new S_Login { LoginOk = 1 };
+                Send(loginOk);
+            }
 
-			LobbyPlayerInfo playerInfo = LobbyPlayers.Find(p => p.Name == enterGamePacket.Name);
-			if (playerInfo == null)
-				return;
+            // 로비로 이동
+            ServerState = PlayerServerState.ServerStateLobby;
+        }
 
-			//MyPlayer = ObjectManager.Instance.Add<Player>();
-			//{
-			//	MyPlayer.PlayerDbId = playerInfo.PlayerDbId;
-			//	MyPlayer.Info.Name = playerInfo.Name;
-			//	MyPlayer.Session = this;
+        public void HandleEnterGame(C_EnterGame enterGamePacket)
+        {
+            if (ServerState != PlayerServerState.ServerStateLobby)
+                return;
 
-			//	S_ItemList itemListPacket = new S_ItemList();
+            LobbyPlayerInfo playerInfo = LobbyPlayers.Find(p => p.Name == enterGamePacket.Name);
+            if (playerInfo == null)
+                return;
 
-			//	// 아이템 목록을 갖고 온다
-			//	using (AppDbContext db = new AppDbContext())
-			//	{
-			//		List<ItemDb> items = db.Items
-			//			.Where(i => i.OwnerDbId == playerInfo.PlayerDbId)
-			//			.ToList();
+            //MyPlayer = ObjectManager.Instance.Add<Player>();
+            //{
+            //	MyPlayer.PlayerDbId = playerInfo.PlayerDbId;
+            //	MyPlayer.Info.Name = playerInfo.Name;
+            //	MyPlayer.Session = this;
 
-			//		foreach (ItemDb itemDb in items)
-			//		{
-			//			Item item = Item.MakeItem(itemDb);
-			//			if (item != null)
-			//			{
-			//				MyPlayer.Inven.Add(item);
+            //	S_ItemList itemListPacket = new S_ItemList();
 
-			//				ItemInfo info = new ItemInfo();
-			//				info.MergeFrom(item.Info);
-			//				itemListPacket.Items.Add(info);
-			//			}
-			//		}
-			//	}
+            //	// 아이템 목록을 갖고 온다
+            //	using (AppDbContext db = new AppDbContext())
+            //	{
+            //		List<ItemDb> items = db.Items
+            //			.Where(i => i.OwnerDbId == playerInfo.PlayerDbId)
+            //			.ToList();
 
-			//	Send(itemListPacket);
-			//}
+            //		foreach (ItemDb itemDb in items)
+            //		{
+            //			Item item = Item.MakeItem(itemDb);
+            //			if (item != null)
+            //			{
+            //				MyPlayer.Inven.Add(item);
 
-			GameLogic.Instance.Push(() =>
-			{
-				GameRoom room = GameLogic.Instance.Find(1);
-				room.Push(room.SetPlayerBySession, this, playerInfo);
-			});
-		}
+            //				ItemInfo info = new ItemInfo();
+            //				info.MergeFrom(item.Info);
+            //				itemListPacket.Items.Add(info);
+            //			}
+            //		}
+            //	}
 
-		public void HandleCreatePlayer(C_CreatePlayer createPacket)
-		{
-			// TODO : 이런 저런 보안 체크
-			if (ServerState != PlayerServerState.ServerStateLobby)
-				return;
+            //	Send(itemListPacket);
+            //}
 
-			using (AppDbContext db = new AppDbContext())
-			{
-				PlayerDb findPlayer = db.Players
-					.Where(p => p.PlayerName == createPacket.Name).FirstOrDefault();
+            GameLogic.Instance.Push(() =>
+            {
+                GameRoom room = GameLogic.Instance.Find(1);
+                room.Push(room.SetPlayerBySession, this, playerInfo);
+            });
+        }
 
-				if (findPlayer != null)
-				{
-					// 이름이 겹친다
-					Send(new S_CreatePlayer());
-				}
-				else
-				{
-					//// 1레벨 스탯 정보 추출
-					//StatInfo stat = null;
-					//DataManager.StatDict.TryGetValue(1, out stat);
+        public void HandleCreatePlayer(C_CreatePlayer createPacket)
+        {
+            // TODO : 이런 저런 보안 체크
+            if (ServerState != PlayerServerState.ServerStateLobby)
+                return;
 
-					// DB에 플레이어 만들어줘야 함
-					PlayerDb newPlayerDb = new PlayerDb()
-					{
-						PlayerName = createPacket.Name,
-						AccountDbId = AccountDbId
-					};
+            using AppDbContext db = new AppDbContext();
+            PlayerDb findPlayer = db.Players.FirstOrDefault(p => p.PlayerName == createPacket.Name);
 
-					db.Players.Add(newPlayerDb);
-					bool success = db.SaveChangesEx();
-					if (success == false)
-						return;
+            if (findPlayer != null)
+            {
+                // 이름이 겹친다
+                Send(new S_CreatePlayer());
+            }
+            else
+            {
+                //// 1레벨 스탯 정보 추출
+                //StatInfo stat = null;
+                //DataManager.StatDict.TryGetValue(1, out stat);
 
-					// 메모리에 추가
-					LobbyPlayerInfo lobbyPlayer = new LobbyPlayerInfo()
-					{
-						PlayerDbId = newPlayerDb.PlayerDbId,
-						Name = createPacket.Name,
-					};
+                // DB에 플레이어 만들어줘야 함
+                PlayerDb newPlayerDb = new PlayerDb
+                {
+                    PlayerName = createPacket.Name,
+                    AccountDbId = AccountDbId
+                };
 
-					// 메모리에도 들고 있다
-					LobbyPlayers.Add(lobbyPlayer);
+                db.Players.Add(newPlayerDb);
+                bool success = db.SaveChangesEx();
+                if (!success)
+                    return;
 
-					// 클라에 전송
-					S_CreatePlayer newPlayer = new S_CreatePlayer() { Player = new LobbyPlayerInfo() };
-					newPlayer.Player.MergeFrom(lobbyPlayer);
+                // 메모리에 추가
+                LobbyPlayerInfo lobbyPlayer = new LobbyPlayerInfo
+                {
+                    PlayerDbId = newPlayerDb.PlayerDbId,
+                    Name = createPacket.Name
+                };
 
-					Send(newPlayer);
-				}
-			}
-		}
+                // 메모리에도 들고 있다
+                LobbyPlayers.Add(lobbyPlayer);
 
-		public void HandleReEnterHandler(int roomId)
-		{
-            S_Login loginOk = new S_Login() { LoginOk = 1 };
+                // 클라에 전송
+                S_CreatePlayer newPlayer = new S_CreatePlayer { Player = new LobbyPlayerInfo() };
+                newPlayer.Player.MergeFrom(lobbyPlayer);
+
+                Send(newPlayer);
+            }
+        }
+
+        public void HandleReEnterHandler(int roomId)
+        {
+            S_Login loginOk = new S_Login { LoginOk = 1 };
             foreach (LobbyPlayerInfo lobbyPlayer in LobbyPlayers)
                 loginOk.Players.Add(lobbyPlayer);
 
@@ -187,5 +194,5 @@ namespace Server
 
             ServerState = PlayerServerState.ServerStateLobby;
         }
-	}
+    }
 }

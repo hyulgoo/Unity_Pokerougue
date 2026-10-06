@@ -9,10 +9,14 @@ namespace ServerCore
 {
 	public abstract class PacketSession : Session
 	{
-		public static readonly int HeaderSize = 2;
+        public const int HeaderSize = 2;
 
-		// [size(2)][packetId(2)][ ... ][size(2)][packetId(2)][ ... ]
-		public sealed override int OnRecv(ArraySegment<byte> buffer)
+        // [size(2)][packetId(2)][ ... ][size(2)][packetId(2)][ ... ]
+        protected PacketSession(Socket socket) : base(socket)
+        {
+        }
+
+        public sealed override int OnRecv(ArraySegment<byte> buffer)
 		{
 			int processLen = 0;
 
@@ -23,21 +27,22 @@ namespace ServerCore
 					break;
 
 				// 패킷이 완전체로 도착했는지 확인
-				ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-				if (buffer.Count < dataSize)
-					break;
+                if (buffer.Array == null) continue;
+                ushort dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+                if (buffer.Count < dataSize)
+                    break;
 
-				// 여기까지 왔으면 패킷 조립 가능
-				OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
+                // 여기까지 왔으면 패킷 조립 가능
+                OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
 
-				processLen += dataSize;
-				buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
-			}
+                processLen += dataSize;
+                buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
+            }
 
 			return processLen;
 		}
 
-		public abstract void OnRecvPacket(ArraySegment<byte> buffer);
+        protected abstract void OnRecvPacket(ArraySegment<byte> buffer);
 	}
 
 	public abstract class Session
@@ -53,12 +58,17 @@ namespace ServerCore
 		SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
 		SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
 
-		public abstract void OnConnected(EndPoint endPoint);
+        protected Session(Socket socket)
+        {
+            _socket = socket;
+        }
+
+        public abstract void OnConnected(EndPoint endPoint);
 		public abstract int  OnRecv(ArraySegment<byte> buffer);
 		public abstract void OnSend(int numOfBytes);
 		public abstract void OnDisconnected(EndPoint endPoint);
 
-		void Clear()
+        private void Clear()
 		{
 			lock (_lock)
 			{
@@ -115,7 +125,7 @@ namespace ServerCore
 
 		#region 네트워크 통신
 
-		void RegisterSend()
+        private void RegisterSend()
 		{
 			if (_disconnected == 1)
 				return;
@@ -130,7 +140,7 @@ namespace ServerCore
 			try
 			{
 				bool pending = _socket.SendAsync(_sendArgs);
-				if (pending == false)
+				if (!pending)
 					OnSendCompleted(null, _sendArgs);
 			}
 			catch (Exception e)
@@ -139,7 +149,7 @@ namespace ServerCore
 			}
 		}
 
-		void OnSendCompleted(object sender, SocketAsyncEventArgs args)
+        public void OnSendCompleted(object sender, SocketAsyncEventArgs args)
 		{
 			lock (_lock)
 			{
@@ -167,7 +177,7 @@ namespace ServerCore
 			}
 		}
 
-		void RegisterRecv()
+        public void RegisterRecv()
 		{
 			if (_disconnected == 1)
 				return;
@@ -179,7 +189,7 @@ namespace ServerCore
 			try
 			{
 				bool pending = _socket.ReceiveAsync(_recvArgs);
-				if (pending == false)
+				if (!pending)
 					OnRecvCompleted(null, _recvArgs);
 			}
 			catch (Exception e)
@@ -188,14 +198,14 @@ namespace ServerCore
 			}
 		}
 
-		void OnRecvCompleted(object sender, SocketAsyncEventArgs args)
+        public void OnRecvCompleted(object sender, SocketAsyncEventArgs args)
 		{
 			if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
 			{
 				try
 				{
 					// Write 커서 이동
-					if (_recvBuffer.OnWrite(args.BytesTransferred) == false)
+					if (!_recvBuffer.OnWrite(args.BytesTransferred))
 					{
 						Disconnect();
 						return;
@@ -210,7 +220,7 @@ namespace ServerCore
 					}
 
 					// Read 커서 이동
-					if (_recvBuffer.OnRead(processLen) == false)
+					if (!_recvBuffer.OnRead(processLen))
 					{
 						Disconnect();
 						return;

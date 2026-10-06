@@ -1,37 +1,28 @@
 ﻿using Google.Protobuf.Protocol;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Server.Game
 {
-	public class GameObject
-	{
-		public GameObjectType ObjectType { get; protected set; } = GameObjectType.Nonetype;
-		public int Id
-		{
-			get { return Info.ObjectId; }
-			set { Info.ObjectId = value; }
-		}
+    public class GameObject
+    {
+        public GameObjectType ObjectType { get; protected set; } = GameObjectType.Nonetype;
 
-		public GameRoom Room { get; set; }
+        public int Id
+        {
+            get => Info.ObjectId;
+            set => Info.ObjectId = value;
+        }
 
-		public ObjectInfo Info { get; set; } = new ObjectInfo();
+        public Room.GameRoom Room { get; set; }
 
-		public GameObject()
-		{
-			//Info.StatInfo = Stat;
-		}
+        public ObjectInfo Info { get; set; } = new ObjectInfo();
 
-		public virtual void Update()
-		{
+        public virtual void Update()
+        {
+        }
 
-		}
-
-		public virtual GameObject GetOwner()
-		{
-			return this;
-		}
-	}
+        public virtual GameObject GetOwner()
+        {
+            return this;
+        }
+    }
 }

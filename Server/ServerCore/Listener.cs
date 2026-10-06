@@ -8,10 +8,20 @@ namespace ServerCore
 {
 	public class Listener
 	{
-		Socket _listenSocket;
-		Func<Session> _sessionFactory;
+        private Socket _listenSocket;
+        private Func<Session> _sessionFactory;
 
-		public void Init(IPEndPoint endPoint, Func<Session> sessionFactory, int register = 10, int backlog = 100)
+        public Listener(Func<Session> sessionFactory)
+        {
+            _sessionFactory = sessionFactory;
+        }
+
+        public Listener()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Init(IPEndPoint endPoint, Func<Session> sessionFactory, int register = 10, int backlog = 100)
 		{
 			_listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			_sessionFactory += sessionFactory;
@@ -31,14 +41,14 @@ namespace ServerCore
 			}
 		}
 
-		void RegisterAccept(SocketAsyncEventArgs args)
+        private void RegisterAccept(SocketAsyncEventArgs args)
 		{
 			args.AcceptSocket = null;
 
 			try
 			{
 				bool pending = _listenSocket.AcceptAsync(args);
-				if (pending == false)
+				if (!pending)
 					OnAcceptCompleted(null, args);
 			}
 			catch (Exception e)
@@ -47,7 +57,7 @@ namespace ServerCore
 			}
 		}
 
-		void OnAcceptCompleted(object sender, SocketAsyncEventArgs args)
+        private void OnAcceptCompleted(object sender, SocketAsyncEventArgs args)
 		{
 			try
 			{
