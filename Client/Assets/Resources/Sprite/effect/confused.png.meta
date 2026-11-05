@@ -274,6 +274,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -1522,7 +1535,63 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      confused_0: -254131194606244618
+      confused_1: -7997237010527309065
+      confused_10: 6194080919339705378
+      confused_11: 3326412004706958454
+      confused_12: -2506446767042886478
+      confused_13: -3787440111126708240
+      confused_14: 4570513575687554001
+      confused_15: 263949739464815386
+      confused_16: -3145889093998219836
+      confused_17: -2066184401108680672
+      confused_18: -4529186255566687596
+      confused_19: -6996600790030275383
+      confused_2: -7224498954094028555
+      confused_20: 6171494803258710840
+      confused_21: -7415571589607517724
+      confused_22: 4724592031649069817
+      confused_23: -9041612375088924433
+      confused_24: -6447242539603678981
+      confused_25: 721377423595630575
+      confused_26: -45208209918151713
+      confused_27: 7890071507076555112
+      confused_28: -3039871680819043684
+      confused_29: 6514842517186461402
+      confused_3: 689695752447444416
+      confused_30: -3877254608016315883
+      confused_31: 5992592834650350509
+      confused_32: -3212092457349044720
+      confused_33: 2750986865698899796
+      confused_34: 1283564740192357207
+      confused_35: -1330096448246042330
+      confused_36: -8406058005119209162
+      confused_37: 7613792184158404766
+      confused_38: -2595674789531013247
+      confused_39: -7699313758928604136
+      confused_4: 2510853535910595835
+      confused_40: 6578717241825376407
+      confused_41: 3501001571134261004
+      confused_42: -7966233461259492709
+      confused_43: -7277856584249944025
+      confused_44: -8873138828385822375
+      confused_45: -2025153668189380915
+      confused_46: 4656661089194717099
+      confused_47: 7919674486198104478
+      confused_48: -4162824724912287320
+      confused_49: 2309157319903814412
+      confused_5: -6324621249117207797
+      confused_50: 6269180834074720610
+      confused_51: -6927014079473871266
+      confused_52: -3905945389202794042
+      confused_53: -3337818110892210903
+      confused_54: -8306811399518387587
+      confused_55: -1250366957910213168
+      confused_6: -2317346393029455399
+      confused_7: -4035737905559056196
+      confused_8: 8656176997286785149
+      confused_9: 3662002267123014874
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

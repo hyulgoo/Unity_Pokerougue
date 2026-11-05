@@ -142,6 +142,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -422,7 +435,19 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GEN8- Thundercage_0: 1567433257917568031
+      GEN8- Thundercage_1: 2076177175145237002
+      GEN8- Thundercage_10: -4419672268000774570
+      GEN8- Thundercage_11: 4383144646949774395
+      GEN8- Thundercage_2: 662743312253782545
+      GEN8- Thundercage_3: 93133573690116300
+      GEN8- Thundercage_4: -7728992629262683809
+      GEN8- Thundercage_5: -4254546804343152318
+      GEN8- Thundercage_6: 7759714420643010319
+      GEN8- Thundercage_7: 928910146483526615
+      GEN8- Thundercage_8: 8113129243281299367
+      GEN8- Thundercage_9: -8652695121207587436
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

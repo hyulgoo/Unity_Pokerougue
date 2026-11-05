@@ -196,6 +196,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -872,7 +885,37 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      fire5_0: -5035712391760483859
+      fire5_1: 7399964061594545221
+      fire5_10: 3482685352078125971
+      fire5_11: 7916368545726825858
+      fire5_12: 326087722307766143
+      fire5_13: 9168440862421156485
+      fire5_14: 6395892587469617934
+      fire5_15: -3477093500515407687
+      fire5_16: -5604580332502284951
+      fire5_17: 689779727976713011
+      fire5_18: -3574206936641605078
+      fire5_19: -3549277092677465759
+      fire5_2: 5439378241274034808
+      fire5_20: -8728167248597501243
+      fire5_21: 8625484169093077434
+      fire5_22: -3980128246508779716
+      fire5_23: -4154798800745560358
+      fire5_24: 603189346578587979
+      fire5_25: 843543583433046494
+      fire5_26: -6147357849898834067
+      fire5_27: 7708114694298318258
+      fire5_28: -1192603246121734340
+      fire5_29: -864902908436453330
+      fire5_3: 6247070725403304992
+      fire5_4: 8697558451135157602
+      fire5_5: 5331127517599422865
+      fire5_6: -3863149227272337250
+      fire5_7: -2505277418599367963
+      fire5_8: -5382408184868527099
+      fire5_9: -7004726700078747651
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

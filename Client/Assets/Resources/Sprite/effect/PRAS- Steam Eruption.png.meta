@@ -178,6 +178,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -722,7 +735,31 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      PRAS- Steam Eruption_0: 6216846876944645348
+      PRAS- Steam Eruption_1: 4109569505311900275
+      PRAS- Steam Eruption_10: 9146824447681114762
+      PRAS- Steam Eruption_11: 6562913815145431080
+      PRAS- Steam Eruption_12: 5665382609207888933
+      PRAS- Steam Eruption_13: -9092928672463732205
+      PRAS- Steam Eruption_14: 5831115415820089739
+      PRAS- Steam Eruption_15: 3470308948774995698
+      PRAS- Steam Eruption_16: 4391003573545248794
+      PRAS- Steam Eruption_17: 2092708586250123687
+      PRAS- Steam Eruption_18: 1403213980442424721
+      PRAS- Steam Eruption_19: -7518291864473726581
+      PRAS- Steam Eruption_2: 7649501197308437289
+      PRAS- Steam Eruption_20: -3241690903475144527
+      PRAS- Steam Eruption_21: -5924745620605148444
+      PRAS- Steam Eruption_22: -2625273746651019777
+      PRAS- Steam Eruption_23: 6021198758263038532
+      PRAS- Steam Eruption_3: 3201429669717103729
+      PRAS- Steam Eruption_4: -2446334392379086252
+      PRAS- Steam Eruption_5: -3532106196745677700
+      PRAS- Steam Eruption_6: 1692449187271985873
+      PRAS- Steam Eruption_7: -2967507105689094056
+      PRAS- Steam Eruption_8: 3885440756699026405
+      PRAS- Steam Eruption_9: 6170312588496957375
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

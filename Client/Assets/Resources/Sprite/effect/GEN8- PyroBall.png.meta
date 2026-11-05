@@ -199,6 +199,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -897,7 +910,38 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GEN8- PyroBall_0: 5443495843199996282
+      GEN8- PyroBall_1: 4825135650313613133
+      GEN8- PyroBall_10: -5351070230026224105
+      GEN8- PyroBall_11: 436550333398723290
+      GEN8- PyroBall_12: 3289782828828588804
+      GEN8- PyroBall_13: -3864679549739582504
+      GEN8- PyroBall_14: -362842956463605596
+      GEN8- PyroBall_15: 5552465037388209573
+      GEN8- PyroBall_16: 7478326171344303171
+      GEN8- PyroBall_17: 7062823977310548796
+      GEN8- PyroBall_18: 8880013610147312701
+      GEN8- PyroBall_19: 3771239344793711772
+      GEN8- PyroBall_2: -10270873924261554
+      GEN8- PyroBall_20: -8323400149725769922
+      GEN8- PyroBall_21: -2789554769384635755
+      GEN8- PyroBall_22: 2550843093252970253
+      GEN8- PyroBall_23: -4488197220161972789
+      GEN8- PyroBall_24: -2569798873787102297
+      GEN8- PyroBall_25: -3980051226212729457
+      GEN8- PyroBall_26: 997707682871755265
+      GEN8- PyroBall_27: -5391178405050659866
+      GEN8- PyroBall_28: -2428957682123434463
+      GEN8- PyroBall_29: -3233164304816618377
+      GEN8- PyroBall_3: 3871882850162055094
+      GEN8- PyroBall_30: 6102862349666035108
+      GEN8- PyroBall_4: -7152323484307841309
+      GEN8- PyroBall_5: 6886394325636398247
+      GEN8- PyroBall_6: -678813617522880902
+      GEN8- PyroBall_7: 3570939436772398947
+      GEN8- PyroBall_8: -5884312564841118818
+      GEN8- PyroBall_9: -9143838749117402293
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

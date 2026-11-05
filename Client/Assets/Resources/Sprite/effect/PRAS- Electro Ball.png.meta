@@ -169,6 +169,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -647,7 +660,28 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      PRAS- Electro Ball_0: 7629816059359797220
+      PRAS- Electro Ball_1: 7000020471283690945
+      PRAS- Electro Ball_10: -804691152464471209
+      PRAS- Electro Ball_11: -5769881933931069500
+      PRAS- Electro Ball_12: 1081908606999557242
+      PRAS- Electro Ball_13: -4677065046466491142
+      PRAS- Electro Ball_14: -7370769927287170416
+      PRAS- Electro Ball_15: 8109833732473739021
+      PRAS- Electro Ball_16: -1538699475202760217
+      PRAS- Electro Ball_17: 2643712135533023048
+      PRAS- Electro Ball_18: -2102241793976108495
+      PRAS- Electro Ball_19: 2117194682841087868
+      PRAS- Electro Ball_2: -5769561646818356171
+      PRAS- Electro Ball_20: -510990126266768441
+      PRAS- Electro Ball_3: 5945878965987868369
+      PRAS- Electro Ball_4: 661200978295573637
+      PRAS- Electro Ball_5: -6899306298479257295
+      PRAS- Electro Ball_6: 8832421671466671325
+      PRAS- Electro Ball_7: 1423491916768039850
+      PRAS- Electro Ball_8: -762567999643934301
+      PRAS- Electro Ball_9: -8275286732819977708
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

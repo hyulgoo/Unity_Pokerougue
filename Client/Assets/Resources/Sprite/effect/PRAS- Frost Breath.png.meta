@@ -148,6 +148,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -472,7 +485,21 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      PRAS- Frost Breath_0: -6689359727044607319
+      PRAS- Frost Breath_1: 5872006955895375228
+      PRAS- Frost Breath_10: -5084356869086294728
+      PRAS- Frost Breath_11: -5321347369570179798
+      PRAS- Frost Breath_12: -4142283496186588584
+      PRAS- Frost Breath_13: -7587062055749399514
+      PRAS- Frost Breath_2: 860355047116911034
+      PRAS- Frost Breath_3: -5206129852546558521
+      PRAS- Frost Breath_4: -2863758607582810327
+      PRAS- Frost Breath_5: 8753902698059041345
+      PRAS- Frost Breath_6: -7398223468328047887
+      PRAS- Frost Breath_7: -3427082650277177234
+      PRAS- Frost Breath_8: -433535880316391231
+      PRAS- Frost Breath_9: -4537831362894845688
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

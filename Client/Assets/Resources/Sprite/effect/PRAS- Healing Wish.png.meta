@@ -247,6 +247,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -1297,7 +1310,54 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      PRAS- Healing Wish_0: 8563490708813345299
+      PRAS- Healing Wish_1: -5370955480566847147
+      PRAS- Healing Wish_10: 3977486506899883899
+      PRAS- Healing Wish_11: -1226530670205804394
+      PRAS- Healing Wish_12: 4480157166252203411
+      PRAS- Healing Wish_13: -5136197972542812565
+      PRAS- Healing Wish_14: -6235097461541959007
+      PRAS- Healing Wish_15: 8782343076380228954
+      PRAS- Healing Wish_16: -577967116713048496
+      PRAS- Healing Wish_17: 4678912155869847006
+      PRAS- Healing Wish_18: 1293624276986614037
+      PRAS- Healing Wish_19: -6693081684602979076
+      PRAS- Healing Wish_2: -5292285582386119681
+      PRAS- Healing Wish_20: 3273428135228641488
+      PRAS- Healing Wish_21: -90118691724693799
+      PRAS- Healing Wish_22: -4583138043726884797
+      PRAS- Healing Wish_23: -2835029191284050684
+      PRAS- Healing Wish_24: -2066868183440025618
+      PRAS- Healing Wish_25: 3252380575483569330
+      PRAS- Healing Wish_26: -8672676044724171037
+      PRAS- Healing Wish_27: 8128865724457219880
+      PRAS- Healing Wish_28: 6739772474776180435
+      PRAS- Healing Wish_29: 4142644719704702292
+      PRAS- Healing Wish_3: 6503048791896027631
+      PRAS- Healing Wish_30: -8864715763442908613
+      PRAS- Healing Wish_31: 8846543046713068668
+      PRAS- Healing Wish_32: -340368402407270319
+      PRAS- Healing Wish_33: 8577392736875026823
+      PRAS- Healing Wish_34: -3585835009686094878
+      PRAS- Healing Wish_35: -4736227120124488708
+      PRAS- Healing Wish_36: -2692185961888648098
+      PRAS- Healing Wish_37: 24547728235689776
+      PRAS- Healing Wish_38: 1935336093433499837
+      PRAS- Healing Wish_39: 1610765271931136874
+      PRAS- Healing Wish_4: -7889231100123435623
+      PRAS- Healing Wish_40: -2118166337072150040
+      PRAS- Healing Wish_41: 4104150525125497923
+      PRAS- Healing Wish_42: 4413311692621591209
+      PRAS- Healing Wish_43: -5613986636833566606
+      PRAS- Healing Wish_44: 1748210160925428275
+      PRAS- Healing Wish_45: 133754574545277583
+      PRAS- Healing Wish_46: -7084549806913167672
+      PRAS- Healing Wish_5: 711022800176028413
+      PRAS- Healing Wish_6: -9152515729742193286
+      PRAS- Healing Wish_7: -5189869493723815221
+      PRAS- Healing Wish_8: -5679926246122723218
+      PRAS- Healing Wish_9: -6308387902037059718
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

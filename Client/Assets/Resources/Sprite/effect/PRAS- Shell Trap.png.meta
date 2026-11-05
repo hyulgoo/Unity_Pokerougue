@@ -184,6 +184,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -772,7 +785,33 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      PRAS- Shell Trap_0: -5413785139203760086
+      PRAS- Shell Trap_1: 321839761600842331
+      PRAS- Shell Trap_10: 4785820734963078267
+      PRAS- Shell Trap_11: 6903506382284939204
+      PRAS- Shell Trap_12: 180604691930025854
+      PRAS- Shell Trap_13: -1565010249721274185
+      PRAS- Shell Trap_14: -7386443941826267133
+      PRAS- Shell Trap_15: 8311410952379934223
+      PRAS- Shell Trap_16: -906319901999448436
+      PRAS- Shell Trap_17: -6530588146443334164
+      PRAS- Shell Trap_18: 7025977239320374362
+      PRAS- Shell Trap_19: -5446625859088727708
+      PRAS- Shell Trap_2: -216945339031871957
+      PRAS- Shell Trap_20: 2726142737510932623
+      PRAS- Shell Trap_21: 2211260812006802502
+      PRAS- Shell Trap_22: 3101567196856118943
+      PRAS- Shell Trap_23: 3677353857860986795
+      PRAS- Shell Trap_24: -1676546133299059129
+      PRAS- Shell Trap_25: -2405650651530448518
+      PRAS- Shell Trap_3: -6877758161456687115
+      PRAS- Shell Trap_4: 8651366830882340487
+      PRAS- Shell Trap_5: -8494738003609935046
+      PRAS- Shell Trap_6: 4804084609218846106
+      PRAS- Shell Trap_7: 7721964402098691217
+      PRAS- Shell Trap_8: 7894541472933983944
+      PRAS- Shell Trap_9: -666901257686746205
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
