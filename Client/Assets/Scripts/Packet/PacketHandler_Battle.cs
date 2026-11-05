@@ -136,6 +136,9 @@ partial class PacketHandler
         if(battleInfoList.Count > 0)
             isDuelEnd = (battleInfoList[battleInfoList.Count - 1].StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd;
 
+        bool isAttackerMe = Managers.Player.MyTurn;
+        bool isSkillAnimPlayed = false;
+
         foreach (BattleInfo battleInfo in battleInfoList)
         {
             if ((battleInfo.StateFlag & BattleStateFlag.DuelEnd) == BattleStateFlag.DuelEnd)
@@ -176,10 +179,10 @@ partial class PacketHandler
                     bool isIneffective = (battleInfo.StateFlag & BattleStateFlag.Ineffective) == BattleStateFlag.Ineffective;
                     bool isNoneEffective = (battleInfo.StateFlag & BattleStateFlag.Noneeffective) == BattleStateFlag.Noneeffective;
 
-                    bool isAttackerMe = Managers.Player.MyTurn;
-                    bool isSpecial = battleInfo.ApplyType != ApplyType.Atk;
+                    // 두번치기처럼 피해 항목이 여러 개면 맞을 때마다 연출을 다시 재생한다.
                     string hitSoundPath = isNoneEffective ? null : (isEffective ? "effect/hit_strong" : (isIneffective ? "effect/hit_weak" : "effect/hit"));
-                    Managers.Job.Push(() => { battleScene.PlayAttack(isAttackerMe, isSpecial, hitSoundPath); });
+                    Managers.Job.Push(() => { battleScene.PlaySkillAnim(skillId, isAttackerMe, false, hitSoundPath); });
+                    isSkillAnimPlayed = true;
 
                     Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
 
@@ -195,6 +198,14 @@ partial class PacketHandler
             }
             else
             {
+                // 변화 기술의 연출. 공격에 딸린 효과(기가드레인의 회복 등)는 이미 재생했으니 다시 틀지 않는다.
+                if (isSkillAnimPlayed == false)
+                {
+                    bool isSelfTarget = battleInfo.TargetType == TargetType.Oneself;
+                    Managers.Job.Push(() => { battleScene.PlaySkillAnim(skillId, isAttackerMe, isSelfTarget, null); });
+                    isSkillAnimPlayed = true;
+                }
+
                 string announce = GetNoneAttackBattleAnnounce(battleInfo);
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 Managers.Job.Push(() => 

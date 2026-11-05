@@ -46,15 +46,6 @@ public class UIBattleScene : UICommonScene
     const float BallBurstScale = 5f;
     static readonly float[] BallBurstFrameTimes = { 1f / 6f, 0.25f, 1f / 12f };
 
-    // 공격 (battle-anims의 tackle.json 사용자 궤적, 프레임당 3/60초)
-    const float AttackFrameTime = 0.05f;
-    static readonly Vector2[] AttackLungeFrames =
-    {
-        new Vector2(13f, 6.5f), new Vector2(26f, 12.5f), new Vector2(17f, 8.5f),
-        new Vector2(8.5f, 4.5f), Vector2.zero, Vector2.zero,
-    };
-    const float SpaEffectTime = 0.9166666f; // Attack_Spa.anim 길이
-
     // 피격 (damage-anim-phase.ts: 0.1초 간격으로 꺼짐/켜짐을 세 번 반복한다)
     const float HitFlashInterval = 0.1f;
     const int HitFlashToggleCount = 5;
@@ -72,6 +63,7 @@ public class UIBattleScene : UICommonScene
     Sprite[] _ballBurstSprites;
     Material _myPokemonMaterial;
     Material _enemyPokemonMaterial;
+    BattleAnimPlayer _battleAnimPlayer;
 
     enum GameObjects
     {
@@ -123,6 +115,11 @@ public class UIBattleScene : UICommonScene
         BindText(typeof(Texts));
 
         LoadSummonResources();
+        _battleAnimPlayer = new BattleAnimPlayer(
+            GetImage((int)Images.Image_MyPokemon),
+            GetImage((int)Images.Image_EnemyPokemon),
+            GetImage((int)Images.Image_BackGround).rectTransform,
+            transform);
 
         // Field
         {
@@ -170,6 +167,7 @@ public class UIBattleScene : UICommonScene
     {
         Destroy(_myPokemonMaterial);
         Destroy(_enemyPokemonMaterial);
+        _battleAnimPlayer?.Dispose();
     }
 
     static float EaseInSine(float ratio) { return 1f - Mathf.Cos(ratio * Mathf.PI * 0.5f); }
@@ -622,34 +620,15 @@ public class UIBattleScene : UICommonScene
             Managers.Job.Excute();
     }
 
-    // hitSoundPath가 null이면 피해가 없는 공격이라 깜빡임과 소리를 생략한다.
-    public void PlayAttack(bool isAttackerMe, bool isSpecial, string hitSoundPath)
+    // 기술 연출을 재생한다. hitSoundPath가 null이면 피해를 주지 않은 경우라 깜빡임과 소리를 생략한다.
+    public void PlaySkillAnim(int skillId, bool isAttackerMe, bool isSelfTarget, string hitSoundPath)
     {
-        StartCoroutine(AttackCoroutine(isAttackerMe, isSpecial, hitSoundPath));
+        StartCoroutine(SkillAnimCoroutine(skillId, isAttackerMe, isSelfTarget, hitSoundPath));
     }
 
-    IEnumerator AttackCoroutine(bool isAttackerMe, bool isSpecial, string hitSoundPath)
+    IEnumerator SkillAnimCoroutine(int skillId, bool isAttackerMe, bool isSelfTarget, string hitSoundPath)
     {
-        if (isSpecial)
-        {
-            PlayAnimationInBattleScene(isAttackerMe ? Images.Image_EnemyPokemon_Effect : Images.Image_MyPokemon_Effect, "Attack_Spa");
-            yield return new WaitForSeconds(SpaEffectTime);
-        }
-        else
-        {
-            RectTransform attackerRect = GetImage(isAttackerMe ? (int)Images.Image_MyPokemon : (int)Images.Image_EnemyPokemon).rectTransform;
-            Vector2 originPosition = attackerRect.anchoredPosition;
-            float direction = isAttackerMe ? 1f : -1f;
-            Vector2 frameScale = new Vector2(Screen.width / OriginalScreenWidth, Screen.height / OriginalScreenHeight) * direction;
-
-            foreach (Vector2 frame in AttackLungeFrames)
-            {
-                attackerRect.anchoredPosition = originPosition + Vector2.Scale(frame, frameScale);
-                yield return new WaitForSeconds(AttackFrameTime);
-            }
-
-            attackerRect.anchoredPosition = originPosition;
-        }
+        yield return StartCoroutine(_battleAnimPlayer.Play(skillId, isAttackerMe, isSelfTarget));
 
         if (hitSoundPath != null)
         {
@@ -666,17 +645,5 @@ public class UIBattleScene : UICommonScene
         }
 
         Managers.Job.Excute();
-    }
-
-    public void PlayAnimationInBattleScene(Images targetImage, string stateName)
-    {
-        Animator animator = GetImage((int)targetImage).GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.Assert(false, $"해당 Image{targetImage}에 Animator Component가 없습니다!");
-            return;
-        }
-
-        animator.Play(stateName);
     }
 }
