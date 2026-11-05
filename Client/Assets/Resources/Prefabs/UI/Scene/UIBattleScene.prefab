@@ -1650,7 +1650,6 @@ GameObject:
   - component: {fileID: 1900882979167012258}
   - component: {fileID: 5693147884718637706}
   - component: {fileID: 8848811902253054564}
-  - component: {fileID: 4090214327111002826}
   m_Layer: 5
   m_Name: Image_EnemyPokeball
   m_TagString: Untagged
@@ -1715,28 +1714,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!95 &4090214327111002826
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5147769346311698468}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 0c235802350c3844f86abf508a652c95, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5247214390291612916
 GameObject:
   m_ObjectHideFlags: 0
@@ -2176,7 +2153,6 @@ GameObject:
   - component: {fileID: 3749243805188488042}
   - component: {fileID: 1646574725104955392}
   - component: {fileID: 1865444474829702944}
-  - component: {fileID: 845770832319493101}
   m_Layer: 5
   m_Name: Image_MyPokeball
   m_TagString: Untagged
@@ -2241,28 +2217,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!95 &845770832319493101
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6283684233579035971}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8175ad1849de7cb45b8fd0e9bb7e6493, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6335893165199693422
 GameObject:
   m_ObjectHideFlags: 0

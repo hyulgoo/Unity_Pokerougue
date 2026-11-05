@@ -176,9 +176,6 @@ public class UIBattlePokemonChangePopup : UICommonPopup
             Managers.Network.Send(packet);
         }
 
-        string selectedChangePokemonName = Managers.Data.PokeonDict[SelectedChangePokemonId].Name;
-        Managers.Job.Push(() => { BattleScene.SetAnnounce($"가라! {selectedChangePokemonName}!", true); });
-
         ClosePopupUI();
     }
 

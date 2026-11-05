@@ -156,18 +156,6 @@ partial class PacketHandler
                 Managers.Job.Push(() => { battleScene.SetAnnounce(announce, true); });
                 return;
             }
-            else if (battleInfo.TargetType == TargetType.Enemy 
-                && (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot) )
-            {
-                UIBattleScene.Images targetImage = Managers.Player.MyTurn ? UIBattleScene.Images.Image_MyPokemon : UIBattleScene.Images.Image_EnemyPokemon;
-                battleScene.PlayAnimationInBattleScene(targetImage, "Attack");
-
-                if (battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
-                {
-                    UIBattleScene.Images spaImage = Managers.Player.MyTurn ? UIBattleScene.Images.Image_EnemyPokemon_Effect : UIBattleScene.Images.Image_MyPokemon_Effect;
-                    battleScene.PlayAnimationInBattleScene(spaImage, "Attack_Spa");
-                }
-            }
 
             if (battleInfo.ApplyType == ApplyType.Atk || battleInfo.ApplyType == ApplyType.Spa || battleInfo.ApplyType == ApplyType.Dot)
             {
@@ -184,14 +172,20 @@ partial class PacketHandler
                 }
                 else
                 {
+                    bool isEffective = (battleInfo.StateFlag & BattleStateFlag.Effective) == BattleStateFlag.Effective;
+                    bool isIneffective = (battleInfo.StateFlag & BattleStateFlag.Ineffective) == BattleStateFlag.Ineffective;
+                    bool isNoneEffective = (battleInfo.StateFlag & BattleStateFlag.Noneeffective) == BattleStateFlag.Noneeffective;
+
+                    bool isAttackerMe = Managers.Player.MyTurn;
+                    bool isSpecial = battleInfo.ApplyType != ApplyType.Atk;
+                    string hitSoundPath = isNoneEffective ? null : (isEffective ? "effect/hit_strong" : (isIneffective ? "effect/hit_weak" : "effect/hit"));
+                    Managers.Job.Push(() => { battleScene.PlayAttack(isAttackerMe, isSpecial, hitSoundPath); });
+
                     Managers.Job.Push(() => { battleScene.SetPokemonHPBar(targetHPRatio, targetType, true); });
 
                     if ((battleInfo.StateFlag & BattleStateFlag.Critical) == BattleStateFlag.Critical)
                         Managers.Job.Push(() => { battleScene.SetAnnounce("급소에 맞았다!", true); });
 
-                    bool isEffective = (battleInfo.StateFlag & BattleStateFlag.Effective) == BattleStateFlag.Effective;
-                    bool isIneffective = (battleInfo.StateFlag & BattleStateFlag.Ineffective) == BattleStateFlag.Ineffective;
-                    bool isNoneEffective = (battleInfo.StateFlag & BattleStateFlag.Noneeffective) == BattleStateFlag.Noneeffective;
                     if (isEffective || isIneffective || isNoneEffective)
                         Managers.Job.Push(() => { battleScene.SetAnnounce(isNoneEffective ? ("효과가 없는 것 같다...") : (isEffective ? "효과는 굉장했다." : "효과가 별로인듯 하다."), true); });
 
@@ -222,8 +216,7 @@ partial class PacketHandler
 
         Managers.Job.Push(() => { battleScene.SetAnnounce($"{fallDownPokemonName}은(는) 쓰려졌다.", true); });
 
-        if (isDuelEnd == false)
-            Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(isMyPokemon); });
+        Managers.Job.Push(() => { battleScene.ChangeFalldownPokemon(isMyPokemon, isDuelEnd); });
 
         return true;
     }
@@ -333,7 +326,7 @@ partial class PacketHandler
         else
             Managers.Player.Enemy.ChangePokemonOrderById(changePokemonPacket.ChangePokemonId);
 
-        battleScene.ThrowPokeball(isMyPokemon, true);
+        battleScene.ThrowPokeball(isMyPokemon);
     }
 
     public static void S_DuelEndHandler(PacketSession session, IMessage packet)
