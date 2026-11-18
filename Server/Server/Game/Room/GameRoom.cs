@@ -11,8 +11,6 @@ namespace Server.Game.Room
     {
         private const int _maxPokemonCount = 2;
         public int RoomId { get; set; }
-        public int CurrentTurnPlayerId { get; set; } = 0;
-        private bool isWaitingPlayerTurnEnd = false;
         private readonly Dictionary<int, Player> _players = new Dictionary<int, Player>();
         private readonly Dictionary<int, bool> _playerReady = new Dictionary<int, bool>();
 
@@ -97,8 +95,7 @@ namespace Server.Game.Room
             {
                 _players.Clear();
                 _playerReady.Clear();
-                isWaitingPlayerTurnEnd = false;
-                CurrentTurnPlayerId = 0;
+                ResetBattleState();
             }
         }
 
@@ -202,7 +199,8 @@ namespace Server.Game.Room
                 if (!DataManager.PokemonDict.TryGetValue(pokemonId, out PokemonData pokemonData))
                     return;
 
-                selectedPokemon.Add(pokemonData);
+                // 전투가 HP·상태를 직접 바꾸므로 마스터 데이터가 아닌 복사본을 준다(PK-R02).
+                selectedPokemon.Add(pokemonData.Clone());
             }
 
             player.Pokemon = selectedPokemon;
@@ -223,7 +221,8 @@ namespace Server.Game.Room
             S_StartBattle packet = new S_StartBattle();
             Random random = new Random();
             packet.ArenaType = random.Next(0, (int)Arenas.End);
-            CurrentTurnPlayerId = PlayerManager.Instance.GetCurrentTurnPlayerId(RoomId);
+            ResetBattleState();
+            InitPP();
             for (int targetIndex = 0; targetIndex < (int)TargetType.End; ++targetIndex)
             {
                 int myid = list[targetIndex];
@@ -243,7 +242,8 @@ namespace Server.Game.Room
                     _players[enemyid].Pokemon[pokemonIndex].Info.State = new ConditionAbnormality();
                 }
 
-                packet.IsMyTurn = myid == CurrentTurnPlayerId;
+                // 두 사람이 동시에 행동을 고른다.
+                packet.IsMyTurn = true;
                 _players[myid].Session.Send(packet);
             }
 

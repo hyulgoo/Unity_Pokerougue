@@ -88,7 +88,7 @@ namespace Server.Tests
 
             room.SelectPokemon(owner.MyPlayer.Id, TestWorld.Select(before.Reverse().ToArray()));
 
-            Assert.NotEqual(0, room.CurrentTurnPlayerId);
+            Assert.Equal(BattlePhase.Choosing, room.Phase);
             Assert.Equal(2, other.MyPlayer.Pokemon.Count);
             Assert.Equal(before, owner.MyPlayer.GetPokemonList());
         }
@@ -112,32 +112,39 @@ namespace Server.Tests
         }
 
         [Fact]
-        public void 턴_주인의_공격_뒤_양쪽이_턴_종료를_보내면_턴이_넘어간다()
+        public void 한_사람만_행동을_고르면_라운드가_처리되지_않는다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
+            int otherHp = other.MyPlayer.Pokemon[0].Info.Hp;
 
             room.Turn(owner.MyPlayer.Id, TestWorld.Fight(OwnedSkill(owner)));
-            TestWorld.EndTurn(room, owner, other);
 
-            Assert.Equal(other.MyPlayer.Id, room.CurrentTurnPlayerId);
+            Assert.Equal(BattlePhase.Choosing, room.Phase);
+            Assert.Equal(otherHp, other.MyPlayer.Pokemon[0].Info.Hp);
+            Assert.Empty(TestWorld.Sent(owner, MsgId.STurnBattle, S_TurnBattle.Parser));
         }
 
         [Fact]
-        public void 상대_턴에_보낸_공격은_무시된다()
+        public void 두_사람이_고르면_라운드가_처리되고_연출이_끝나면_다음_라운드를_고른다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
-            int ownerHp = owner.MyPlayer.Pokemon[0].Info.Hp;
 
-            room.Turn(other.MyPlayer.Id, TestWorld.Fight(OwnedSkill(other)));
-            TestWorld.EndTurn(room, owner, other);
+            TestWorld.Round(room, owner, TestWorld.Fight(OwnedSkill(owner)), other, TestWorld.Pass());
+            Assert.Equal(BattlePhase.Animating, room.Phase);
+            Assert.NotEmpty(TestWorld.Sent(other, MsgId.STurnBattle, S_TurnBattle.Parser));
 
-            // 턴이 진행되지 않았으므로 턴 종료도 받지 않고, 턴 주인이 그대로다.
-            Assert.Equal(owner.MyPlayer.Id, room.CurrentTurnPlayerId);
-            Assert.Equal(ownerHp, owner.MyPlayer.Pokemon[0].Info.Hp);
+            // 한쪽 연출만 끝나서는 넘어가지 않는다.
+            room.TurnEnd(owner.MyPlayer.Id);
+            Assert.Equal(BattlePhase.Animating, room.Phase);
+
+            room.TurnEnd(other.MyPlayer.Id);
+            Assert.Equal(BattlePhase.Choosing, room.Phase);
+            Assert.True(TestWorld.Sent(owner, MsgId.STurn, S_Turn.Parser).Last().MyTurn);
+            Assert.True(TestWorld.Sent(other, MsgId.STurn, S_Turn.Parser).Last().MyTurn);
         }
 
         [Fact]
-        public void 한_턴에_행동을_두_번_보내면_두_번째는_무시된다()
+        public void 한_라운드에_행동을_두_번_보내면_두_번째는_무시된다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
 
@@ -147,6 +154,19 @@ namespace Server.Tests
             // 두 번째 행동(도주)이 처리됐다면 양쪽이 로비 상태로 돌아갔을 것이다.
             Assert.Equal(PlayerServerState.ServerStateGame, owner.ServerState);
             Assert.Equal(PlayerServerState.ServerStateGame, other.ServerState);
+        }
+
+        [Fact]
+        public void 연출_중에_보낸_행동은_무시된다()
+        {
+            (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
+            TestWorld.Round(room, owner, TestWorld.Pass(), other, TestWorld.Pass());
+            int otherHp = other.MyPlayer.Pokemon[0].Info.Hp;
+
+            TestWorld.Round(room, owner, TestWorld.Fight(OwnedSkill(owner)), other, TestWorld.Pass());
+
+            Assert.Equal(otherHp, other.MyPlayer.Pokemon[0].Info.Hp);
+            Assert.Equal(BattlePhase.Animating, room.Phase);
         }
 
         [Fact]
@@ -162,32 +182,31 @@ namespace Server.Tests
                 room.Turn(owner.MyPlayer.Id, TestWorld.Fight(123456));
                 room.Turn(owner.MyPlayer.Id, TestWorld.Fight(-1));
             });
-            TestWorld.EndTurn(room, owner, other);
+            room.Turn(other.MyPlayer.Id, TestWorld.Pass());
 
             Assert.Null(exception);
-            Assert.Equal(owner.MyPlayer.Id, room.CurrentTurnPlayerId);
+            Assert.Equal(BattlePhase.Choosing, room.Phase);
 
-            // 거절된 뒤에도 턴이 살아 있어 올바른 스킬은 쓸 수 있다.
+            // 거절된 뒤에도 라운드가 살아 있어 올바른 스킬은 쓸 수 있다.
             room.Turn(owner.MyPlayer.Id, TestWorld.Fight(OwnedSkill(owner)));
-            TestWorld.EndTurn(room, owner, other);
-            Assert.Equal(other.MyPlayer.Id, room.CurrentTurnPlayerId);
+            Assert.Equal(BattlePhase.Animating, room.Phase);
         }
 
         [Fact]
-        public void 상대의_ID를_적은_도주_패킷으로_상대를_지게_만들_수_없다()
+        public void 상대의_ID를_적은_도주_패킷은_보낸_사람의_항복으로_처리된다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
 
-            // 턴이 아닌 쪽이 "턴 주인이 도주했다"는 패킷을 보낸다. 행위자는 보낸 세션이다.
+            // 패킷에 상대 ID를 적어도 행위자는 보낸 세션이다.
             PacketHandler.C_TurnHandler(other, TestWorld.Runaway(owner.MyPlayer.Id));
             TestWorld.Pump();
 
-            Assert.Equal(PlayerServerState.ServerStateGame, owner.ServerState);
-            Assert.Equal(PlayerServerState.ServerStateGame, other.ServerState);
+            Assert.True(TestWorld.Sent(owner, MsgId.SDuelEnd, S_DuelEnd.Parser).Single().IsWin);
+            Assert.False(TestWorld.Sent(other, MsgId.SDuelEnd, S_DuelEnd.Parser).Single().IsWin);
         }
 
         [Fact]
-        public void 자기_턴의_도주는_전투를_끝내고_그_뒤의_턴_패킷은_무시된다()
+        public void 도주는_전투를_끝내고_그_뒤의_턴_패킷은_무시된다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
 
@@ -203,42 +222,61 @@ namespace Server.Tests
         }
 
         [Fact]
-        public void 방에_없는_ID의_턴_종료는_턴_진행을_막지_않는다()
+        public void 방에_없는_ID의_턴_종료는_라운드_진행을_막지_않는다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
-            room.Turn(owner.MyPlayer.Id, TestWorld.Fight(OwnedSkill(owner)));
+            TestWorld.Round(room, owner, TestWorld.Fight(OwnedSkill(owner)), other, TestWorld.Pass());
 
             room.TurnEnd(123456);
             TestWorld.EndTurn(room, owner, other);
 
-            Assert.Equal(other.MyPlayer.Id, room.CurrentTurnPlayerId);
+            Assert.Equal(BattlePhase.Choosing, room.Phase);
         }
 
         [Fact]
-        public void 자기_목록에_없는_포켓몬으로는_교체되지_않는다()
+        public void 자기_목록에_없거나_출전_중인_포켓몬으로는_교체되지_않는다()
         {
-            (GameRoom room, ClientSession owner, _) = TestWorld.StartBattle();
+            (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
             int[] before = owner.MyPlayer.GetPokemonList();
 
-            Exception exception = Record.Exception(() => room.ChangePokemon(owner.MyPlayer.Id, 123456));
+            Exception exception = Record.Exception(() =>
+            {
+                room.ChangePokemon(owner.MyPlayer.Id, 123456);
+                room.Turn(owner.MyPlayer.Id, TestWorld.Change(123456));
+                room.Turn(owner.MyPlayer.Id, TestWorld.Change(before[0]));
+            });
+            room.Turn(other.MyPlayer.Id, TestWorld.Pass());
 
             Assert.Null(exception);
             Assert.Equal(before, owner.MyPlayer.GetPokemonList());
+            Assert.Equal(BattlePhase.Choosing, room.Phase);
         }
 
         [Fact]
-        public void 교체_패킷의_PlayerId를_상대로_적어도_보낸_사람의_포켓몬이_바뀐다()
+        public void 교체_행동의_PlayerId를_상대로_적어도_보낸_사람의_포켓몬이_바뀐다()
         {
             (GameRoom room, ClientSession owner, ClientSession other) = TestWorld.StartBattle();
             int[] ownerBefore = owner.MyPlayer.GetPokemonList();
             int[] otherBefore = other.MyPlayer.GetPokemonList();
 
-            PacketHandler.C_ChangePokemonHandler(other,
-                new C_ChangePokemon { PlayerId = owner.MyPlayer.Id, ChangePokemonId = otherBefore[1] });
+            PacketHandler.C_TurnHandler(other, TestWorld.Change(otherBefore[1], owner.MyPlayer.Id));
             TestWorld.Pump();
+            room.Turn(owner.MyPlayer.Id, TestWorld.Pass());
 
             Assert.Equal(ownerBefore, owner.MyPlayer.GetPokemonList());
             Assert.Equal(otherBefore.Reverse(), other.MyPlayer.GetPokemonList());
+        }
+
+        [Fact]
+        public void 쓰러지지_않았으면_C_ChangePokemon으로_교체할_수_없다()
+        {
+            (GameRoom room, ClientSession owner, _) = TestWorld.StartBattle();
+            int[] before = owner.MyPlayer.GetPokemonList();
+
+            PacketHandler.C_ChangePokemonHandler(owner, new C_ChangePokemon { ChangePokemonId = before[1] });
+            TestWorld.Pump();
+
+            Assert.Equal(before, owner.MyPlayer.GetPokemonList());
         }
     }
 }

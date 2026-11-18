@@ -167,16 +167,28 @@ public class UIBattlePokemonChangePopup : UICommonPopup
         if (SelectedChangePokemonId == Define.InValidNumber)
             Debug.Assert(false, "SelectedChangePokemonId is InValid!!");
 
+        if (MustChange)
         {
             C_ChangePokemon packet = new C_ChangePokemon();
             packet.PlayerId = Managers.Player.MyPlayer.Id;
-            packet.ChangeByFallDown = MustChange;
+            packet.ChangeByFallDown = true;
             packet.ChangePokemonId = SelectedChangePokemonId;
 
             Managers.Network.Send(packet);
         }
+        else
+        {
+            C_Turn turnPacket = new C_Turn();
+            turnPacket.PlayerId = Managers.Player.MyPlayer.Id;
+            turnPacket.TurnInfo = new TurnInfo { Action = ActionType.Change, ChangePokemonId = SelectedChangePokemonId };
+
+            Managers.Network.Send(turnPacket);
+        }
 
         ClosePopupUI();
+
+        UIBattleScene battleScene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();
+        battleScene.ShowIdleText(MustChange ? "상대를 기다리는 중..." : "상대의 행동을 기다리는 중...");
     }
 
     public void OnClickChangePokemonButton()

@@ -283,19 +283,24 @@ public class UIBattleScene : UICommonScene
 
     public void ThrowPokeball(bool isMe)
     {
+        StopIdleText();
         CommonPlayerController targetPlayer = isMe ? Managers.Player.MyPlayer : Managers.Player.Enemy;
         string pokemonName = targetPlayer.GetCurPokemonName();
         string announce = isMe ? $"가라! {pokemonName}!" : $"상대는 {pokemonName}(을)를 내보냈다!";
 
         // 쓰러져서 교체할 때는 Excute가 C_TurnEnd를 보낸다. 다음 턴이 연출 도중에 시작되지 않게 소환이 끝난 뒤에 부른다.
-        SetAnnounce(announce, false);
-        StartCoroutine(ChangePokemonCoroutine(isMe));
+        _announceText = announce;
+        Coroutine announceRoutine = StartCoroutine(SetTextCoroutine(false));
+        StartCoroutine(ChangePokemonCoroutine(isMe, announceRoutine));
     }
 
-    IEnumerator ChangePokemonCoroutine(bool isMe)
+    IEnumerator ChangePokemonCoroutine(bool isMe, Coroutine announceRoutine)
     {
         yield return StartCoroutine(RecallPokemonCoroutine(isMe));
         yield return StartCoroutine(SummonPokemonCoroutine(isMe));
+
+        // 소환이 먼저 끝나도 문구를 다 쓴 뒤에 넘어간다. 그러지 않으면 다음 턴 문구와 글자가 섞인다.
+        yield return announceRoutine;
 
         Managers.Job.Excute();
     }
@@ -489,21 +494,46 @@ public class UIBattleScene : UICommonScene
         Managers.Sound.Play($"cry/{pokemonId}");
     }
 
-    public void NewTurn()
+    // 새 라운드: 두 사람이 동시에 행동을 고른다.
+    // mustChange: 내 포켓몬이 쓰러져 다음 포켓몬을 골라야 한다. MyTurn이 false면 상대가 고르는 동안 기다린다.
+    public void NewTurn(bool mustChange = false)
     {
-        string anounceText = string.Empty;
-        if (Managers.Player.MyTurn)
+        if (mustChange)
+        {
+            UIBattlePokemonChangePopup battlePokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
+            battlePokemonChangePopup.BattleScene = this;
+            battlePokemonChangePopup.MustChange = true;
+            ShowIdleText("다음 포켓몬을 골라 주세요.");
+        }
+        else if (Managers.Player.MyTurn)
         {
             Managers.UI.ShowPopupUI<UIBattleBehaviorSelectPopup>();
             string myPokemonName = Managers.Data.PokeonDict[Managers.Player.MyPlayer.GetCurPokemonData().Id].Name;
-            anounceText = $"{myPokemonName}(은)는 무엇을 할까?";
+            ShowIdleText($"{myPokemonName}(은)는 무엇을 할까?");
         }
         else
         {
-            anounceText = "상대 차례를 기다리는 중";
+            ShowIdleText("상대가 다음 포켓몬을 고르는 중...");
         }
+    }
 
-        Managers.Job.Push(() => SetAnnounce(anounceText, true));         
+    // 잡 큐와 상관없이 띄우는 안내 문구. 라운드 연출이 시작되면 끊고 연출 문구를 쓴다.
+    Coroutine _idleTextRoutine;
+
+    public void ShowIdleText(string text)
+    {
+        StopIdleText();
+        _announceText = text;
+        _idleTextRoutine = StartCoroutine(SetTextCoroutine(false));
+    }
+
+    void StopIdleText()
+    {
+        if (_idleTextRoutine == null)
+            return;
+
+        StopCoroutine(_idleTextRoutine);
+        _idleTextRoutine = null;
     }
 
     public void ChangeFalldownPokemon(bool isMe, bool isDuelEnd)
@@ -544,16 +574,8 @@ public class UIBattleScene : UICommonScene
         targetImage.fillAmount = 1f;
         targetRect.anchoredPosition = originPosition;
 
-        if (isDuelEnd)
-        {
-            Managers.Job.Excute();
-        }
-        else if (isMe)
-        {
-            UIBattlePokemonChangePopup battlePokemonChangePopup = Managers.UI.ShowPopupUI<UIBattlePokemonChangePopup>();
-            battlePokemonChangePopup.BattleScene = this;
-            battlePokemonChangePopup.MustChange = true;
-        }
+        // 다음 포켓몬은 라운드 연출이 모두 끝난 뒤 서버의 S_Turn(MustChange)으로 고른다.
+        Managers.Job.Excute();
     }
 
     public void DuelEnd(bool isWin, bool isRunaway)
@@ -566,6 +588,7 @@ public class UIBattleScene : UICommonScene
 
     public void SetAnnounce(string announce, bool setByHandler)
     {
+        StopIdleText();
         _announceText = announce;
         StartCoroutine(SetTextCoroutine(setByHandler));
     }

@@ -36,6 +36,21 @@ public class CommonPlayerController : MonoBehaviour
 
     public void SetCurPokemonData(PokemonData data) { _pokemonDataList[0] = data; }
 
+    // 서버가 보낸 결과로 같은 ID의 포켓몬 데이터를 바꾼다. 출전 순서와 상관없이 찾는다.
+    public void SetPokemonDataById(PokemonData data)
+    {
+        int index = _pokemonDataList.FindIndex(pokemon => pokemon.Id == data.Id);
+        if (index >= 0)
+            _pokemonDataList[index] = data;
+    }
+
+    // 묶여 있으면 스스로 교체할 수 없다.
+    public bool IsCurPokemonBound()
+    {
+        ConditionAbnormality state = GetCurPokemonInfo().State;
+        return state != null && state.Bind > 0;
+    }
+
     public PokemonData GetCurPokemonData() { return _pokemonDataList[0]; }
     public PokemonData GetPokemonData(int order) { return _pokemonDataList[order]; }
 

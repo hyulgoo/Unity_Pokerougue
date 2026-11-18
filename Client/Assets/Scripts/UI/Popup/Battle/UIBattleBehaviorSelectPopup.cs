@@ -38,6 +38,14 @@ public class UIBattleBehaviorSelectPopup : UICommonPopup
 
     void OnClickPokemonButton()
     {
+        if (Managers.Player.MyPlayer.IsCurPokemonBound())
+        {
+            UICommonAnnouncePopup announcePopup = Managers.UI.ShowPopupUI<UICommonAnnouncePopup>();
+            announcePopup.InitSound = InitSounds.Error;
+            announcePopup.SetAnnounceText("묶여 있어서 교체할 수 없다!");
+            return;
+        }
+
         Managers.UI.ClosePopupUI();
 
         UIBattleScene battleSceene = Managers.UI.SceneUI.GetComponent<UIBattleScene>();

@@ -15,7 +15,7 @@ namespace Server.Tests
     // 잡 큐는 테스트가 GameLogic.Instance.Update()를 직접 불러 한 스레드에서 비운다.
     internal static class TestWorld
     {
-        // 전투가 마스터 데이터의 HP를 직접 깎으므로(PK-R02) 테스트마다 다시 읽는다.
+        // 테스트마다 데이터를 새로 읽어 앞 테스트가 바꾼 값이 남지 않게 한다.
         public static void LoadData()
         {
             ConfigManager.LoadConfig();
@@ -61,7 +61,7 @@ namespace Server.Tests
             return DataManager.PokemonDict.Keys.Take(2).ToArray();
         }
 
-        // 두 사람이 포켓몬을 골라 전투가 시작된 방과, 첫 턴의 주인·상대를 돌려준다.
+        // 두 사람이 포켓몬을 골라 전투가 시작된 방과 두 사람을 돌려준다. 둘 다 같은 두 마리(388, 392)를 고른다.
         public static (GameRoom room, ClientSession owner, ClientSession other) StartBattle()
         {
             LoadData();
@@ -74,7 +74,7 @@ namespace Server.Tests
             room.SelectPokemon(a.MyPlayer.Id, Select(pokemon));
             room.SelectPokemon(b.MyPlayer.Id, Select(pokemon));
 
-            return a.MyPlayer.Id == room.CurrentTurnPlayerId ? (room, a, b) : (room, b, a);
+            return (room, a, b);
         }
 
         public static C_Turn Fight(int skillId, int playerIdInPacket = 0)
@@ -86,6 +86,36 @@ namespace Server.Tests
             };
         }
 
+        // 아무것도 하지 않는 행동. 한쪽의 효과만 보고 싶을 때 상대에게 시킨다.
+        public static C_Turn Pass()
+        {
+            return new C_Turn { TurnInfo = new TurnInfo { Action = ActionType.Pass } };
+        }
+
+        public static C_Turn Change(int pokemonId, int playerIdInPacket = 0)
+        {
+            return new C_Turn
+            {
+                PlayerId = playerIdInPacket,
+                TurnInfo = new TurnInfo { Action = ActionType.Change, ChangePokemonId = pokemonId }
+            };
+        }
+
+        // 두 사람이 행동을 고른다. 둘째 행동을 받는 순간 라운드가 처리된다.
+        public static void Round(GameRoom room, ClientSession a, C_Turn aTurn, ClientSession b, C_Turn bTurn)
+        {
+            room.Turn(a.MyPlayer.Id, aTurn);
+            room.Turn(b.MyPlayer.Id, bTurn);
+        }
+
+        // 전투 시작 전 준비용: 그 포켓몬을 맨 앞(출전 중)으로 옮긴다.
+        public static void PutFirst(ClientSession session, int pokemonId)
+        {
+            List<PokemonData> pokemon = session.MyPlayer.Pokemon;
+            int index = pokemon.FindIndex(p => p.Id == pokemonId);
+            (pokemon[0], pokemon[index]) = (pokemon[index], pokemon[0]);
+        }
+
         public static C_Turn Runaway(int playerIdInPacket = 0)
         {
             return new C_Turn
@@ -95,7 +125,32 @@ namespace Server.Tests
             };
         }
 
-        // 양쪽의 연출이 끝났다고 알린다. 턴이 진행 중이었다면 턴 주인이 바뀐다.
+        // 세션이 보낼 패킷 중 그 종류만 순서대로 읽는다. 큐 형식: [size u16][msgId u16][body].
+        public static List<T> Sent<T>(ClientSession session, MsgId id, Google.Protobuf.MessageParser<T> parser)
+            where T : Google.Protobuf.IMessage<T>
+        {
+            FieldInfo field = typeof(ClientSession).GetField("_reserveQueue", BindingFlags.Instance | BindingFlags.NonPublic);
+            List<System.ArraySegment<byte>> queue = (List<System.ArraySegment<byte>>)field.GetValue(session);
+
+            List<T> result = new List<T>();
+            foreach (System.ArraySegment<byte> buffer in queue)
+            {
+                ushort msgId = System.BitConverter.ToUInt16(buffer.Array, buffer.Offset + 2);
+                if (msgId == (ushort)id)
+                    result.Add(parser.ParseFrom(buffer.Array, buffer.Offset + 4, buffer.Count - 4));
+            }
+            return result;
+        }
+
+        // 세션이 보낼 패킷의 종류를 보낸 순서대로 돌려준다.
+        public static List<MsgId> SentIds(ClientSession session)
+        {
+            FieldInfo field = typeof(ClientSession).GetField("_reserveQueue", BindingFlags.Instance | BindingFlags.NonPublic);
+            List<System.ArraySegment<byte>> queue = (List<System.ArraySegment<byte>>)field.GetValue(session);
+            return queue.Select(buffer => (MsgId)System.BitConverter.ToUInt16(buffer.Array, buffer.Offset + 2)).ToList();
+        }
+
+        // 양쪽의 연출이 끝났다고 알린다. 쓰러진 포켓몬이 없으면 다음 라운드가 시작된다.
         public static void EndTurn(GameRoom room, ClientSession a, ClientSession b)
         {
             room.TurnEnd(a.MyPlayer.Id);

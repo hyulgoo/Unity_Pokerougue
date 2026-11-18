@@ -10,7 +10,7 @@
             "target": "Enemy",
             "type": "Grass",
             "value": 130,
-            "accuracy": 100,
+            "accuracy": 90,
             "duration": 1
           },
           {
@@ -42,7 +42,7 @@
             "applyType": "Recovery",
             "target": "Oneself",
             "type": "Grass",
-            "value": 37,
+            "value": 50,
             "accuracy": 100,
             "duration": 1
           }
@@ -64,11 +64,11 @@
             "duration": 1
           },
           {
-            "applyType": "DebuffAtk",
+            "applyType": "DebuffDef",
             "target": "Enemy",
-            "type": "Grass",
-            "value": 37,
-            "accuracy": 100,
+            "type": "Dark",
+            "value": 1,
+            "accuracy": 20,
             "duration": 1
           }
         ],
@@ -85,19 +85,11 @@
             "target": "Enemy",
             "type": "Grass",
             "value": 35,
-            "accuracy": 100,
-            "duration": 5
-          },
-          {
-            "applyType": "Recovery",
-            "target": "Oneself",
-            "type": "Grass",
-            "value": 35,
-            "accuracy": 100,
+            "accuracy": 90,
             "duration": 5
           }
         ],
-        "pp": 15
+        "pp": 10
       }
     },
     {
@@ -114,10 +106,18 @@
             "duration": 1
           },
           {
+            "applyType": "Burn",
+            "target": "Enemy",
+            "type": "Fire",
+            "value": 1,
+            "accuracy": 10,
+            "duration": 1
+          },
+          {
             "applyType": "Atk",
             "target": "Oneself",
             "type": "Fire",
-            "value": 40,
+            "value": 33,
             "accuracy": 100,
             "duration": 1
           }
@@ -161,7 +161,15 @@
             "type": "Fire",
             "value": 35,
             "accuracy": 85,
-            "duration": 4
+            "duration": 1
+          },
+          {
+            "applyType": "Bind",
+            "target": "Enemy",
+            "type": "Fire",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
           }
         ],
         "pp": 15
@@ -177,6 +185,22 @@
             "target": "Enemy",
             "type": "Fighting",
             "value": 120,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "applyType": "DebuffDef",
+            "target": "Oneself",
+            "type": "Fighting",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "applyType": "DebuffSpd",
+            "target": "Oneself",
+            "type": "Fighting",
+            "value": 1,
             "accuracy": 100,
             "duration": 1
           }
@@ -228,8 +252,16 @@
             "target": "Enemy",
             "type": "Water",
             "value": 35,
-            "accuracy": 80,
-            "duration": 4
+            "accuracy": 85,
+            "duration": 1
+          },
+          {
+            "applyType": "Bind",
+            "target": "Enemy",
+            "type": "Water",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
           }
         ],
         "pp": 15
@@ -246,6 +278,14 @@
             "type": "Water",
             "value": 65,
             "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "applyType": "DebuffSpe",
+            "target": "Enemy",
+            "type": "Water",
+            "value": 1,
+            "accuracy": 10,
             "duration": 1
           }
         ],
@@ -269,7 +309,7 @@
             "applyType": "Atk",
             "target": "Oneself",
             "type": "Flying",
-            "value": 40,
+            "value": 33,
             "accuracy": 100,
             "duration": 1
           }
@@ -283,9 +323,9 @@
       "info": {
         "skillEffect": [
           {
-            "applyType": "BuffSpd",
+            "applyType": "BuffSpe",
             "target": "Oneself",
-            "type": "Flying",
+            "type": "Psychic",
             "value": 2,
             "accuracy": 100,
             "duration": 1
@@ -311,8 +351,8 @@
             "applyType": "Atk",
             "target": "Oneself",
             "type": "Normal",
-            "value": 22,
-            "accuracy": 85,
+            "value": 25,
+            "accuracy": 100,
             "duration": 1
           }
         ],
@@ -346,6 +386,22 @@
             "target": "Enemy",
             "type": "Fighting",
             "value": 120,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "applyType": "DebuffAtk",
+            "target": "Oneself",
+            "type": "Fighting",
+            "value": 1,
+            "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "applyType": "DebuffDef",
+            "target": "Oneself",
+            "type": "Fighting",
+            "value": 1,
             "accuracy": 100,
             "duration": 1
           }
@@ -404,7 +460,7 @@
             "applyType": "Atk",
             "target": "Oneself",
             "type": "Electric",
-            "value": 22,
+            "value": 25,
             "accuracy": 100,
             "duration": 1
           }
@@ -441,6 +497,14 @@
             "value": 40,
             "accuracy": 100,
             "duration": 1
+          },
+          {
+            "applyType": "Paralysis",
+            "target": "Enemy",
+            "type": "Electric",
+            "value": 1,
+            "accuracy": 10,
+            "duration": 1
           }
         ],
         "pp": 30
@@ -460,7 +524,8 @@
             "duration": 1
           }
         ],
-        "pp": 30
+        "pp": 20,
+        "priority": 1
       }
     },
     {
@@ -511,10 +576,10 @@
             "duration": 1
           },
           {
-            "applyType": "Atk",
+            "applyType": "FaintSelf",
             "target": "Oneself",
             "type": "Normal",
-            "value": 1000,
+            "value": 0,
             "accuracy": 100,
             "duration": 1
           }
@@ -528,15 +593,15 @@
       "info": {
         "skillEffect": [
           {
-            "applyType": "BuffSpe",
+            "applyType": "Tailwind",
             "target": "Oneself",
-            "type": "Normal",
-            "value": 1,
+            "type": "Flying",
+            "value": 4,
             "accuracy": 100,
             "duration": 1
           }
         ],
-        "pp": 30
+        "pp": 15
       }
     },
     {
@@ -550,6 +615,14 @@
             "type": "Ghost",
             "value": 80,
             "accuracy": 100,
+            "duration": 1
+          },
+          {
+            "applyType": "DebuffSpd",
+            "target": "Enemy",
+            "type": "Ghost",
+            "value": 1,
+            "accuracy": 20,
             "duration": 1
           }
         ],
@@ -628,7 +701,7 @@
             "duration": 1
           }
         ],
-        "pp": 20
+        "pp": 15
       }
     },
     {
@@ -664,7 +737,7 @@
           {
             "applyType": "DebuffAtk",
             "target": "Enemy",
-            "type": "Normal",
+            "type": "Fairy",
             "value": 2,
             "accuracy": 100,
             "duration": 1
@@ -681,7 +754,7 @@
           {
             "applyType": "Atk",
             "target": "Enemy",
-            "type": "Normal",
+            "type": "Fighting",
             "value": 30,
             "accuracy": 100,
             "duration": 1
@@ -689,13 +762,13 @@
           {
             "applyType": "Atk",
             "target": "Enemy",
-            "type": "Normal",
+            "type": "Fighting",
             "value": 30,
             "accuracy": 100,
             "duration": 1
           }
         ],
-        "pp": 20
+        "pp": 30
       }
     },
     {

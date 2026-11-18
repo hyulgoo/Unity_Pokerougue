@@ -181,7 +181,8 @@ namespace Server
 
         #endregion
 
-        public static BattleInfo CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect)
+        // lastDamage: 같은 기술의 앞선 효과가 준 피해. 흡수(Recovery) 효과가 이 값의 value%를 회복한다.
+        public static BattleInfo CalcBattle(PokemonData myData, PokemonData enemyData, SkillEffect effect, int lastDamage = 0)
         {
             Random random = new Random();
             bool isMiss = random.Next(0, 101) > effect.Accuracy ? true : false;
@@ -194,13 +195,29 @@ namespace Server
 
             if (isMiss && effect.Target == TargetType.Enemy)
             {
-                battleInfo.ToData = myData.Clone();
+                // 클라이언트가 FromData로 "~의 공격은 빗나갔다"를 만든다.
+                battleInfo.FromData = myData.Clone();
+                battleInfo.ToData = enemyData.Clone();
                 battleInfo.StateFlag = battleInfo.StateFlag |= BattleStateFlag.Miss;
                 return battleInfo;
             }
 
             PokemonData targetData = effect.Target == TargetType.Oneself ? myData : enemyData;
-            if (effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa)
+            bool isAttack = effect.ApplyType == ApplyType.Atk || effect.ApplyType == ApplyType.Spa;
+            if (isAttack && effect.Target == TargetType.Oneself)
+            {
+                // 반동: 이 기술로 준 피해의 value%(최소 1)를 자신이 입는다. 급소·상성과 무관하다.
+                int recoil = lastDamage > 0 ? Math.Max(1, lastDamage * effect.Value / 100) : 0;
+                targetData.Info.Hp = Math.Max(0, targetData.Info.Hp - recoil);
+                isCritical = false;
+            }
+            else if (effect.ApplyType == ApplyType.Dot && targetData.Info.Type.Contains(Type.Grass))
+            {
+                // 풀 타입에게는 씨뿌리기가 듣지 않는다.
+                battleInfo.StateFlag |= BattleStateFlag.Noneeffective;
+                isCritical = false;
+            }
+            else if (isAttack)
             {
                 float effectRatio = CalcDamageAndReturnEffective(effect, myData.Info, targetData.Info, isCritical);
                 if (effectRatio < 1f)
@@ -212,7 +229,7 @@ namespace Server
             }
             else
             {
-                CalcBuffType(targetData, effect.ApplyType, effect.Value, battleInfo.StateFlag);
+                CalcBuffType(targetData, effect.ApplyType, effect.Value, battleInfo.StateFlag, lastDamage);
             }
 
             if (isCritical)
@@ -254,13 +271,27 @@ namespace Server
             damage *= effectRatio;
             damage *= Mode3;
 
-            targetInfo.Hp = (int)damage >= targetInfo.Hp ? 0 : targetInfo.Hp - (int)damage;
+            // 화상을 입은 포켓몬의 물리 공격은 위력이 절반이 된다.
+            if (skillInfo.ApplyType == ApplyType.Atk && attackerInfo.State != null && attackerInfo.State.Fire > 0)
+                damage *= 0.5f;
+
+            // 계산이 어떻게 나오든 공격이 상대를 회복시키지 않게 한다.
+            int dealtDamage = Math.Max(0, (int)damage);
+            targetInfo.Hp = dealtDamage >= targetInfo.Hp ? 0 : targetInfo.Hp - dealtDamage;
 
             return effectRatio;
         }
 
+        // 능력치 변화는 한 단계에 기본값의 1/5씩, 기본값의 1/4 ~ 4배를 넘지 않는다.
+        // 막지 않으면 공격력이 음수가 되어 데미지가 상대를 회복시킨다.
+        private static int ChangeStat(int current, int standard, int stages)
+        {
+            int changed = current + standard / 5 * stages;
+            return Math.Clamp(changed, Math.Max(1, standard / 4), standard * 4);
+        }
+
         private static void CalcBuffType(PokemonData targetData, ApplyType skillType, int value,
-            BattleStateFlag battleFlag)
+            BattleStateFlag battleFlag, int lastDamage)
         {
             PokemonInfo targetInfo = targetData.Info;
             PokemonInfo stadardInfo = DataManager.PokemonDict[targetData.Id].Info;
@@ -268,50 +299,52 @@ namespace Server
             switch (skillType)
             {
                 case ApplyType.Recovery:
-                    targetInfo.Hp += stadardInfo.Hp / 5 * value;
+                    // 흡수: 이 기술로 준 피해의 value%를 회복한다(기가드레인 50). 피해를 줬다면 최소 1.
+                    int drain = lastDamage * value / 100;
+                    if (lastDamage > 0 && drain < 1)
+                        drain = 1;
+                    targetInfo.Hp += drain;
                     if (targetInfo.Hp > stadardInfo.Hp)
                         targetInfo.Hp = stadardInfo.Hp;
                     break;
                 case ApplyType.BuffAtk:
-                    targetInfo.Atk = targetInfo.Atk + stadardInfo.Atk / 5 * value;
+                    targetInfo.Atk = ChangeStat(targetInfo.Atk, stadardInfo.Atk, value);
                     break;
                 case ApplyType.BuffSpa:
-                    targetInfo.SpA = targetInfo.SpA + stadardInfo.SpA / 5 * value;
+                    targetInfo.SpA = ChangeStat(targetInfo.SpA, stadardInfo.SpA, value);
                     break;
                 case ApplyType.BuffDef:
-                    targetInfo.Def = targetInfo.Def + stadardInfo.Def / 5 * value;
+                    targetInfo.Def = ChangeStat(targetInfo.Def, stadardInfo.Def, value);
                     break;
                 case ApplyType.BuffSpd:
-                    targetInfo.SpD = targetInfo.SpD + stadardInfo.SpD / 5 * value;
+                    targetInfo.SpD = ChangeStat(targetInfo.SpD, stadardInfo.SpD, value);
                     break;
                 case ApplyType.BuffSpe:
-                    targetInfo.Spe = targetInfo.Spe + stadardInfo.Spe / 5 * value;
+                    targetInfo.Spe = ChangeStat(targetInfo.Spe, stadardInfo.Spe, value);
                     break;
                 case ApplyType.Dot:
-                    targetInfo.State.Dot = 3;
+                    // 씨뿌리기는 교체될 때까지 계속된다(교체 시 GameRoom.ChangePokemon이 푼다).
+                    targetInfo.State.Dot = int.MaxValue;
                     break;
                 case ApplyType.DebuffAtk:
-                    targetInfo.Atk = targetInfo.Atk - stadardInfo.Atk / 5 * value;
+                    targetInfo.Atk = ChangeStat(targetInfo.Atk, stadardInfo.Atk, -value);
                     break;
                 case ApplyType.DebuffSpa:
-                    targetInfo.SpA = targetInfo.SpA - stadardInfo.SpA / 5 * value;
+                    targetInfo.SpA = ChangeStat(targetInfo.SpA, stadardInfo.SpA, -value);
                     break;
                 case ApplyType.DebuffDef:
-                    targetInfo.Def = targetInfo.Def - stadardInfo.Def / 5 * value;
+                    targetInfo.Def = ChangeStat(targetInfo.Def, stadardInfo.Def, -value);
                     break;
                 case ApplyType.DebuffSpd:
-                    targetInfo.SpD = targetInfo.SpD - stadardInfo.SpD / 5 * value;
+                    targetInfo.SpD = ChangeStat(targetInfo.SpD, stadardInfo.SpD, -value);
                     break;
                 case ApplyType.DebuffSpe:
-                    targetInfo.Spe = targetInfo.Spe - stadardInfo.Spe / 5 * value;
-                    break;
-                case ApplyType.Sturn:
-                    if (targetInfo.State.Confusion == 0)
-                        targetInfo.State.Sturn = 3;
+                    targetInfo.Spe = ChangeStat(targetInfo.Spe, stadardInfo.Spe, -value);
                     break;
                 case ApplyType.Confusion:
-                    if (targetInfo.State.Sturn == 0)
-                        targetInfo.State.Confusion = 3;
+                    // 혼란은 2~5턴. 이미 혼란이면 다시 걸리지 않는다.
+                    if (targetInfo.State.Confusion == 0)
+                        targetInfo.State.Confusion = Random.Shared.Next(2, 6);
                     break;
             }
         }

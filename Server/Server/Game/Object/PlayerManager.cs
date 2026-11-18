@@ -82,35 +82,5 @@ namespace Server.Game
 
             return null;
         }
-
-        public int GetCurrentTurnPlayerId(int roomId, bool includeCurrentTurnPlayer = false)
-        {
-            lock (_lock)
-            {
-                int nextTurnPlayerId = 0;
-                int nextTurnPlayerPokemonSpeed = 0;
-                foreach (KeyValuePair<int, Player> player in _roomAndPlayers[roomId])
-                {
-                    int playerId = player.Key;
-                    int playerCurrentPokemonSpeed = player.Value.Pokemon[0].Info.Spe;
-
-                    if (!includeCurrentTurnPlayer && player.Value.Room.CurrentTurnPlayerId == playerId)
-                        continue;
-
-                    if (nextTurnPlayerPokemonSpeed < playerCurrentPokemonSpeed)
-                    {
-                        nextTurnPlayerId = playerId;
-                        nextTurnPlayerPokemonSpeed = playerCurrentPokemonSpeed;
-                    }
-                    else if (nextTurnPlayerPokemonSpeed == playerCurrentPokemonSpeed &&
-                             nextTurnPlayerId == player.Value.Room.CurrentTurnPlayerId)
-                    {
-                        nextTurnPlayerId = playerId;
-                    }
-                }
-
-                return nextTurnPlayerId;
-            }
-        }
     }
 }

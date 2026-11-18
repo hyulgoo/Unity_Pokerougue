@@ -158,6 +158,11 @@ enum ApplyType {
   DEBUFF_SPE = 15;
   STURN = 16;
   CONFUSION = 17;
+  BURN = 18;
+  PARALYSIS = 19;
+  BIND = 20;
+  FAINT_SELF = 21;
+  TAILWIND = 22;
 }
 
 enum BattleStateFlag {
@@ -175,6 +180,10 @@ enum BattleStateFlag {
   RECOVERY_STURN = 1024;
   RECOVERY_CONFUSION = 2048;
   DUEL_END = 4096;
+  DEBUFF_PARALYSIS = 8192;
+  DEBUFF_BIND = 16384;
+  RECOVERY_BIND = 32768;
+  TAILWIND_END = 65536;
 }
 
 enum PokeballType {
@@ -330,6 +339,7 @@ message C_ChangePokemon {
 message S_Turn {
   int32 playerId = 1;
   bool myTurn = 2;
+  bool mustChange = 3;
 }
 
 message S_ChangePokemon {
@@ -399,6 +409,8 @@ message ConditionAbnormality {
   int32 fire = 3;
   int32 poison = 4;
   int32 dot = 5;
+  int32 paralysis = 6;
+  int32 bind = 7;
 }
 
 message SkillEffect {
@@ -413,6 +425,7 @@ message SkillEffect {
 message SkillInfo {
   repeated SkillEffect skillEffect = 1;
   int32 pp = 2;
+  int32 priority = 3;
 }
 
 message ItemInfo {

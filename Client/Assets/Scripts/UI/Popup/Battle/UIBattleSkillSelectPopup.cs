@@ -152,5 +152,6 @@ public class UIBattleSkillSelectPopup : UICommonPopup
         Managers.Network.Send(turnpacket);
         Managers.UI.CloseAllPopupUI();
         UIBattleScene scene = Managers.UI.SceneUI.gameObject.GetComponent<UIBattleScene>();
+        scene.ShowIdleText("상대의 행동을 기다리는 중...");
     }
 }
